@@ -84,7 +84,12 @@ class ToolIssue(Document):
 		entry = frappe.new_doc("Stock Entry")
 		entry.stock_entry_type = ISSUE_ENTRY_TYPE
 		entry.purpose = "Material Transfer"
+		# set_posting_time is what makes ERPNext honour the date given; without
+		# it the movement is stamped today, so a tool issued last week would
+		# leave the store today and any earlier return would be backdated
+		# against it.
 		entry.posting_date = self.issue_date
+		entry.set_posting_time = 1
 		entry.project = self.project
 		entry.a3c_tool_issue = self.name
 

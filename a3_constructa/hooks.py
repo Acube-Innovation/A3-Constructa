@@ -114,6 +114,11 @@ doc_events = {
 		# Head 51 row 2: number an asset from its category, not one shared series.
 		"before_naming": "a3_constructa.overrides.asset.set_naming_series_from_category",
 	},
+	"Serial No": {
+		# Head 55 row 23 filters the tool register by item group, which ERPNext
+		# leaves empty on every serial it creates.
+		"before_insert": "a3_constructa.overrides.serial_no.set_item_group",
+	},
 }
 
 # scheduler_events = {}
