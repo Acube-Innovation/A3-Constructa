@@ -1,0 +1,23 @@
+{
+ "creation": "2026-09-15 14:24:43.898620",
+ "currency": "INR",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Budget Utilisation %",
+ "modified": "2026-09-15 14:24:43.898620",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Budget Utilisation %",
+ "owner": "Administrator",
+ "report_field": "percent_consumed",
+ "report_function": "Average",
+ "report_name": "Cost Code Wise Costing",
+ "show_full_number": 0,
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Daily",
+ "type": "Report"
+}

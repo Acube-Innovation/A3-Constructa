@@ -1,0 +1,63 @@
+{
+ "cards": [
+  {
+   "card": "Total Receivable"
+  },
+  {
+   "card": "Total Payable"
+  },
+  {
+   "card": "Overdue Receivable"
+  },
+  {
+   "card": "Cash & Bank Balance"
+  },
+  {
+   "card": "Committed but Unbilled"
+  },
+  {
+   "card": "Retention Held"
+  },
+  {
+   "card": "Budget Utilisation %"
+  }
+ ],
+ "charts": [
+  {
+   "chart": "Cash Flow Forecast",
+   "width": "Half"
+  },
+  {
+   "chart": "Receivable Ageing",
+   "width": "Half"
+  },
+  {
+   "chart": "Payable Ageing",
+   "width": "Half"
+  },
+  {
+   "chart": "Budget Variance",
+   "width": "Half"
+  },
+  {
+   "chart": "Project Profitability",
+   "width": "Half"
+  },
+  {
+   "chart": "Working Capital Trend",
+   "width": "Half"
+  }
+ ],
+ "creation": "2026-09-15 14:24:44.941912",
+ "dashboard_name": "Construction Finance",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2026-09-15 14:24:44.941912",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Construction Finance",
+ "owner": "Administrator"
+}

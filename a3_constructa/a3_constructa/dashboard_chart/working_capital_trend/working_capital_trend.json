@@ -1,0 +1,33 @@
+{
+ "chart_name": "Working Capital Trend",
+ "chart_type": "Report",
+ "creation": "2026-09-15 14:24:44.714048",
+ "currency": "INR",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart",
+ "filters_json": "{}",
+ "group_by_type": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "modified": "2026-09-15 14:24:44.714048",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Working Capital Trend",
+ "number_of_groups": 0,
+ "owner": "Administrator",
+ "report_name": "Working Capital",
+ "roles": [],
+ "show_values_over_chart": 0,
+ "time_interval": "Monthly",
+ "timeseries": 0,
+ "timespan": "Last Year",
+ "type": "Line",
+ "use_report_chart": 0,
+ "x_field": "period",
+ "y_axis": [
+  {
+   "y_field": "net_working_capital"
+  }
+ ]
+}
