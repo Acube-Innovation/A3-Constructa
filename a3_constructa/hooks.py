@@ -7,11 +7,24 @@ app_license = "mit"
 
 # ERPNext supplies the Project, Item, Asset, Stock and Accounts doctypes this
 # app extends; without it, installing here is meaningless.
-required_apps = ["frappe/erpnext"]
+required_apps = ["frappe/erpnext", "hrms"]
 
-# Every DocType, Report, Workspace and Print Format this app owns lives under
-# this module, and the fixture filters below key off it.
-A3_CONSTRUCTA_MODULE = "A3 Constructa"
+# Module names for this app. "&" is deliberately spelled "and": Frappe derives a
+# Python package folder from the module name, and "Planning & Budgeting" would
+# scrub to an invalid identifier. The Workspace titles keep the ampersand.
+A3_CONSTRUCTA_MODULES = [
+	"A3 Constructa",
+	"Master Data",
+	"Planning and Budgeting",
+	"Procurement",
+	"Procurement Classification",
+	"Delivery and Logistics",
+	"Inventory Movement",
+	"Asset and Equipment",
+	"HR and Time",
+	"Finance and Accounting",
+]
+
 
 # ---------------------------------------------------------------- install
 before_install = "a3_constructa.install.before_install"
@@ -39,9 +52,9 @@ before_tests = "a3_constructa.install.before_tests"
 # this app and reinstall them onto every other site. Add names here as records
 # are created — that list is the app's inventory of what it owns.
 fixtures = [
-	{"dt": "Custom Field", "filters": [["module", "=", A3_CONSTRUCTA_MODULE]]},
-	{"dt": "Property Setter", "filters": [["module", "=", A3_CONSTRUCTA_MODULE]]},
-	{"dt": "Workspace", "filters": [["module", "=", A3_CONSTRUCTA_MODULE]]},
+	{"dt": "Custom Field", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
+	{"dt": "Property Setter", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
+	{"dt": "Workspace", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
 	{"dt": "Item Group", "filters": [["name", "in", []]]},
 	{"dt": "Asset Category", "filters": [["name", "in", []]]},
 	{"dt": "Stock Entry Type", "filters": [["name", "in", []]]},

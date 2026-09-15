@@ -80,6 +80,8 @@ fetch_app() {
 }
 
 fetch_app erpnext https://github.com/frappe/erpnext "${ERPNEXT_BRANCH}"
+# HR (attendance, payroll, leave, expense claims) lives in hrms, not core ERPNext.
+fetch_app hrms    https://github.com/frappe/hrms    "${HRMS_BRANCH}"
 
 # This app is not cloned — it is the repository on the Windows side, mounted in
 # and soft-linked, so an edit in the editor is an edit in the bench.
@@ -166,6 +168,9 @@ if [ "${SETUP_WIZARD:-1}" = "1" ] && ! has_company; then
 			'email': 'admin@example.com'
 		}}"
 fi
+
+# hrms and this app both expect a Company, so they go in after the wizard.
+install_app hrms
 
 # This app's installer seeds records that hang off ERPNext masters, so it goes
 # in after the wizard.
