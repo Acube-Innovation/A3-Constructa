@@ -16,6 +16,9 @@ import frappe
 SOURCE = "docs/how_it_works.html"
 OUTPUT = "docs/A3-Constructa-How-It-Works.pdf"
 
+GUIDE_SOURCE = "docs/maintenance_guide.html"
+GUIDE_OUTPUT = "docs/A3-Constructa-Maintenance-Guide.pdf"
+
 # wkhtmltopdf takes its page setup from arguments, not from @page rules, so the
 # margins here have to match the ones in the stylesheet.
 PDF_OPTIONS = {
@@ -34,8 +37,9 @@ PDF_OPTIONS = {
 }
 
 
-def build_pdf(source: str | None = None, output: str | None = None) -> str:
-	"""Render the guide and return the path it was written to."""
+def build_pdf(source: str | None = None, output: str | None = None,
+              footer: str | None = None) -> str:
+	"""Render the client guide and return the path it was written to."""
 	from frappe.utils.pdf import get_pdf
 
 	app_root = os.path.dirname(frappe.get_app_path("a3_constructa"))
@@ -48,7 +52,10 @@ def build_pdf(source: str | None = None, output: str | None = None) -> str:
 	with open(source_path, encoding="utf-8") as handle:
 		html = handle.read()
 
-	pdf = get_pdf(html, options=dict(PDF_OPTIONS))
+	options = dict(PDF_OPTIONS)
+	if footer:
+		options["footer-left"] = footer
+	pdf = get_pdf(html, options=options)
 
 	os.makedirs(os.path.dirname(output_path), exist_ok=True)
 	with open(output_path, "wb") as handle:
@@ -56,3 +63,12 @@ def build_pdf(source: str | None = None, output: str | None = None) -> str:
 
 	print("Wrote %s (%.0f KB)" % (output_path, len(pdf) / 1024.0))
 	return output_path
+
+
+def build_guide() -> str:
+	"""Render the internal maintenance guide."""
+	return build_pdf(
+		source=GUIDE_SOURCE,
+		output=GUIDE_OUTPUT,
+		footer="A3 Constructa - Maintenance guide (internal)",
+	)
