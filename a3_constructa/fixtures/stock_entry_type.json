@@ -1,1 +1,29 @@
-[]
+[
+ {
+  "add_to_transit": 0,
+  "docstatus": 0,
+  "doctype": "Stock Entry Type",
+  "is_standard": 0,
+  "modified": "2026-09-15 13:38:55.970571",
+  "name": "Material Issue Note (MIN)",
+  "purpose": "Material Issue"
+ },
+ {
+  "add_to_transit": 0,
+  "docstatus": 0,
+  "doctype": "Stock Entry Type",
+  "is_standard": 0,
+  "modified": "2026-09-15 13:38:56.020344",
+  "name": "Material Receipt Note (MRN)",
+  "purpose": "Material Transfer"
+ },
+ {
+  "add_to_transit": 0,
+  "docstatus": 0,
+  "doctype": "Stock Entry Type",
+  "is_standard": 0,
+  "modified": "2026-09-15 13:38:56.026994",
+  "name": "Site Material Return",
+  "purpose": "Material Transfer"
+ }
+]
