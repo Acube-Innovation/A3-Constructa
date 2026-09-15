@@ -1,0 +1,738 @@
+<!--
+  Source for docs/A3-Constructa-How-It-Works.pdf
+
+  Written for the client, not for the build team: plain language, no Frappe
+  vocabulary except where the reader will see it on screen. Regenerate with:
+
+      bench --site <site> execute a3_constructa.demo.build_docs.build_pdf
+
+  Laid out for wkhtmltopdf, which runs an old WebKit: it drops inline SVG
+  silently and is unreliable with flexbox, so the diagrams are built from
+  bordered table cells and the layout uses tables throughout.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+	@page { size: A4; margin: 16mm 14mm 18mm 14mm; }
+
+	body {
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 10.5pt;
+		line-height: 1.5;
+		color: #1f2933;
+		margin: 0;
+	}
+
+	h1 { font-size: 24pt; margin: 0 0 4px 0; color: #14304f; letter-spacing: -0.4px; }
+	h2 {
+		font-size: 15pt; color: #14304f; margin: 0 0 10px 0;
+		border-bottom: 2px solid #14304f; padding-bottom: 5px;
+	}
+	h3 { font-size: 11.5pt; color: #14304f; margin: 16px 0 5px 0; }
+	p  { margin: 0 0 9px 0; }
+
+	.page { page-break-after: always; }
+	/* The old WebKit in wkhtmltopdf does not honour :last-child here, so the
+	   final page is marked explicitly - otherwise it emits a blank page. */
+	.page.last { page-break-after: auto; }
+
+	.lead { font-size: 11.5pt; color: #3e4c59; }
+	.muted { color: #6b7785; }
+	.small { font-size: 9pt; }
+
+	table.data { width: 100%; border-collapse: collapse; margin: 8px 0 12px 0; }
+	table.data th {
+		background: #14304f; color: #fff; text-align: left;
+		padding: 6px 8px; font-size: 9.5pt; font-weight: bold;
+	}
+	table.data td {
+		padding: 6px 8px; border-bottom: 1px solid #dfe3e8;
+		vertical-align: top; font-size: 9.5pt;
+	}
+	table.data tr:nth-child(even) td { background: #f6f8fa; }
+	td.term { font-weight: bold; color: #14304f; width: 30%; }
+	td.sys  { font-family: "Courier New", monospace; font-size: 9pt; color: #9a5b00; width: 27%; }
+
+	.note {
+		background: #fff8e6; border-left: 4px solid #d99100;
+		padding: 9px 12px; margin: 12px 0; font-size: 9.5pt;
+	}
+	.note b { color: #8a5a00; }
+
+	.cover {
+		border-top: 8px solid #14304f;
+		padding-top: 26px;
+		margin-top: 150px;
+	}
+	.cover .sub { font-size: 13pt; color: #3e4c59; margin-top: 6px; }
+	.cover .meta { margin-top: 90px; font-size: 10pt; color: #6b7785; }
+
+	ol.steps { margin: 0 0 10px 18px; padding: 0; }
+	ol.steps li { margin-bottom: 7px; }
+
+	.two-col { width: 100%; border-collapse: collapse; }
+	.two-col td { vertical-align: top; width: 50%; padding-right: 14px; }
+
+	/* --- diagrams -------------------------------------------------------
+	   Built from tables and bordered cells rather than SVG: wkhtmltopdf runs
+	   an old WebKit that drops inline SVG entirely, so anything drawn that
+	   way disappears from the PDF without an error. */
+	table.flow { width: 100%; border-collapse: separate; border-spacing: 0; }
+	table.flow td { vertical-align: middle; }
+
+	.box {
+		border: 1.3px solid #14304f; border-radius: 5px; background: #fff;
+		padding: 8px 9px;
+	}
+	.box .t { font-size: 10.5pt; font-weight: bold; color: #14304f; display: block; }
+	.box .d { font-size: 8.5pt; color: #6b7785; display: block; margin-top: 3px; line-height: 1.35; }
+	.box.tint { background: #eef3f8; }
+	.box.warn { background: #fff8e6; border-color: #d99100; }
+	.box.warn .t { color: #8a5a00; }
+	.box.warn .d { color: #8a5a00; }
+	.box.dim  { background: #f6f8fa; border-color: #9aa5b1; }
+	.box.dim .t { color: #3e4c59; font-weight: normal; }
+	.box.dim .d { color: #9aa5b1; }
+
+	.arrow  { text-align: center; color: #14304f; font-size: 13pt; width: 22px; }
+	.arrowd { text-align: center; color: #14304f; font-size: 13pt; padding: 3px 0; }
+
+	.band {
+		background: #f6f8fa; border: 1px solid #dfe3e8; border-radius: 6px;
+		padding: 9px 10px 10px 10px; margin-bottom: 4px;
+	}
+	.band .label {
+		font-size: 8.5pt; font-weight: bold; color: #9a5b00;
+		letter-spacing: 1px; display: block; margin-bottom: 7px;
+	}
+
+	.strip {
+		background: #14304f; color: #fff; border-radius: 5px;
+		padding: 11px 14px; margin-top: 12px;
+	}
+	.strip b { font-size: 10.5pt; }
+	.strip span { display: block; color: #c3d0dd; font-size: 9.5pt; margin-top: 4px; }
+
+	/* budget / committed / actual bars */
+	table.bars { width: 100%; border-collapse: collapse; margin: 6px 0 4px 0; }
+	table.bars td { padding: 5px 0; vertical-align: middle; }
+	td.barlabel { width: 128px; padding-right: 10px; }
+	td.barlabel b { font-size: 10pt; display: block; }
+	td.barlabel span { font-size: 8.5pt; color: #6b7785; }
+	.bar { border-radius: 4px; padding: 7px 10px; font-size: 9.5pt; }
+	.bar.budget { background: #eef3f8; border: 1.3px solid #14304f; color: #14304f; }
+	.bar.commit { background: #fff8e6; border: 1.3px solid #d99100; color: #8a5a00; }
+	.bar.actual { background: #14304f; color: #fff; }
+	.bar.rest {
+		background: #fff; border: 1px dashed #cbd2d9; color: #9aa5b1;
+		text-align: center; font-size: 9pt;
+	}
+
+	/* hierarchy levels */
+	table.level { width: 100%; border-collapse: separate; border-spacing: 5px 0; margin-bottom: 2px; }
+	table.level td { text-align: center; padding: 7px 4px; border-radius: 4px; font-size: 9.5pt; }
+	td.lv-on  { background: #eef3f8; border: 1.3px solid #14304f; color: #14304f; font-weight: bold; }
+	td.lv-off { background: #f6f8fa; border: 1px solid #cbd2d9; color: #6b7785; }
+	td.lv-code { background: #fff8e6; border: 1.3px solid #d99100; color: #8a5a00; font-weight: bold; }
+	.lvtag { font-size: 8pt; font-weight: normal; color: #9aa5b1; display: block; margin-top: 2px; }
+	.down { text-align: center; color: #9aa5b1; font-size: 12pt; line-height: 1.1; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ cover -->
+<div class="page">
+	<div class="cover">
+		<h1>A3 Constructa</h1>
+		<div class="sub">How the system works &mdash; a plain-language guide</div>
+		<p class="muted" style="margin-top:22px; max-width:440px;">
+			A construction ERP built on ERPNext. This guide explains what the system
+			does, how work flows through it, and where your money is tracked &mdash;
+			without assuming you have used ERPNext before.
+		</p>
+		<div class="meta">
+			Acube Innovations Pvt Ltd<br>
+			Prepared for client walkthrough
+		</div>
+	</div>
+</div>
+
+<!-- ======================================================= the idea -->
+<div class="page">
+	<h2>1. The problem this solves</h2>
+
+	<p class="lead">
+		On a construction job, money is committed long before it is spent, and
+		spent long before anyone sees a number.
+	</p>
+
+	<p>
+		You order steel in March. It arrives in May. It is used in June. The
+		invoice is paid in July. By the time the cost appears in the accounts, the
+		decision that caused it is four months old. Meanwhile the site is asking
+		for more material, the client wants a progress claim, and nobody can say
+		with confidence whether the substructure package is still inside its
+		budget.
+	</p>
+
+	<p>
+		A3 Constructa closes that gap. Every purchase order, delivery, material
+		issue and invoice is tagged to a part of the works, so at any moment you
+		can answer three questions:
+	</p>
+
+	<table class="data">
+		<tr><th style="width:34%">Question</th><th>Where the answer comes from</th></tr>
+		<tr>
+			<td><b>What did we budget?</b></td>
+			<td>The approved BOQ, allocated across the works</td>
+		</tr>
+		<tr>
+			<td><b>What have we committed?</b></td>
+			<td>Purchase orders raised but not yet invoiced</td>
+		</tr>
+		<tr>
+			<td><b>What have we actually spent?</b></td>
+			<td>Invoices posted and material issued from store</td>
+		</tr>
+	</table>
+
+	<p>
+		The difference between the second and third answer is the one most systems
+		miss. A package can look healthy on spend and already be over-committed on
+		orders that have not yet been invoiced. This system shows both side by side.
+	</p>
+
+	<h3>The three tags that make it work</h3>
+
+	<p>
+		Nearly everything in the system carries the same three tags. Once you
+		understand these, the rest follows.
+	</p>
+
+	<table class="flow">
+		<tr>
+			<td width="31%"><div class="box tint">
+				<span class="t">Cost Head</span>
+				<span class="d"><b>The package of work</b><br>
+				&ldquo;University&rdquo;, &ldquo;Hospital&rdquo;, &ldquo;Road works&rdquo;</span>
+			</div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="31%"><div class="box tint">
+				<span class="t">WBS</span>
+				<span class="d"><b>The part of the works</b><br>
+				&ldquo;Substructure&rdquo;, &ldquo;Superstructure&rdquo;</span>
+			</div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="31%"><div class="box tint">
+				<span class="t">Cost Code</span>
+				<span class="d"><b>The kind of cost</b><br>
+				Concrete, rebar, blockwork, plant hire</span>
+			</div></td>
+		</tr>
+	</table>
+
+	<div class="strip">
+		<b>Every order, delivery, issue and invoice carries these three tags</b>
+		<span>That is what lets the system add up cost by package, by part of the
+		works, or by type of cost.</span>
+	</div>
+
+	<div class="note">
+		<b>In practice:</b> when a storeman issues 50 bags of cement, he picks the
+		cost code. He does not need to know about accounts or cost centres &mdash;
+		the system takes those from the cost code and posts them correctly.
+	</div>
+</div>
+
+<!-- ================================================== the main flow -->
+<div class="page">
+	<h2>2. How work flows through the system</h2>
+
+	<p>
+		This is the whole journey, from agreeing a budget to paying for what was
+		delivered. Each box is a screen someone fills in; the tags travel with the
+		work all the way along.
+	</p>
+
+	<div class="band">
+		<span class="label">PLAN</span>
+		<table class="flow">
+			<tr>
+				<td width="23%"><div class="box"><span class="t">Project</span>
+					<span class="d">The job itself, with its packages and breakdown of works</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">BOQ</span>
+					<span class="d">Bill of quantities: what the job needs and at what rates</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Budget</span>
+					<span class="d">The approved BOQ spread across the parts of the works</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Buying plan</span>
+					<span class="d">When each item must be ordered to arrive on time</span></div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="arrowd">&#9660;</div>
+
+	<div class="band">
+		<span class="label">BUY</span>
+		<table class="flow">
+			<tr>
+				<td width="23%"><div class="box"><span class="t">Requisition</span>
+					<span class="d">Site asks for what it needs, against a cost code</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Quotations</span>
+					<span class="d">Prices from several suppliers, compared and recommended</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Purchase Order</span>
+					<span class="d">The commitment. From here the money is spoken for</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box warn"><span class="t">Budget check</span>
+					<span class="d">The system warns or stops an order that breaks budget</span></div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="arrowd">&#9660;</div>
+
+	<div class="band">
+		<span class="label">DELIVER</span>
+		<table class="flow">
+			<tr>
+				<td width="23%"><div class="box"><span class="t">Shipment</span>
+					<span class="d">Where the goods are: sailed, at port, in customs, on the road</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Goods Receipt</span>
+					<span class="d">What actually turned up, checked against the order</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Landed Cost</span>
+					<span class="d">Freight, duty and clearing added to the real item cost</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Store</span>
+					<span class="d">Central store, transit, site store &mdash; each holding real stock</span></div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="arrowd">&#9660;</div>
+
+	<div class="band">
+		<span class="label">USE &amp; PAY</span>
+		<table class="flow">
+			<tr>
+				<td width="23%"><div class="box"><span class="t">Material Issue</span>
+					<span class="d">Stock leaves store for the job &mdash; the moment it is a cost</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Work Certificate</span>
+					<span class="d">Subcontractor work measured, with retention held back</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box"><span class="t">Invoices</span>
+					<span class="d">Supplier bills in, progress claims out to the client</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="23%"><div class="box tint"><span class="t">Reports</span>
+					<span class="d">Budget vs committed vs actual, cash forecast, margins</span></div></td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<!-- ============================================ the cost structure -->
+<div class="page">
+	<h2>3. How a job is broken down</h2>
+
+	<p>
+		Before anything can be tracked, the job has to be described. This is done
+		once, at the start, and everything afterwards refers back to it.
+	</p>
+
+	<table class="level">
+		<tr><td class="lv-on" colspan="4" style="background:#14304f; color:#fff; border-color:#14304f;">
+			PROJECT &mdash; Mbandaka University Campus
+		</td></tr>
+	</table>
+	<div class="down">&#9660;</div>
+
+	<table class="level">
+		<tr>
+			<td class="lv-on">University<span class="lvtag">cost head</span></td>
+			<td class="lv-off">Hospital<span class="lvtag">cost head</span></td>
+			<td class="lv-off">Road works<span class="lvtag">cost head</span></td>
+			<td class="lv-off">External works<span class="lvtag">cost head</span></td>
+		</tr>
+	</table>
+	<div class="down" style="text-align:left; padding-left:10%;">&#9660;</div>
+
+	<table class="level" style="width:76%">
+		<tr>
+			<td class="lv-on">Substructure<span class="lvtag">WBS</span></td>
+			<td class="lv-off">Superstructure<span class="lvtag">WBS</span></td>
+			<td class="lv-off">Temporary works<span class="lvtag">WBS</span></td>
+		</tr>
+	</table>
+	<div class="down" style="text-align:left; padding-left:8%;">&#9660;</div>
+
+	<table class="level" style="width:52%">
+		<tr>
+			<td class="lv-code">Concrete<span class="lvtag" style="color:#b07a1a">cost code</span></td>
+			<td class="lv-code">Rebar<span class="lvtag" style="color:#b07a1a">cost code</span></td>
+		</tr>
+	</table>
+
+	<table class="two-col" style="margin-top:14px;">
+		<tr>
+			<td>
+				<h3 style="margin-top:0">Read it downwards</h3>
+				<p class="small">
+					The University package contains the substructure, which is built
+					from concrete and rebar. Costs roll back up the same way: every
+					bag of cement issued against the Concrete code adds to the
+					substructure, and to the University package, and to the project.
+				</p>
+			</td>
+			<td>
+				<h3 style="margin-top:0">Only the highlighted path is shown</h3>
+				<p class="small">
+					Each of the other packages has its own breakdown beneath it, and
+					each part of the works its own cost codes. The tree is as deep as
+					the job needs &mdash; a part of the works can have sub-parts.
+				</p>
+			</td>
+		</tr>
+	</table>
+
+	<div class="note">
+		<b>Why the cost code matters most:</b> it is the level at which a quantity
+		surveyor actually works. The BOQ says you allowed 4,000 bags of cement for
+		the substructure. The cost code is what lets the system tell you that
+		1,450 have gone out and you are 36% through the allowance.
+	</div>
+</div>
+
+<!-- ================================================ what you call it -->
+<div class="page">
+	<h2>4. What you call it, what the system calls it</h2>
+
+	<p>
+		The screens use standard ERPNext names in some places and construction
+		names in others. This table maps them, so nobody gets lost.
+	</p>
+
+	<table class="data">
+		<tr>
+			<th style="width:30%">What you say</th>
+			<th style="width:27%">On screen</th>
+			<th>What it does</th>
+		</tr>
+		<tr><td class="term">Package</td><td class="sys">Cost Head</td>
+			<td>A major division of the job &mdash; the university block, the hospital, the roads.</td></tr>
+		<tr><td class="term">Breakdown of works</td><td class="sys">WBS</td>
+			<td>The parts each package is built from. Sits in a tree, so parts can have sub-parts.</td></tr>
+		<tr><td class="term">Cost code</td><td class="sys">Cost Code</td>
+			<td>A type of cost within the works. Carries the account and cost centre it should post to.</td></tr>
+		<tr><td class="term">Bill of quantities</td><td class="sys">BOQ</td>
+			<td>Quantities and rates, approved through a sign-off process before anything is bought.</td></tr>
+		<tr><td class="term">Budget allocation</td><td class="sys">WBS Allocation</td>
+			<td>Spreads the approved BOQ across the parts of the works, so each has its own budget.</td></tr>
+		<tr><td class="term">Buying schedule</td><td class="sys">Procurement Plan</td>
+			<td>Works back from the date material is needed on site, using supplier lead times.</td></tr>
+		<tr><td class="term">Requisition / PR</td><td class="sys">Material Request</td>
+			<td>Site asking for material, tagged to the cost code it is for.</td></tr>
+		<tr><td class="term">Purchase order</td><td class="sys">Purchase Order</td>
+			<td>The commitment to a supplier. From this point the money is spoken for.</td></tr>
+		<tr><td class="term">Shipment tracker</td><td class="sys">Shipment Tracking</td>
+			<td>Where an import is: sailed, arrived, in customs, on the road. Holds the documents too.</td></tr>
+		<tr><td class="term">GRN</td><td class="sys">Purchase Receipt</td>
+			<td>What actually arrived. A receipt taken straight to site is flagged as an SMRN.</td></tr>
+		<tr><td class="term">Landed cost</td><td class="sys">Landed Cost Voucher</td>
+			<td>Adds freight, duty and clearing onto the item so stock is valued at true cost.</td></tr>
+	</table>
+
+	<p class="small muted">Continued on the next page.</p>
+</div>
+
+<!-- ============================================ what you call it (2) -->
+<div class="page">
+	<h2>4. What you call it, what the system calls it <span style="font-weight:normal; font-size:11pt; color:#6b7785">&mdash; continued</span></h2>
+
+	<table class="data">
+		<tr>
+			<th style="width:30%">What you say</th>
+			<th style="width:27%">On screen</th>
+			<th>What it does</th>
+		</tr>
+		<tr><td class="term">MIN &mdash; issue note</td><td class="sys">Stock Entry</td>
+			<td>Material leaving store for the job. This is the moment it becomes a cost.</td></tr>
+		<tr><td class="term">MRN &mdash; receipt note</td><td class="sys">Stock Entry</td>
+			<td>Material arriving at the site store, usually after a transit leg.</td></tr>
+		<tr><td class="term">Site return</td><td class="sys">Stock Entry</td>
+			<td>Surplus material coming back off site into the store, so it is not counted as used.</td></tr>
+		<tr><td class="term">Work certificate</td><td class="sys">Work Certificate</td>
+			<td>Subcontractor work measured for the month, with retention withheld automatically.</td></tr>
+		<tr><td class="term">Tool register</td><td class="sys">Tool Issue</td>
+			<td>Who is holding which tool. Moves the tool into that person&rsquo;s custody store.</td></tr>
+		<tr><td class="term">Plant register</td><td class="sys">Asset</td>
+			<td>Machines, with make, model, capacity, warranty and their own numbering per category.</td></tr>
+		<tr><td class="term">Breakdown record</td><td class="sys">Asset Repair</td>
+			<td>What failed, what it cost, which spares were used and how long the machine was down.</td></tr>
+		<tr><td class="term">Spares list</td><td class="sys">Asset Spare Part</td>
+			<td>Which parts fit which machine, with minimum stock and preferred supplier.</td></tr>
+		<tr><td class="term">Supplier bill</td><td class="sys">Purchase Invoice</td>
+			<td>What the supplier is charging, matched back to the order and the receipt.</td></tr>
+		<tr><td class="term">Progress claim</td><td class="sys">Sales Invoice</td>
+			<td>What is billed to the client for work done, against the project.</td></tr>
+	</table>
+
+	<div class="note">
+		<b>One thing worth explaining to users:</b> a material issue, a material
+		receipt and a site return are all a <i>Stock Entry</i> on screen &mdash;
+		the difference is the type chosen at the top. The numbering tells them
+		apart: issues are <b>MIN-</b>, receipts are <b>MRN-</b>.
+	</div>
+
+	<div class="note" style="background:#eef3f8; border-left-color:#14304f">
+		<b style="color:#14304f">Why some names look unfamiliar:</b> the system is
+		built on ERPNext, which is used by every kind of business, so a few screens
+		carry general names like &ldquo;Stock Entry&rdquo; or &ldquo;Material
+		Request&rdquo;. The construction-specific parts &mdash; BOQ, WBS, Cost
+		Head, Cost Code, Work Certificate, Tool Issue, Shipment Tracking &mdash;
+		were built for you and carry the names you already use.
+	</div>
+</div>
+
+<!-- ================================================ money tracking -->
+<div class="page">
+	<h2>5. Where the money is tracked</h2>
+
+	<p>
+		This is the part that pays for the system. A cost passes through three
+		states, and the system keeps them separate.
+	</p>
+
+	<table class="bars">
+		<tr>
+			<td class="barlabel"><b style="color:#14304f">BUDGET</b>
+				<span>what was allowed</span></td>
+			<td>
+				<table style="width:100%; border-collapse:collapse"><tr>
+					<td style="width:100%"><div class="bar budget">Approved BOQ, allocated to the works</div></td>
+				</tr></table>
+			</td>
+		</tr>
+		<tr>
+			<td class="barlabel"><b style="color:#8a5a00">COMMITTED</b>
+				<span>ordered, not yet billed</span></td>
+			<td>
+				<table style="width:100%; border-collapse:collapse"><tr>
+					<td style="width:65%; padding-right:4px"><div class="bar commit">Purchase orders raised</div></td>
+					<td style="width:35%"><div class="bar rest">still uncommitted</div></td>
+				</tr></table>
+			</td>
+		</tr>
+		<tr>
+			<td class="barlabel"><b style="color:#14304f">ACTUAL</b>
+				<span>really spent</span></td>
+			<td>
+				<table style="width:100%; border-collapse:collapse"><tr>
+					<td style="width:39%; padding-right:4px"><div class="bar actual">Invoiced + issued from store</div></td>
+					<td style="width:61%"><div class="bar rest">not yet spent</div></td>
+				</tr></table>
+			</td>
+		</tr>
+	</table>
+
+	<div class="band" style="margin-top:10px">
+		<b style="font-size:10.5pt; color:#14304f">The gap between the middle bar and the bottom bar is the one that catches people out</b>
+		<p class="small" style="margin:6px 0 0 0; color:#3e4c59">
+			On spend alone this package looks comfortable. But orders are already
+			placed well beyond that, and those invoices are coming. The system shows
+			both, so the overspend is visible months before it lands.
+		</p>
+	</div>
+
+	<h3>The reports that answer it</h3>
+
+	<table class="data">
+		<tr><th style="width:38%">Report</th><th>What it tells you</th></tr>
+		<tr><td class="term">Cost Code Wise Costing</td>
+			<td>Budget, committed, actual and balance for every cost code, WBS or package.</td></tr>
+		<tr><td class="term">Budget vs Commitment</td>
+			<td>How much of each budget is already spoken for on purchase orders.</td></tr>
+		<tr><td class="term">Cost to Complete</td>
+			<td>What each cost code will finish at, and whether that is above or below budget.</td></tr>
+		<tr><td class="term">BOQ vs Consumption</td>
+			<td>Quantities allowed against quantities issued, flagging over-consumption.</td></tr>
+		<tr><td class="term">Cash Flow Forecast</td>
+			<td>Money due in and out over the coming weeks, from commitments already made.</td></tr>
+		<tr><td class="term">Working Capital</td>
+			<td>Receivables, payables, stock, work in progress and retention, month by month.</td></tr>
+	</table>
+</div>
+
+<!-- ============================================ construction extras -->
+<div class="page">
+	<h2>6. The construction-specific parts</h2>
+
+	<p>
+		Standard ERP handles buying, stock and accounts. These are the pieces that
+		were added because a construction business needs them and off-the-shelf
+		systems do not have them.
+	</p>
+
+	<h3>Imports tracked door to door</h3>
+	<p>
+		A single record follows a container from the supplier&rsquo;s factory to the
+		site store: FAT inspection, stuffing, sailing, arrival, customs, inland
+		haulage. It holds the bill of lading, certificate of origin, duty receipt
+		and delivery order, and records demurrage and detention when a container is
+		held too long. Reports show turnaround by stage, so you can see whether the
+		delays are at the port, at customs, or on the road.
+	</p>
+
+	<h3>Retention handled properly</h3>
+	<p>
+		When subcontractor work is certified, the system withholds the retention
+		percentage and posts it to a separate <b>Retention Payable</b> account.
+		The subcontractor is paid the net amount; the retention stays on the
+		balance sheet until the defect liability period expires, at which point it
+		is released deliberately rather than forgotten.
+	</p>
+
+	<h3>Small tools tracked by person</h3>
+	<p>
+		Tools are not treated as fixed assets &mdash; they are stock, issued into a
+		custody store in an individual&rsquo;s name. At any point you can list what
+		each person is holding, how long they have had it, and what it is worth.
+		Lost tools are written off with the amount recovered from the holder
+		recorded against them.
+	</p>
+
+	<h3>Labour costed to the works</h3>
+	<p>
+		Attendance is recorded against a project and site, and timesheets against a
+		WBS and cost code. Staff who fill timesheets have their hours costed
+		directly; site labour who do not have their payroll spread across the
+		projects they were present on, in proportion to days worked. Every figure
+		says which basis it used, so nothing is silently half-measured.
+	</p>
+
+	<h3>Plant that earns or costs</h3>
+	<p>
+		Each machine is numbered by its own category &mdash; HEQ for heavy
+		equipment, VEH for vehicles &mdash; and carries its make, model, capacity,
+		serial and warranty. Breakdowns, repair costs and spare parts are recorded
+		against it, and utilisation is measured against downtime, so the decision
+		to keep a machine or hire one is based on its own numbers.
+	</p>
+</div>
+
+<!-- ================================================= what you see -->
+<div class="page">
+	<h2>7. What you see when you log in</h2>
+
+	<p>
+		Everything sits under one heading in the menu, <b>A3 Constructa</b>, with
+		nine areas beneath it. Each area is a page of shortcuts to the screens and
+		reports for that part of the business.
+	</p>
+
+	<table class="data">
+		<tr><th style="width:32%">Area</th><th>What it covers</th></tr>
+		<tr><td class="term">Master Data</td>
+			<td>The job itself: packages, breakdown of works, cost codes, items, suppliers, stores, ports and approval rules.</td></tr>
+		<tr><td class="term">Planning &amp; Budgeting</td>
+			<td>The BOQ, its approval, the budget spread across the works, and the buying schedule.</td></tr>
+		<tr><td class="term">Procurement</td>
+			<td>Requisitions, quotations, vendor selection, purchase orders and subcontract certificates.</td></tr>
+		<tr><td class="term">Procurement Classification</td>
+			<td>How materials, services, spares, tools and rentals are grouped for reporting.</td></tr>
+		<tr><td class="term">Delivery &amp; Logistics</td>
+			<td>Shipment tracking, goods receipts, landed cost and the document trail.</td></tr>
+		<tr><td class="term">Inventory Movement</td>
+			<td>Stock in the stores, issues to the job, transit legs and site returns.</td></tr>
+		<tr><td class="term">Asset &amp; Equipment</td>
+			<td>Plant register, maintenance, spares and the small tools register.</td></tr>
+		<tr><td class="term">HR &amp; Time</td>
+			<td>People, attendance, shifts, leave, payroll, expenses and timesheets.</td></tr>
+		<tr><td class="term">Finance &amp; Accounting</td>
+			<td>Ledger, payables, receivables, banking, tax, cost control and the finance dashboard.</td></tr>
+	</table>
+
+	<h3>The finance dashboard</h3>
+	<p>
+		The Finance area opens with the figures a director asks for first: total
+		receivable and payable, what is overdue, cash and bank balance, retention
+		held, how much is committed but not yet billed, and budget utilisation.
+		Underneath are trend charts for cash flow, ageing, budget variance and
+		working capital.
+	</p>
+
+	<div class="note">
+		<b>A note on permissions:</b> the system knows who is looking. A project
+		manager can be limited to their own project&rsquo;s figures while finance
+		sees the company-wide position, using the same screens.
+	</div>
+</div>
+
+<!-- ================================================= worked example -->
+<div class="page last">
+	<h2>8. A worked example</h2>
+
+	<p>
+		The demonstration system is loaded with one real-shaped project so you can
+		follow a single cost from beginning to end. Here is the cement.
+	</p>
+
+	<table class="data">
+		<tr><th style="width:22%">Stage</th><th style="width:30%">What happens</th><th>Result</th></tr>
+		<tr><td class="term">1. Allowed</td>
+			<td>The BOQ allows 4,000 bags for the substructure</td>
+			<td>Budget set against the Concrete cost code</td></tr>
+		<tr><td class="term">2. Planned</td>
+			<td>Needed on site in two weeks; supplier takes three</td>
+			<td>The system says the order should already have been placed</td></tr>
+		<tr><td class="term">3. Ordered</td>
+			<td>2,000 bags ordered from the cement works</td>
+			<td>Money now shows as <i>committed</i>, not yet spent</td></tr>
+		<tr><td class="term">4. Delivered</td>
+			<td>Goods receipt into the central store</td>
+			<td>Stock on hand rises; the order stops being a commitment</td></tr>
+		<tr><td class="term">5. Moved</td>
+			<td>600 bags sent upriver by barge; 450 arrive so far</td>
+			<td>150 bags visible as stock in transit</td></tr>
+		<tr><td class="term">6. Used</td>
+			<td>1,450 bags issued to the substructure</td>
+			<td>Now a real cost against the Concrete cost code</td></tr>
+		<tr><td class="term">7. Billed</td>
+			<td>Supplier invoice received, due date passed</td>
+			<td>Shows in payables ageing and the overdue figure</td></tr>
+		<tr><td class="term">8. Reported</td>
+			<td>Cost Code Wise Costing is opened</td>
+			<td>Budget, committed, actual and balance for that one cost code</td></tr>
+	</table>
+
+	<p>
+		The same trail exists for the imported steel, the blockwork subcontract
+		with its retention, the excavator and its breakdown, the tools in people&rsquo;s
+		custody, and the two progress claims to the client &mdash; one paid, one
+		overdue.
+	</p>
+
+	<div class="note">
+		<b>Worth showing live:</b> open <b>Cost Code Wise Costing</b>, then change
+		the grouping from Cost Code to WBS to Package. It is the same money
+		answered three ways, and it makes the point about the tags better than any
+		explanation.
+	</div>
+
+	<h3>What the demonstration does not show</h3>
+	<p class="small muted">
+		Two screens are deliberately empty: subcontract purchase orders, which need
+		the standard subcontracting setup configured, and internal transfer
+		despatch notes, which need an internal customer defined. Both are
+		configuration decisions for the live system rather than missing
+		functionality.
+	</p>
+</div>
+
+</body>
+</html>
