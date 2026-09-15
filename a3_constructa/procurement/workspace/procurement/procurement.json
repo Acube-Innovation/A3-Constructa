@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"pr_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Procurement</b></span>\", \"col\": 12}}, {\"id\": \"card_pr_creation_by_project_team\", \"type\": \"card\", \"data\": {\"card_name\": \"PR Creation by Project Team\", \"col\": 4}}, {\"id\": \"card_pr_approval_workflow\", \"type\": \"card\", \"data\": {\"card_name\": \"PR Approval Workflow\", \"col\": 4}}, {\"id\": \"card_rfq_process\", \"type\": \"card\", \"data\": {\"card_name\": \"RFQ Process\", \"col\": 4}}, {\"id\": \"card_quotation_receipt\", \"type\": \"card\", \"data\": {\"card_name\": \"Quotation Receipt\", \"col\": 4}}, {\"id\": \"card_budget_commitment\", \"type\": \"card\", \"data\": {\"card_name\": \"Budget Commitment\", \"col\": 4}}, {\"id\": \"card_vendor_selection_&_approval\", \"type\": \"card\", \"data\": {\"card_name\": \"Vendor Selection & Approval\", \"col\": 4}}, {\"id\": \"card_purchase_order_(po)\", \"type\": \"card\", \"data\": {\"card_name\": \"Purchase Order (PO)\", \"col\": 4}}, {\"id\": \"card_cost_comparison\", \"type\": \"card\", \"data\": {\"card_name\": \"Cost Comparison\", \"col\": 4}}, {\"id\": \"card_contract_/_subcontract_po\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract / Subcontract PO\", \"col\": 4}}]",
- "creation": "2026-09-15 12:30:30.727438",
+ "creation": "2026-09-15 12:43:54.700177",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -392,12 +392,13 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-15 12:30:30.727438",
+ "modified": "2026-09-15 12:46:11.397244",
  "modified_by": "Administrator",
  "module": "Procurement",
  "name": "Procurement",
  "number_cards": [],
  "owner": "Administrator",
+ "parent_page": "A3 Constructa",
  "public": 1,
  "quick_lists": [],
  "roles": [],
