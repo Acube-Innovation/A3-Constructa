@@ -54,7 +54,11 @@ before_tests = "a3_constructa.install.before_tests"
 fixtures = [
 	{"dt": "Custom Field", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
 	{"dt": "Property Setter", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
-	{"dt": "Workspace", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
+	# Workspace is deliberately NOT a fixture. A Workspace with a module is
+	# already exported to that module's folder and synced by `bench migrate`;
+	# listing it here too gave it two sources of truth, and the fixture - which
+	# imports after the module sync - silently overwrote the module copy,
+	# wiping parent_page and un-nesting the sidebar.
 	{"dt": "Item Group", "filters": [["name", "in", []]]},
 	{"dt": "Asset Category", "filters": [["name", "in", []]]},
 	{"dt": "Stock Entry Type", "filters": [["name", "in", []]]},
