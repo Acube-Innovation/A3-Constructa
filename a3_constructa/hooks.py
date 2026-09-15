@@ -59,9 +59,11 @@ fixtures = [
 	{"dt": "Asset Category", "filters": [["name", "in", []]]},
 	{"dt": "Stock Entry Type", "filters": [["name", "in", []]]},
 	{"dt": "Document Type", "filters": [["name", "in", []]]},
-	{"dt": "Workflow", "filters": [["name", "in", []]]},
-	{"dt": "Workflow State", "filters": [["name", "in", []]]},
-	{"dt": "Workflow Action Master", "filters": [["name", "in", []]]},
+	# Only the records this app introduces. "Approved", "Rejected", "Approve"
+	# and "Reject" ship with Frappe and must not be re-exported as ours.
+	{"dt": "Workflow", "filters": [["name", "in", ["BOQ Approval"]]]},
+	{"dt": "Workflow State", "filters": [["name", "in", ["Draft", "Pending Approval"]]]},
+	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Submit for Approval"]]]},
 ]
 
 # Naming series are not a doctype of their own: `bench setup naming-series` and
