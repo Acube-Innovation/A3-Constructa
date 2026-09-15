@@ -50,8 +50,18 @@ fixtures = [
 	# listing it here too gave it two sources of truth, and the fixture - which
 	# imports after the module sync - silently overwrote the module copy,
 	# wiping parent_page and un-nesting the sidebar.
-	{"dt": "Item Group", "filters": [["name", "in", []]]},
-	{"dt": "Asset Category", "filters": [["name", "in", []]]},
+	# Build sheet heads 31-37. "Services" is an ERPNext record this app converts
+	# to a group so Transport, Installation and Testing & Commissioning can hang
+	# off it; exporting it here is what reproduces that conversion elsewhere.
+	{"dt": "Item Group", "filters": [["name", "in", [
+		"Construction Materials", "Consumables",
+		"Services", "Transport", "Installation", "Testing & Commissioning",
+		"Subcontract Works", "Spare Parts", "Small Tools",
+		"Rental Equipment", "Temporary Works",
+	]]]},
+	# Asset Category is deliberately NOT a fixture: its `accounts` child table is
+	# mandatory and company-specific, so an exported copy would carry this site's
+	# company and chart of accounts. Built in setup/install_defaults.py instead.
 	{"dt": "Stock Entry Type", "filters": [["name", "in", []]]},
 	{"dt": "Document Type", "filters": [["name", "in", []]]},
 	# Only the records this app introduces. "Approved", "Rejected", "Approve"
