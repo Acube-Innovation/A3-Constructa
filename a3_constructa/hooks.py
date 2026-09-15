@@ -72,10 +72,12 @@ fixtures = [
 	{"dt": "Stock Entry Type", "filters": [["name", "in", [
 		"Material Issue Note (MIN)", "Material Receipt Note (MRN)",
 		"Site Material Return",
+		# heads 55 - the small-tools custody cycle
+		"Tool Issue", "Tool Return", "Tool Write-off",
 	]]]},
 	# Head 47 row 16 filters site stores on this warehouse type. "Transit"
 	# (head 44) already ships with ERPNext and is deliberately not re-exported.
-	{"dt": "Warehouse Type", "filters": [["name", "in", ["Site"]]]},
+	{"dt": "Warehouse Type", "filters": [["name", "in", ["Site", "Custody"]]]},
 	# Build sheet head 40 row 19 - the documents an import shipment carries.
 	{"dt": "Document Type", "filters": [["name", "in", [
 		"Certificate of Origin", "CNF Invoice",
@@ -107,6 +109,10 @@ doc_events = {
 		# before_naming runs inside set_new_name, before the series is consumed.
 		"before_naming": "a3_constructa.overrides.stock_entry.set_naming_series",
 		"validate": "a3_constructa.overrides.stock_entry.set_cost_code_accounting",
+	},
+	"Asset": {
+		# Head 51 row 2: number an asset from its category, not one shared series.
+		"before_naming": "a3_constructa.overrides.asset.set_naming_series_from_category",
 	},
 }
 

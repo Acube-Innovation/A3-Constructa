@@ -3,6 +3,13 @@
   "description": null,
   "docstatus": 0,
   "doctype": "Warehouse Type",
+  "modified": "2026-09-15 13:54:21.695498",
+  "name": "Custody"
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Warehouse Type",
   "modified": "2026-09-15 13:38:54.785205",
   "name": "Site"
  }
