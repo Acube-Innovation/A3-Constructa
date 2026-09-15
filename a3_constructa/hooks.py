@@ -1,0 +1,67 @@
+app_name = "a3_constructa"
+app_title = "A3 Constructa"
+app_publisher = "Acube Innovations Pvt Ltd"
+app_description = "Construction ERP extensions for ERPNext"
+app_email = "saaspurchases@acube.co"
+app_license = "mit"
+
+# ERPNext supplies the Project, Item, Asset, Stock and Accounts doctypes this
+# app extends; without it, installing here is meaningless.
+required_apps = ["frappe/erpnext"]
+
+# Every DocType, Report, Workspace and Print Format this app owns lives under
+# this module, and the fixture filters below key off it.
+A3_CONSTRUCTA_MODULE = "A3 Constructa"
+
+# ---------------------------------------------------------------- install
+before_install = "a3_constructa.install.before_install"
+after_install = "a3_constructa.install.after_install"
+after_migrate = "a3_constructa.install.after_migrate"
+before_tests = "a3_constructa.install.before_tests"
+
+# ---------------------------------------------------------------- fixtures
+#
+# Anything built through the UI — a custom field, a workflow, a workspace, a
+# naming series — is otherwise only a row in this site's database. Listing the
+# doctype here makes `bench export-fixtures --app a3_constructa` write it to
+# a3_constructa/fixtures/*.json, where it is version-controlled and reinstalled
+# automatically on `bench migrate` of any other site.
+#
+# The filters matter as much as the list. Custom Field, Property Setter and
+# Workspace carry a `module`, so they are scoped to this app's module — set the
+# module when creating them in Customize Form, or they will not be exported.
+#
+# The master-data doctypes below (Item Group, Asset Category, Stock Entry Type,
+# Workflow and friends) have no `module` field, so there is nothing to scope
+# them by except their names. They are pinned to explicit allow-lists, which are
+# empty until Phase 2 names the records: an empty `in` list exports nothing,
+# whereas an unfiltered entry would export every stock ERPNext Item Group into
+# this app and reinstall them onto every other site. Add names here as records
+# are created — that list is the app's inventory of what it owns.
+fixtures = [
+	{"dt": "Custom Field", "filters": [["module", "=", A3_CONSTRUCTA_MODULE]]},
+	{"dt": "Property Setter", "filters": [["module", "=", A3_CONSTRUCTA_MODULE]]},
+	{"dt": "Workspace", "filters": [["module", "=", A3_CONSTRUCTA_MODULE]]},
+	{"dt": "Item Group", "filters": [["name", "in", []]]},
+	{"dt": "Asset Category", "filters": [["name", "in", []]]},
+	{"dt": "Stock Entry Type", "filters": [["name", "in", []]]},
+	{"dt": "Document Type", "filters": [["name", "in", []]]},
+	{"dt": "Workflow", "filters": [["name", "in", []]]},
+	{"dt": "Workflow State", "filters": [["name", "in", []]]},
+	{"dt": "Workflow Action Master", "filters": [["name", "in", []]]},
+]
+
+# Naming series are not a doctype of their own: `bench setup naming-series` and
+# the Document Naming Rule UI both write to the `options` of the target
+# doctype's `naming_series` field, which is stored as a Property Setter — and
+# Property Setter is already exported above. Series that need a rule rather than
+# a field option are Document Naming Rule records; add that doctype to the list
+# above when Phase 2 introduces one.
+
+# ---------------------------------------------------------------- assets
+# app_include_css = "/assets/a3_constructa/css/a3_constructa_desk.css"
+# app_include_js = "/assets/a3_constructa/js/a3_constructa_desk.js"
+
+# ---------------------------------------------------------------- events
+# doc_events = {}
+# scheduler_events = {}

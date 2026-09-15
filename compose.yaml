@@ -1,0 +1,162 @@
+# A3 Constructa — local development environment.
+#
+#   docker compose up -d          start everything
+#   docker compose ps             what is running
+#   docker compose logs -f        follow all logs
+#   docker compose down           stop (data is kept)
+#
+# The bench, the sites and the database live in named volumes, so `down` and
+# `up` are safe. `down -v` would delete them — do not use it.
+#
+# This repository is bind-mounted into every bench container at
+# /workspace/a3_constructa and linked into the bench as apps/a3_constructa, so a
+# file edited on Windows is the file the server runs.
+#
+# Ports are chosen to clear the other benches on this machine — a3-optics
+# (80/8000/3306), a3-retail (8090/8001/3307), a3-loan (8091/8002/3308) and
+# erpnext15 (8010). See .env.example.
+
+x-bench: &bench
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+  image: a3-constructa/bench:dev
+  env_file: .env
+  working_dir: /workspace/frappe-bench
+  volumes:
+    - bench:/workspace
+    - sites:/workspace/frappe-bench/sites
+    - logs:/workspace/frappe-bench/logs
+    - ./:/workspace/a3_constructa
+  restart: unless-stopped
+
+services:
+  # --------------------------------------------------------------- datastores
+  mariadb:
+    image: mariadb:10.6
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --skip-innodb-read-only-compressed
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    # Loopback only: reachable from a GUI client on Windows, not from the LAN.
+    ports:
+      - "127.0.0.1:${DB_PORT:-3309}:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  redis-cache:
+    image: redis:6.2-alpine
+    # A cache has nothing worth keeping across a restart.
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis-queue:
+    image: redis:6.2-alpine
+    # This one holds queued background jobs and the socketio pub/sub, so it is
+    # persisted — a restart should not drop work that was waiting.
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-queue-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------- python
+  # The first `up` runs docker/bootstrap.sh here: it initialises the bench,
+  # fetches ERPNext, links this app and creates the site. It is idempotent —
+  # every later start skips straight to the server.
+  backend:
+    <<: *bench
+    command: ["bash", "/workspace/a3_constructa/docker/backend.sh"]
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+      redis-queue:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8003}:8000"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'curl -fsS -H "Host: ${SITE_NAME}" http://localhost:8000/api/method/ping || exit 1'
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      # The first run clones and builds two apps; nothing is wrong until this
+      # has had time to finish.
+      start_period: 3600s
+
+  websocket:
+    <<: *bench
+    command: ["bash", "-c", "node /workspace/frappe-bench/apps/frappe/socketio.js"]
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  scheduler:
+    <<: *bench
+    command: ["bash", "-c", "bench schedule"]
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  worker:
+    <<: *bench
+    command: ["bash", "-c", "bench worker --queue short,default,long"]
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # Rebuilds bundled desk assets when a source file changes. Opt-in, because it
+  # is only useful while editing CSS/JS:  docker compose --profile watch up -d
+  watch:
+    <<: *bench
+    command: ["bash", "-c", "bench watch"]
+    depends_on:
+      backend:
+        condition: service_healthy
+    profiles: ["watch"]
+
+  # ----------------------------------------------------------------- frontend
+  frontend:
+    image: nginx:1.27-alpine
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      SITE_NAME: ${SITE_NAME}
+      BACKEND: backend:8000
+      SOCKETIO: websocket:9000
+    volumes:
+      - ./docker/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+    ports:
+      - "${HTTP_PORT:-8092}:80"
+    restart: unless-stopped
+
+volumes:
+  # The bench itself: apps/, env/, config/, node_modules/.
+  bench:
+  # Site data — site_config.json, the public/private files, the encryption key.
+  sites:
+  logs:
+  mariadb-data:
+  redis-queue-data:

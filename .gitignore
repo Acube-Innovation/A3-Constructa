@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+*.egg-info
+.venv
+node_modules
+
+# Local Docker development environment — credentials, never committed.
+.env
