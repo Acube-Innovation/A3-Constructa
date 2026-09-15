@@ -1,1 +1,50 @@
-[]
+[
+ {
+  "applicable_for": "Shipment Tracking",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Statutory",
+  "document_type_name": "Certificate of Origin",
+  "is_mandatory": 1,
+  "modified": "2026-09-15 13:22:41.690409",
+  "name": "Certificate of Origin",
+  "retention_days": 0,
+  "tags": null
+ },
+ {
+  "applicable_for": "Shipment Tracking",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Commercial",
+  "document_type_name": "CNF Invoice",
+  "is_mandatory": 1,
+  "modified": "2026-09-15 13:22:41.822390",
+  "name": "CNF Invoice",
+  "retention_days": 0,
+  "tags": null
+ },
+ {
+  "applicable_for": "Shipment Tracking",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Statutory",
+  "document_type_name": "Duty Payment Receipt",
+  "is_mandatory": 1,
+  "modified": "2026-09-15 13:22:41.831335",
+  "name": "Duty Payment Receipt",
+  "retention_days": 0,
+  "tags": null
+ },
+ {
+  "applicable_for": "Shipment Tracking",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Commercial",
+  "document_type_name": "Delivery Order",
+  "is_mandatory": 1,
+  "modified": "2026-09-15 13:22:41.854042",
+  "name": "Delivery Order",
+  "retention_days": 0,
+  "tags": null
+ }
+]

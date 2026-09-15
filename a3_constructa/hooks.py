@@ -43,6 +43,11 @@ before_tests = "a3_constructa.install.before_tests"
 # this app and reinstall them onto every other site. Add names here as records
 # are created — that list is the app's inventory of what it owns.
 fixtures = [
+	# Fixture import runs after the module sync on every `bench migrate`, so for
+	# these doctypes the exported JSON - not the database - is the source of
+	# truth. If you ever change the module of a record listed here, re-export
+	# before migrating: a stale export silently reverts the change, and records
+	# the filter no longer matches drop out of version control entirely.
 	{"dt": "Custom Field", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
 	{"dt": "Property Setter", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
 	# Workspace is deliberately NOT a fixture. A Workspace with a module is
@@ -63,7 +68,11 @@ fixtures = [
 	# mandatory and company-specific, so an exported copy would carry this site's
 	# company and chart of accounts. Built in setup/install_defaults.py instead.
 	{"dt": "Stock Entry Type", "filters": [["name", "in", []]]},
-	{"dt": "Document Type", "filters": [["name", "in", []]]},
+	# Build sheet head 40 row 19 - the documents an import shipment carries.
+	{"dt": "Document Type", "filters": [["name", "in", [
+		"Certificate of Origin", "CNF Invoice",
+		"Duty Payment Receipt", "Delivery Order",
+	]]]},
 	# Only the records this app introduces. "Approved", "Rejected", "Approve"
 	# and "Reject" ship with Frappe and must not be re-exported as ours.
 	{"dt": "Workflow", "filters": [["name", "in", ["BOQ Approval"]]]},
