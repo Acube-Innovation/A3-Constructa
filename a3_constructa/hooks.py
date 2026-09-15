@@ -9,21 +9,12 @@ app_license = "mit"
 # app extends; without it, installing here is meaningless.
 required_apps = ["frappe/erpnext", "hrms"]
 
-# Module names for this app. "&" is deliberately spelled "and": Frappe derives a
-# Python package folder from the module name, and "Planning & Budgeting" would
-# scrub to an invalid identifier. The Workspace titles keep the ampersand.
-A3_CONSTRUCTA_MODULES = [
-	"A3 Constructa",
-	"Master Data",
-	"Planning and Budgeting",
-	"Procurement",
-	"Procurement Classification",
-	"Delivery and Logistics",
-	"Inventory Movement",
-	"Asset and Equipment",
-	"HR and Time",
-	"Finance and Accounting",
-]
+# Everything this app owns lives in one module, matching how the other A3 apps
+# are built: a single `Module = A3 Constructa` filter then lists every DocType,
+# Report and Workspace the app adds. Workspaces still carry their own titles
+# (including the ampersand in "Planning & Budgeting"), which is what the desk
+# sidebar shows.
+A3_CONSTRUCTA_MODULES = ["A3 Constructa"]
 
 
 # ---------------------------------------------------------------- install
