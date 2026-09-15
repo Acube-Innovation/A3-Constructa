@@ -169,7 +169,25 @@ def _payables_parent(company: str) -> str | None:
 	return groups[0].name
 
 
+# Head 72 row 39 links ERPNext's Project Profitability report, and head 75 row
+# 51 charts it. That report refuses to run until Standard Working Hours is set,
+# so the app supplies a sensible default rather than shipping a link that errors.
+DEFAULT_STANDARD_WORKING_HOURS = 8
+
+
+def set_standard_working_hours():
+	"""Fill in Standard Working Hours only when nobody has set it."""
+	if frappe.db.get_value("HR Settings", None, "standard_working_hours"):
+		return
+	if not frappe.db.exists("DocType", "HR Settings"):
+		return
+	frappe.db.set_single_value(
+		"HR Settings", "standard_working_hours", DEFAULT_STANDARD_WORKING_HOURS
+	)
+
+
 def run():
 	"""Seed every baseline record. Idempotent."""
 	create_asset_categories()
 	create_retention_account()
+	set_standard_working_hours()

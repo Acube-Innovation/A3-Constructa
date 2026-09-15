@@ -36,7 +36,7 @@
    "width": "Half"
   },
   {
-   "chart": "Budget Variance",
+   "chart": "Budget Variance by Cost Code",
    "width": "Half"
   },
   {
@@ -55,7 +55,7 @@
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
- "modified": "2026-09-15 14:24:44.941912",
+ "modified": "2026-09-15 16:07:17.981822",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Construction Finance",

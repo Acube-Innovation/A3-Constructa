@@ -13,8 +13,8 @@
    "label": "Payable Ageing"
   },
   {
-   "chart_name": "Budget Variance",
-   "label": "Budget Variance"
+   "chart_name": "Budget Variance by Cost Code",
+   "label": "Budget Variance by Cost Code"
   },
   {
    "chart_name": "Project Profitability",
@@ -630,7 +630,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-15 14:24:46.617223",
+ "modified": "2026-09-15 16:10:17.863744",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Finance & Accounting",

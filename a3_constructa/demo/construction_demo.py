@@ -50,6 +50,9 @@ def run(stage: str | None = None):
 # Transactions are removed newest-first so that a document is never deleted
 # while something still points at it.
 TRANSACTION_DOCTYPES = [
+	# Salary Slip before Timesheet, and both before Salary Structure: a slip
+	# holds the timesheet it costed, and the structure holds the assignments.
+	"Salary Slip", "Salary Structure Assignment",
 	"Payment Entry", "Journal Entry", "Sales Invoice", "Purchase Invoice",
 	"Landed Cost Voucher", "Work Certificate", "Tool Issue", "Asset Repair",
 	"Asset Movement", "Asset", "Expense Claim", "Timesheet", "Attendance",
@@ -59,6 +62,8 @@ TRANSACTION_DOCTYPES = [
 ]
 
 MASTER_DOCTYPES = [
+	("Salary Structure", {"name": ["like", PREFIX + "%"]}),
+	("Salary Component", {"name": ["in", ["Site Wages"]]}),
 	("Asset Spare Part", {}),
 	("Freight Rate Contract", {}),
 	("Service Route", {"name": ["like", "%Matadi%"]}),
