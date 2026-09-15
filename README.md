@@ -67,3 +67,8 @@ DocTypes export themselves to source automatically while `developer_mode` is on
 Baseline records that need logic rather than a fixture belong in
 [`a3_constructa/setup/install_defaults.py`](a3_constructa/setup/install_defaults.py),
 which runs on install and on every migrate and is written to be idempotent.
+
+## License
+
+MIT — see [`license.txt`](license.txt). Copyright (c) 2026 Acube Innovations
+Pvt Ltd.
