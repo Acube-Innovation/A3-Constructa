@@ -9,21 +9,12 @@ app_license = "mit"
 # app extends; without it, installing here is meaningless.
 required_apps = ["frappe/erpnext", "hrms"]
 
-# Module names for this app. "&" is deliberately spelled "and": Frappe derives a
-# Python package folder from the module name, and "Planning & Budgeting" would
-# scrub to an invalid identifier. The Workspace titles keep the ampersand.
-A3_CONSTRUCTA_MODULES = [
-	"A3 Constructa",
-	"Master Data",
-	"Planning and Budgeting",
-	"Procurement",
-	"Procurement Classification",
-	"Delivery and Logistics",
-	"Inventory Movement",
-	"Asset and Equipment",
-	"HR and Time",
-	"Finance and Accounting",
-]
+# Everything this app owns lives in one module, matching how the other A3 apps
+# are built: a single `Module = A3 Constructa` filter then lists every DocType,
+# Report and Workspace the app adds. Workspaces still carry their own titles
+# (including the ampersand in "Planning & Budgeting"), which is what the desk
+# sidebar shows.
+A3_CONSTRUCTA_MODULES = ["A3 Constructa"]
 
 
 # ---------------------------------------------------------------- install
@@ -52,6 +43,11 @@ before_tests = "a3_constructa.install.before_tests"
 # this app and reinstall them onto every other site. Add names here as records
 # are created — that list is the app's inventory of what it owns.
 fixtures = [
+	# Fixture import runs after the module sync on every `bench migrate`, so for
+	# these doctypes the exported JSON - not the database - is the source of
+	# truth. If you ever change the module of a record listed here, re-export
+	# before migrating: a stale export silently reverts the change, and records
+	# the filter no longer matches drop out of version control entirely.
 	{"dt": "Custom Field", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
 	{"dt": "Property Setter", "filters": [["module", "in", A3_CONSTRUCTA_MODULES]]},
 	# Workspace is deliberately NOT a fixture. A Workspace with a module is
@@ -59,10 +55,24 @@ fixtures = [
 	# listing it here too gave it two sources of truth, and the fixture - which
 	# imports after the module sync - silently overwrote the module copy,
 	# wiping parent_page and un-nesting the sidebar.
-	{"dt": "Item Group", "filters": [["name", "in", []]]},
-	{"dt": "Asset Category", "filters": [["name", "in", []]]},
+	# Build sheet heads 31-37. "Services" is an ERPNext record this app converts
+	# to a group so Transport, Installation and Testing & Commissioning can hang
+	# off it; exporting it here is what reproduces that conversion elsewhere.
+	{"dt": "Item Group", "filters": [["name", "in", [
+		"Construction Materials", "Consumables",
+		"Services", "Transport", "Installation", "Testing & Commissioning",
+		"Subcontract Works", "Spare Parts", "Small Tools",
+		"Rental Equipment", "Temporary Works",
+	]]]},
+	# Asset Category is deliberately NOT a fixture: its `accounts` child table is
+	# mandatory and company-specific, so an exported copy would carry this site's
+	# company and chart of accounts. Built in setup/install_defaults.py instead.
 	{"dt": "Stock Entry Type", "filters": [["name", "in", []]]},
-	{"dt": "Document Type", "filters": [["name", "in", []]]},
+	# Build sheet head 40 row 19 - the documents an import shipment carries.
+	{"dt": "Document Type", "filters": [["name", "in", [
+		"Certificate of Origin", "CNF Invoice",
+		"Duty Payment Receipt", "Delivery Order",
+	]]]},
 	# Only the records this app introduces. "Approved", "Rejected", "Approve"
 	# and "Reject" ship with Frappe and must not be re-exported as ours.
 	{"dt": "Workflow", "filters": [["name", "in", ["BOQ Approval"]]]},
