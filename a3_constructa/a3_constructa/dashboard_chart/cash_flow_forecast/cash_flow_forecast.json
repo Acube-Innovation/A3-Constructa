@@ -1,0 +1,33 @@
+{
+ "chart_name": "Cash Flow Forecast",
+ "chart_type": "Report",
+ "creation": "2026-09-15 14:24:44.065137",
+ "currency": "INR",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart",
+ "filters_json": "{}",
+ "group_by_type": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "modified": "2026-09-15 14:24:44.065137",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Cash Flow Forecast",
+ "number_of_groups": 0,
+ "owner": "Administrator",
+ "report_name": "Cash Flow Forecast",
+ "roles": [],
+ "show_values_over_chart": 0,
+ "time_interval": "Weekly",
+ "timeseries": 0,
+ "timespan": "Last Quarter",
+ "type": "Line",
+ "use_report_chart": 0,
+ "x_field": "period",
+ "y_axis": [
+  {
+   "y_field": "net_movement"
+  }
+ ]
+}

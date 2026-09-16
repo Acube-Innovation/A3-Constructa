@@ -1,0 +1,558 @@
+<!--
+  Source for docs/A3-Constructa-Maintenance-Guide.pdf
+
+  Written for the team that maintains the app, not for the client. Regenerate:
+
+      bench --site <site> execute a3_constructa.demo.build_docs.build_guide
+
+  Same wkhtmltopdf constraints as the client guide: no inline SVG (it is
+  dropped without an error), no flexbox, diagrams built from table cells.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+	@page { size: A4; margin: 15mm 13mm 17mm 13mm; }
+
+	body { font-family: Helvetica, Arial, sans-serif; font-size: 10pt;
+	       line-height: 1.45; color: #1f2933; margin: 0; }
+
+	h1 { font-size: 23pt; margin: 0 0 4px 0; color: #14304f; letter-spacing: -0.4px; }
+	h2 { font-size: 14.5pt; color: #14304f; margin: 0 0 9px 0;
+	     border-bottom: 2px solid #14304f; padding-bottom: 5px; }
+	h3 { font-size: 11pt; color: #14304f; margin: 14px 0 4px 0; }
+	h4 { font-size: 10pt; color: #8a5a00; margin: 11px 0 3px 0; }
+	p  { margin: 0 0 8px 0; }
+
+	.page { page-break-after: always; }
+	.page.last { page-break-after: auto; }
+
+	.muted { color: #6b7785; }
+	.small { font-size: 9pt; }
+
+	code, .mono { font-family: "Courier New", monospace; font-size: 9pt; color: #9a5b00; }
+	pre {
+		background: #f6f8fa; border: 1px solid #dfe3e8; border-left: 3px solid #14304f;
+		padding: 8px 10px; margin: 6px 0 10px 0; font-family: "Courier New", monospace;
+		font-size: 8.5pt; line-height: 1.45; color: #1f2933; white-space: pre-wrap;
+	}
+
+	table.data { width: 100%; border-collapse: collapse; margin: 6px 0 10px 0; }
+	table.data th { background: #14304f; color: #fff; text-align: left;
+	                padding: 5px 7px; font-size: 9pt; }
+	table.data td { padding: 5px 7px; border-bottom: 1px solid #dfe3e8;
+	                vertical-align: top; font-size: 9pt; }
+	table.data tr:nth-child(even) td { background: #f6f8fa; }
+	td.k { font-weight: bold; color: #14304f; }
+	td.m { font-family: "Courier New", monospace; font-size: 8.5pt; color: #9a5b00; }
+
+	.note { background: #fff8e6; border-left: 4px solid #d99100;
+	        padding: 8px 11px; margin: 10px 0; font-size: 9pt; }
+	.note b { color: #8a5a00; }
+	.warn { background: #fdeeee; border-left: 4px solid #b42318; }
+	.warn b { color: #b42318; }
+
+	.cover { border-top: 8px solid #14304f; padding-top: 24px; margin-top: 150px; }
+	.cover .sub { font-size: 12.5pt; color: #3e4c59; margin-top: 6px; }
+	.cover .meta { margin-top: 85px; font-size: 9.5pt; color: #6b7785; }
+
+	/* diagrams from table cells - wkhtmltopdf drops inline SVG */
+	table.flow { width: 100%; border-collapse: separate; border-spacing: 0; }
+	table.flow td { vertical-align: middle; }
+	.box { border: 1.2px solid #14304f; border-radius: 4px; background: #fff; padding: 7px 8px; }
+	.box .t { font-size: 9.5pt; font-weight: bold; color: #14304f; display: block; }
+	.box .d { font-size: 8pt; color: #6b7785; display: block; margin-top: 2px; line-height: 1.3; }
+	.box.tint { background: #eef3f8; }
+	.box.warn2 { background: #fff8e6; border-color: #d99100; }
+	.box.warn2 .t, .box.warn2 .d { color: #8a5a00; }
+	.arrow { text-align: center; color: #14304f; font-size: 12pt; width: 20px; }
+	.arrowd { text-align: center; color: #14304f; font-size: 12pt; padding: 2px 0; }
+
+	.band { background: #f6f8fa; border: 1px solid #dfe3e8; border-radius: 5px;
+	        padding: 8px 9px 9px 9px; margin-bottom: 3px; }
+	.band .label { font-size: 8pt; font-weight: bold; color: #9a5b00;
+	               letter-spacing: 1px; display: block; margin-bottom: 6px; }
+
+	.trap { border: 1px solid #dfe3e8; border-radius: 5px; padding: 9px 11px;
+	        margin: 0 0 10px 0; }
+	.trap .h { font-weight: bold; color: #b42318; font-size: 10pt; display: block;
+	           margin-bottom: 4px; }
+	.trap table { width: 100%; border-collapse: collapse; }
+	.trap td { font-size: 9pt; padding: 2px 0; vertical-align: top; }
+	.trap td.lbl { width: 72px; color: #6b7785; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<!-- ==================================================== cover -->
+<div class="page">
+	<div class="cover">
+		<h1>A3 Constructa</h1>
+		<div class="sub">Maintenance guide &mdash; how it is built and how to change it</div>
+		<p class="muted" style="margin-top:20px; max-width:430px;">
+			For the team maintaining the app. Covers how the code is laid out, what
+			each workspace contains, the rules that keep changes reproducible, and
+			the traps that have already cost us time.
+		</p>
+		<div class="meta">Acube Innovations Pvt Ltd &mdash; internal</div>
+	</div>
+</div>
+
+<!-- ============================================== how it is built -->
+<div class="page">
+	<h2>1. How the app is put together</h2>
+
+	<p>
+		Everything lives in one Frappe app, <code>a3_constructa</code>, under a
+		single module also called <b>A3 Constructa</b>. One module was chosen
+		deliberately so that <code>Module = A3 Constructa</code> in the DocType
+		list shows everything the app owns &mdash; the same way A3 Dumas, Optics
+		and Retail are built.
+	</p>
+
+<pre>a3_constructa/
+├── a3_constructa/              the single module
+│   ├── doctype/                24 doctypes (19 parent + 5 child)
+│   ├── report/                 68 reports (script + report builder)
+│   ├── number_card/            7 finance KPI cards
+│   ├── dashboard_chart/        5 charts
+│   ├── a3_constructa_dashboard/  the Construction Finance dashboard
+│   └── workspace/              10 workspaces (9 + the parent index)
+├── overrides/                  hooks into core doctypes
+│   ├── stock_entry.py          cost-code accounting, MIN/MRN series
+│   ├── asset.py                per-category asset numbering
+│   └── serial_no.py            fills item_group on serials
+├── setup/install_defaults.py   records built in code, not fixtures
+├── demo/                       the demo project, by stage
+├── fixtures/                   exported master data (see rules overleaf)
+├── docs/                       this guide and the client guide
+└── hooks.py                    fixtures list, doc_events, required apps</pre>
+
+	<h3>What goes where</h3>
+
+	<table class="data">
+		<tr><th style="width:26%">Kind of change</th><th style="width:30%">Lives in</th><th>Why</th></tr>
+		<tr><td class="k">DocType, report, workspace</td><td class="m">module folder, as JSON</td>
+			<td>Frappe exports these automatically while developer mode is on.</td></tr>
+		<tr><td class="k">Custom field, property setter</td><td class="m">fixtures/*.json</td>
+			<td>Exported by <code>bench export-fixtures</code>, filtered by module.</td></tr>
+		<tr><td class="k">Master records</td><td class="m">fixtures/*.json</td>
+			<td>Item Group, Stock Entry Type, Warehouse Type, Document Type, Workflow.</td></tr>
+		<tr><td class="k">Records needing a company</td><td class="m">setup/install_defaults.py</td>
+			<td>Asset Category and the Retention account carry company-specific
+				accounts, so a fixture would hard-code this site&rsquo;s chart of accounts.</td></tr>
+		<tr><td class="k">Behaviour on a core doctype</td><td class="m">overrides/ + hooks.py</td>
+			<td>Never edit erpnext or frappe. Hook it.</td></tr>
+	</table>
+
+	<h3>The change pipeline</h3>
+
+	<p>Every change follows the same path from your edit to version control.</p>
+
+	<table class="flow">
+		<tr>
+			<td width="22%"><div class="box"><span class="t">1. Change it</span>
+				<span class="d">In the UI (developer mode on) or in code</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="22%"><div class="box"><span class="t">2. Export</span>
+				<span class="d">bench export-fixtures, or automatic for doctypes</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="22%"><div class="box"><span class="t">3. Migrate</span>
+				<span class="d">Proves it reinstalls from source</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="22%"><div class="box tint"><span class="t">4. Commit</span>
+				<span class="d">The JSON is the artefact, not the database</span></div></td>
+		</tr>
+	</table>
+
+	<div class="note warn">
+		<b>Order matters.</b> Export before you migrate, never after. Migrate
+		re-imports the fixtures on top of the database, so a stale export silently
+		reverts whatever you just changed. This has bitten us twice &mdash; see
+		section 5.
+	</div>
+</div>
+
+<!-- ================================================ the workspaces -->
+<div class="page">
+	<h2>2. The nine workspaces</h2>
+
+	<p>
+		All nine sit under the <b>A3 Constructa</b> parent in the sidebar. They map
+		one-to-one onto the build sheet&rsquo;s 350 rows.
+	</p>
+
+	<table class="data">
+		<tr><th style="width:23%">Workspace</th><th style="width:9%">Rows</th>
+			<th style="width:30%">What it owns</th><th>Worth knowing</th></tr>
+		<tr><td class="k">Master Data</td><td>77</td>
+			<td>Cost Head, WBS, Cost Code, Port, Service Route, Freight Rate Contract,
+				Document Type, Mandatory Document Rule, Approval Matrix</td>
+			<td>Cost Head and WBS are nested-set trees. 15 report-builder reports back
+				its filtered card links.</td></tr>
+		<tr><td class="k">Planning &amp; Budgeting</td><td>21</td>
+			<td>BOQ (+ items), WBS Allocation, Procurement Plan</td>
+			<td>BOQ is submittable and gated by the BOQ Approval workflow. Budget
+				figures for every other report start here.</td></tr>
+		<tr><td class="k">Procurement</td><td>31</td>
+			<td>Work Certificate (+ items)</td>
+			<td>Mostly custom fields on Material Request Item, Supplier Quotation and
+				Purchase Order Item. Retention is calculated on the certificate.</td></tr>
+		<tr><td class="k">Procurement Classification</td><td>14</td>
+			<td>Item Groups, Asset Categories</td>
+			<td>Almost entirely master records. Converts ERPNext&rsquo;s stock
+				&ldquo;Services&rdquo; group into a parent group.</td></tr>
+		<tr><td class="k">Delivery &amp; Logistics</td><td>30</td>
+			<td>Shipment Tracking, Shipment Milestone, Shipment Document</td>
+			<td>One doctype assembled from seven rows. Blocking document rule fires on
+				submit.</td></tr>
+		<tr><td class="k">Inventory Movement</td><td>29</td>
+			<td>No doctypes &mdash; Stock Entry Types, custom fields, 10 reports</td>
+			<td>Two hooks on Stock Entry: cost-code accounting and the MIN/MRN series.</td></tr>
+		<tr><td class="k">Asset &amp; Equipment</td><td>43</td>
+			<td>Asset Spare Part, Tool Issue (+ items)</td>
+			<td>Tool Issue posts a Stock Entry on submit and cancels it on cancel.
+				Assets number per category via a hook.</td></tr>
+		<tr><td class="k">HR &amp; Time</td><td>42</td>
+			<td>No doctypes &mdash; 8 custom fields, 3 reports</td>
+			<td>Everything is hrms. The fields give labour a project dimension;
+				Attendance had none at all.</td></tr>
+		<tr><td class="k">Finance &amp; Accounting</td><td>63</td>
+			<td>No doctypes &mdash; 4 script reports, 7 number cards, 6 charts, 1 dashboard</td>
+			<td>Cost Code Wise Costing is the report everything else reads from. Do
+				not rename its columns.</td></tr>
+	</table>
+
+	<h3>How data flows between them</h3>
+
+	<div class="band">
+		<span class="label">THE SPINE &mdash; every stage tags project, cost head, WBS and cost code</span>
+		<table class="flow">
+			<tr>
+				<td width="18%"><div class="box tint"><span class="t">Master Data</span>
+					<span class="d">Defines the tags</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="18%"><div class="box"><span class="t">Planning</span>
+					<span class="d">Sets the budget</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="18%"><div class="box"><span class="t">Procurement</span>
+					<span class="d">Commits it</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="18%"><div class="box"><span class="t">Logistics</span>
+					<span class="d">Lands the goods</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="18%"><div class="box"><span class="t">Inventory</span>
+					<span class="d">Spends it</span></div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="arrowd">&#9660;</div>
+	<div class="band">
+		<span class="label">FEEDING THE SAME COST STRUCTURE</span>
+		<table class="flow">
+			<tr>
+				<td width="31%"><div class="box"><span class="t">Asset &amp; Equipment</span>
+					<span class="d">Plant cost and tool losses, by cost code</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="31%"><div class="box"><span class="t">HR &amp; Time</span>
+					<span class="d">Labour cost, by WBS and cost code</span></div></td>
+				<td class="arrow">&#9654;</td>
+				<td width="31%"><div class="box tint"><span class="t">Finance</span>
+					<span class="d">Budget vs committed vs actual, in one report</span></div></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="note">
+		<b>The one dependency to remember:</b> <code>Cost Code Wise Costing</code>
+		reads budget from WBS Allocation, commitments from Purchase Order Item and
+		actuals from both GL Entry and the stock ledger. <code>Cost to Complete</code>
+		imports its three helper functions directly. Change one and check the other.
+	</div>
+</div>
+
+<!-- ============================================== the golden rules -->
+<div class="page">
+	<h2>3. The rules that keep it reproducible</h2>
+
+	<p>
+		The app has to install cleanly on a fresh site with erpnext and hrms. These
+		six rules are what make that true.
+	</p>
+
+	<h3>1. The exported JSON is the source of truth, not the database</h3>
+	<p class="small">
+		For fixture doctypes, <code>bench migrate</code> imports the JSON <i>over</i>
+		the database. If you change a record in the UI and migrate before exporting,
+		your change is gone. Export first.
+	</p>
+
+	<h3>2. Never list a Workspace as a fixture</h3>
+	<p class="small">
+		A Workspace with a module is already exported to the module folder and
+		synced by migrate. Listing it in <code>fixtures</code> as well gives it two
+		sources of truth, and the fixture wins because it imports last.
+	</p>
+
+	<h3>3. Filter every master-data fixture by an explicit allow-list</h3>
+	<p class="small">
+		Item Group, Stock Entry Type, Warehouse Type and the workflow doctypes have
+		no <code>module</code> field. An unfiltered entry would export every stock
+		ERPNext Item Group into our app and reinstall them everywhere. Each list in
+		<code>hooks.py</code> is the app&rsquo;s inventory of the master data it
+		owns &mdash; add a name whenever you create a record.
+	</p>
+
+	<h3>4. Anything company-specific goes in code, not fixtures</h3>
+	<p class="small">
+		Account names carry the company abbreviation and parents differ by chart of
+		accounts. Asset Category and the Retention Payable account resolve theirs at
+		install time in <code>setup/install_defaults.py</code>, which runs on
+		<code>after_install</code> and again on <code>after_migrate</code> and is
+		written to be idempotent.
+	</p>
+
+	<h3>5. Do not edit erpnext or frappe &mdash; hook them</h3>
+	<p class="small">
+		Three hooks exist today, all in <code>overrides/</code> and registered in
+		<code>doc_events</code>. Follow the same pattern.
+	</p>
+
+	<h3>6. Freeze report column names that a card or chart binds to</h3>
+	<p class="small">
+		A Number Card or Dashboard Chart of type Report names a column by fieldname.
+		Rename the column and the card renders empty <b>with no error</b>. The two
+		bound today are <code>percent_consumed</code> on Cost Code Wise Costing and
+		<code>committed_amount</code> on Budget vs Commitment.
+	</p>
+
+	<h3>Verify before you commit</h3>
+<pre>bench --site &lt;site&gt; migrate           # must be clean
+bench export-fixtures --app a3_constructa
+bench --site &lt;site&gt; migrate           # again: changes must survive
+git status                            # fixtures should be unchanged the 2nd time</pre>
+</div>
+
+<!-- ================================================== how to add -->
+<div class="page">
+	<h2>4. How to add or change things</h2>
+
+	<h4>Add a custom field to a core doctype</h4>
+	<p class="small">
+		Create it with <code>create_custom_fields</code> and set
+		<code>module = "A3 Constructa"</code> &mdash; the fixture filter keys off
+		that, and a field without it will not be exported.
+	</p>
+<pre>from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+
+create_custom_fields({
+    "Purchase Order Item": [
+        {"fieldname": "site_zone", "label": "Site Zone", "fieldtype": "Data",
+         "insert_after": "cost_code", "module": "A3 Constructa"},
+    ],
+}, ignore_validate=True)
+
+# then: bench export-fixtures --app a3_constructa && bench migrate</pre>
+
+	<h4>Add a DocType</h4>
+	<p class="small">
+		Create it in the UI with developer mode on, module <b>A3 Constructa</b>.
+		Frappe writes the JSON, a controller stub and a test file into the module
+		folder as you save. Commit all of them. For a tree, set
+		<code>is_tree</code> and <code>nsm_parent_field</code> and add
+		<code>lft</code>, <code>rgt</code>, <code>old_parent</code>; the controller
+		must extend <code>NestedSet</code>.
+	</p>
+
+	<h4>Add a report</h4>
+	<p class="small">
+		Script Report for anything that aggregates or joins; Report Builder for a
+		filtered list view. Set <code>is_standard = Yes</code> and the module, and
+		Frappe exports it. A Report Builder report is the only way to give a
+		workspace card link a filter &mdash; Workspace Link has no filter field.
+	</p>
+
+	<h4>Add a link to a workspace card</h4>
+	<p class="small">
+		Edit the workspace in the UI, or the JSON in
+		<code>a3_constructa/workspace/&lt;name&gt;/</code>. A link can point at a
+		DocType, a Page or a Report &mdash; not a Dashboard. For a dashboard, use a
+		Workspace Shortcut instead.
+	</p>
+
+	<h4>Add a master record that must exist everywhere</h4>
+	<p class="small">
+		Create the record, add its name to the matching allow-list in
+		<code>hooks.py</code>, then export fixtures. If it needs a company or an
+		account, put it in <code>install_defaults.py</code> instead.
+	</p>
+
+	<h4>Add or change a workflow</h4>
+	<p class="small">
+		Workflow, Workflow State and Workflow Action Master are fixtures with
+		allow-lists. Only add names <i>we</i> introduce &mdash; Approved, Rejected,
+		Approve and Reject ship with Frappe and must not be re-exported. Drive a
+		workflow from code with <code>apply_workflow(doc, "Action")</code>; setting
+		the state field directly is refused, which is the point of it.
+	</p>
+
+	<h4>Hook behaviour onto a core doctype</h4>
+	<p class="small">
+		Add a function in <code>overrides/</code> and register it in
+		<code>doc_events</code>. Pick the event carefully &mdash; see the traps
+		overleaf.
+	</p>
+
+	<h4>Add a new workspace</h4>
+	<p class="small">
+		Set <code>parent_page = "A3 Constructa"</code> and the next
+		<code>sequence_id</code>, module <b>A3 Constructa</b>, and
+		<code>public = 1</code>. Cards are <code>Card Break</code> rows in the
+		<code>links</code> table followed by their <code>Link</code> rows; the
+		<code>content</code> JSON lists a card block per card.
+	</p>
+</div>
+
+<!-- ===================================================== the traps -->
+<div class="page">
+	<h2>5. Traps we have already hit</h2>
+
+	<p>
+		Each of these shipped silently &mdash; no error, wrong behaviour. They are
+		listed because the same shape of mistake will recur.
+	</p>
+
+	<div class="trap">
+		<span class="h">A stale fixture reverted a database change on migrate</span>
+		<table>
+			<tr><td class="lbl">Symptom</td><td>Workspaces un-nested themselves; later, 17 custom fields pointed at deleted modules and fell out of version control entirely.</td></tr>
+			<tr><td class="lbl">Cause</td><td>Fixture import runs <i>after</i> the module sync on every migrate. The exported JSON was older than the database.</td></tr>
+			<tr><td class="lbl">Fix</td><td>Export before migrating. Workspace removed from the fixtures list altogether.</td></tr>
+		</table>
+	</div>
+
+	<div class="trap">
+		<span class="h">A validate hook never won, because ERPNext validated first</span>
+		<table>
+			<tr><td class="lbl">Symptom</td><td>Material issues kept posting to Stock Adjustment instead of the cost code&rsquo;s account.</td></tr>
+			<tr><td class="lbl">Cause</td><td><code>doc_events</code> validate runs after the controller&rsquo;s own validate, which had already filled the field. Our &ldquo;only if empty&rdquo; guard meant the cost code never applied.</td></tr>
+			<tr><td class="lbl">Fix</td><td>Overwrite deliberately when a cost code is set, and say so in the code.</td></tr>
+		</table>
+	</div>
+
+	<div class="trap">
+		<span class="h">A naming series set on validate is already too late</span>
+		<table>
+			<tr><td class="lbl">Symptom</td><td>Issue notes numbered MAT-STE- even though MIN- was in the options list.</td></tr>
+			<tr><td class="lbl">Cause</td><td>The name is built in <code>set_new_name</code>, before validate runs.</td></tr>
+			<tr><td class="lbl">Fix</td><td>Use the <code>before_naming</code> event, which frappe calls from inside <code>set_new_name</code>. Same fix for per-category asset numbering.</td></tr>
+		</table>
+	</div>
+
+	<div class="trap">
+		<span class="h">A report bound to a column that does not exist</span>
+		<table>
+			<tr><td class="lbl">Symptom</td><td>Project Profitability chart rendered empty, no error.</td></tr>
+			<tr><td class="lbl">Cause</td><td>Bound to <code>gross_profit_percent</code>; the report calls it <code>profit</code>.</td></tr>
+			<tr><td class="lbl">Fix</td><td>Check the source report&rsquo;s fieldnames before binding a card or chart to them.</td></tr>
+		</table>
+	</div>
+
+	<div class="trap">
+		<span class="h">A field ERPNext never populates</span>
+		<table>
+			<tr><td class="lbl">Symptom</td><td>The small-tools register was empty on every site, not just ours.</td></tr>
+			<tr><td class="lbl">Cause</td><td><code>Serial No.item_group</code> exists but is never filled &mdash; serials come from stock movements carrying only an item code.</td></tr>
+			<tr><td class="lbl">Fix</td><td>A <code>before_insert</code> hook copies it from the item, plus a backfill for existing serials.</td></tr>
+		</table>
+	</div>
+
+	<div class="note warn">
+		<b>The pattern:</b> creating a record proves nothing. Every one of these
+		passed &ldquo;does it exist&rdquo;. They only showed up when a real
+		transaction was posted and the numbers were read back. Test with data.
+	</div>
+</div>
+
+<!-- =================================================== commands -->
+<div class="page">
+	<h2>6. Commands and where things live</h2>
+
+	<h3>Everyday</h3>
+<pre>docker compose up -d                      # start the stack
+docker compose logs -f backend            # watch it
+docker compose exec backend bash          # shell in the bench
+
+bench --site constructa.localhost migrate
+bench --site constructa.localhost clear-cache
+bench --site constructa.localhost console
+bench export-fixtures --app a3_constructa</pre>
+
+	<h3>The demo</h3>
+<pre>bench --site constructa.localhost execute \
+    a3_constructa.demo.construction_demo.run
+
+bench --site constructa.localhost execute \
+    a3_constructa.demo.construction_demo.run --kwargs "{'stage':'finance'}"
+
+bench --site constructa.localhost execute \
+    a3_constructa.demo.construction_demo.teardown</pre>
+	<p class="small muted">
+		<code>run</code> is idempotent and takes an optional stage: masters,
+		planning, procurement, logistics, inventory, plant, people, finance,
+		extras. <code>teardown</code> reports what it could not remove &mdash;
+		warehouses and serial numbers are pinned by stock ledger entries, and the
+		clean answer there is to drop the site.
+	</p>
+
+	<h3>The documents</h3>
+<pre>bench --site constructa.localhost execute a3_constructa.demo.build_docs.build_pdf
+bench --site constructa.localhost execute a3_constructa.demo.build_docs.build_guide</pre>
+	<p class="small muted">
+		The HTML in <code>docs/</code> is the source; the PDF is the output. Do not
+		edit the PDF.
+	</p>
+
+</div>
+
+<!-- =============================================== ports and gaps -->
+<div class="page last">
+	<h2>7. Environment and known gaps</h2>
+
+	<h3>Ports on this machine</h3>
+	<table class="data">
+		<tr><th style="width:26%">Service</th><th style="width:22%">Port</th><th>Note</th></tr>
+		<tr><td class="k">A3 Constructa</td><td class="m">8092 / 8003 / 3309</td>
+			<td>Browser, dev server, MariaDB</td></tr>
+		<tr><td class="k">a3-optics</td><td class="m">80 / 8000 / 3306</td><td>Separate bench</td></tr>
+		<tr><td class="k">a3-retail</td><td class="m">8090 / 8001 / 3307</td><td>Separate bench</td></tr>
+		<tr><td class="k">a3-loan</td><td class="m">8091 / 8002 / 3308</td><td>Separate bench</td></tr>
+		<tr><td class="k">erpnext15</td><td class="m">8010</td><td>Separate bench</td></tr>
+	</table>
+
+	<h3>Known gaps</h3>
+	<table class="data">
+		<tr><th style="width:34%">Item</th><th>Why it is open</th></tr>
+		<tr><td class="k">Subcontract PO report</td>
+			<td>Needs ERPNext subcontracting configured with a finished-good item and
+				Subcontracting BOM. Work Certificate covers the payment path instead.</td></tr>
+		<tr><td class="k">Transfer Despatch Notes</td>
+			<td>Needs an internal customer defined.</td></tr>
+		<tr><td class="k">Loans (HR row 24)</td>
+			<td>Loan Management moved to the separate <code>lending</code> app, not installed.</td></tr>
+		<tr><td class="k">13 label-only links</td>
+			<td>Master Data cards where the sheet gives no filter basis. They work, but
+				siblings open the same list.</td></tr>
+		<tr><td class="k">GL Entry wbs / cost_code</td>
+			<td>Fields exist; nothing populates them yet. Budget reports read actuals
+				from the stock ledger in the meantime.</td></tr>
+	</table>
+
+	<div class="note">
+		<b>Branch discipline:</b> work happens on <code>dev-muzzammil</code>. If
+		anyone edits the app on <code>main</code>, the next merge stops being free.
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,683 @@
+{
+ "charts": [
+  {
+   "chart_name": "Cash Flow Forecast",
+   "label": "Cash Flow Forecast"
+  },
+  {
+   "chart_name": "Receivable Ageing",
+   "label": "Receivable Ageing"
+  },
+  {
+   "chart_name": "Payable Ageing",
+   "label": "Payable Ageing"
+  },
+  {
+   "chart_name": "Budget Variance by Cost Code",
+   "label": "Budget Variance by Cost Code"
+  },
+  {
+   "chart_name": "Project Profitability",
+   "label": "Project Profitability"
+  },
+  {
+   "chart_name": "Working Capital Trend",
+   "label": "Working Capital Trend"
+  }
+ ],
+ "content": "[{\"id\": \"fa_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Finance &amp; Accounting</b></span>\", \"col\": 12}}, {\"id\": \"nc_total_receivable\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Total Receivable\", \"col\": 3}}, {\"id\": \"nc_total_payable\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Total Payable\", \"col\": 3}}, {\"id\": \"nc_overdue_receivable\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Receivable\", \"col\": 3}}, {\"id\": \"nc_cash_&_bank_balance\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Cash & Bank Balance\", \"col\": 3}}, {\"id\": \"nc_committed_but_unbilled\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Committed but Unbilled\", \"col\": 3}}, {\"id\": \"nc_retention_held\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Retention Held\", \"col\": 3}}, {\"id\": \"nc_budget_utilisation_%\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Budget Utilisation %\", \"col\": 3}}, {\"id\": \"ch_cash_flow_forecast\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Cash Flow Forecast\", \"col\": 12}}, {\"id\": \"ch_receivable_ageing\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Receivable Ageing\", \"col\": 12}}, {\"id\": \"ch_payable_ageing\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Payable Ageing\", \"col\": 12}}, {\"id\": \"ch_budget_variance\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Budget Variance\", \"col\": 12}}, {\"id\": \"ch_project_profitability\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Project Profitability\", \"col\": 12}}, {\"id\": \"ch_working_capital_trend\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Working Capital Trend\", \"col\": 12}}, {\"id\": \"sc_finance_dashboard\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Finance Dashboard\", \"col\": 4}}, {\"id\": \"card_general_ledger\", \"type\": \"card\", \"data\": {\"card_name\": \"General Ledger\", \"col\": 4}}, {\"id\": \"card_accounts_payable\", \"type\": \"card\", \"data\": {\"card_name\": \"Accounts Payable\", \"col\": 4}}, {\"id\": \"card_accounts_receivable\", \"type\": \"card\", \"data\": {\"card_name\": \"Accounts Receivable\", \"col\": 4}}, {\"id\": \"card_bank_&_cash\", \"type\": \"card\", \"data\": {\"card_name\": \"Bank & Cash\", \"col\": 4}}, {\"id\": \"card_fixed_assets\", \"type\": \"card\", \"data\": {\"card_name\": \"Fixed Assets\", \"col\": 4}}, {\"id\": \"card_tax_&_compliance\", \"type\": \"card\", \"data\": {\"card_name\": \"Tax & Compliance\", \"col\": 4}}, {\"id\": \"card_cost_&_budget_control\", \"type\": \"card\", \"data\": {\"card_name\": \"Cost & Budget Control\", \"col\": 4}}, {\"id\": \"card_project_accounting\", \"type\": \"card\", \"data\": {\"card_name\": \"Project Accounting\", \"col\": 4}}, {\"id\": \"card_multi_currency\", \"type\": \"card\", \"data\": {\"card_name\": \"Multi Currency\", \"col\": 4}}, {\"id\": \"card_financial_reporting\", \"type\": \"card\", \"data\": {\"card_name\": \"Financial Reporting\", \"col\": 4}}, {\"id\": \"card_finance_analytics\", \"type\": \"card\", \"data\": {\"card_name\": \"Finance Analytics\", \"col\": 4}}]",
+ "creation": "2026-09-15 14:24:46.617223",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "accounting",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Finance & Accounting",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "General Ledger",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Chart of Accounts",
+   "link_count": 0,
+   "link_to": "Account",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Journal Entries",
+   "link_count": 0,
+   "link_to": "Journal Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Multi Currency",
+   "link_count": 0,
+   "link_to": "Currency Exchange",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Period Closing",
+   "link_count": 0,
+   "link_to": "Period Closing Voucher",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Opening Balance",
+   "link_count": 0,
+   "link_to": "Opening Invoice Creation Tool",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Accounts Payable",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Vendor Bills",
+   "link_count": 0,
+   "link_to": "Purchase Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "3-Way Matching",
+   "link_count": 0,
+   "link_to": "Purchase Order Analysis",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Purchase Order",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payments",
+   "link_count": 0,
+   "link_to": "Payment Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Withholding Tax",
+   "link_count": 0,
+   "link_to": "Tax Withholding Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Ageing Report",
+   "link_count": 0,
+   "link_to": "Accounts Payable",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Purchase Invoice",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Work Certificates",
+   "link_count": 0,
+   "link_to": "Work Certificate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Accounts Receivable",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Customer Invoices",
+   "link_count": 0,
+   "link_to": "Sales Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Receipts",
+   "link_count": 0,
+   "link_to": "Customer Receipts",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Payment Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Credit Notes",
+   "link_count": 0,
+   "link_to": "Credit Notes",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Sales Invoice",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Collections",
+   "link_count": 0,
+   "link_to": "Dunning",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Ageing Report",
+   "link_count": 0,
+   "link_to": "Accounts Receivable",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Sales Invoice",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank & Cash",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Accounts",
+   "link_count": 0,
+   "link_to": "Bank Account",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Reconciliation",
+   "link_count": 0,
+   "link_to": "Bank Reconciliation Tool",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Cash Book",
+   "link_count": 0,
+   "link_to": "Cash Flow",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payment Run",
+   "link_count": 0,
+   "link_to": "Payment Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cheque / EFT Clearance",
+   "link_count": 0,
+   "link_to": "Bank Clearance",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Site Petty Cash",
+   "link_count": 0,
+   "link_to": "Journal Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Fixed Assets",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Asset Register",
+   "link_count": 0,
+   "link_to": "Fixed Asset Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Asset",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Depreciation",
+   "link_count": 0,
+   "link_to": "Asset Depreciation Schedule",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Asset Transfer",
+   "link_count": 0,
+   "link_to": "Asset Movement",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Disposal",
+   "link_count": 0,
+   "link_to": "Asset Capitalization",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Depreciation & Balances",
+   "link_count": 0,
+   "link_to": "Asset Depreciations and Balances",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Asset",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tax & Compliance",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "VAT / GST",
+   "link_count": 0,
+   "link_to": "Purchase Taxes and Charges Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Tax Reports",
+   "link_count": 0,
+   "link_to": "Item-wise Purchase Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Purchase Invoice",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Statutory Reports",
+   "link_count": 0,
+   "link_to": "Trial Balance",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost & Budget Control",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Cost Code Wise Costing",
+   "link_count": 0,
+   "link_to": "Cost Code Wise Costing",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Budget vs Actual",
+   "link_count": 0,
+   "link_to": "Budget Variance Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Cost Center",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Commitment vs Actual",
+   "link_count": 0,
+   "link_to": "Budget vs Commitment",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Purchase Order",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Variance Analysis",
+   "link_count": 0,
+   "link_to": "Profitability Analysis",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Project Accounting",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Project Wise P&L",
+   "link_count": 0,
+   "link_to": "Profitability Analysis",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "WBS Wise Cost",
+   "link_count": 0,
+   "link_to": "Cost Code Wise Costing",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Cost to Complete",
+   "link_count": 0,
+   "link_to": "Cost to Complete",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "BOQ",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Revenue Recognition",
+   "link_count": 0,
+   "link_to": "Project",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Project Profitability",
+   "link_count": 0,
+   "link_to": "Project Profitability",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Timesheet",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Multi Currency",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Currency Rates",
+   "link_count": 0,
+   "link_to": "Currency Exchange Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gain / Loss",
+   "link_count": 0,
+   "link_to": "Exchange Rate Revaluation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Financial Reporting",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "P&L",
+   "link_count": 0,
+   "link_to": "Profit and Loss Statement",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Balance Sheet",
+   "link_count": 0,
+   "link_to": "Balance Sheet",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Cash Flow",
+   "link_count": 0,
+   "link_to": "Cash Flow",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Trial Balance",
+   "link_count": 0,
+   "link_to": "Trial Balance",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Consolidated Statements",
+   "link_count": 0,
+   "link_to": "Consolidated Financial Statement",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Account",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Finance Analytics",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Scheduled Reports",
+   "link_count": 0,
+   "link_to": "Auto Email Report",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-09-15 16:10:17.863744",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Finance & Accounting",
+ "number_cards": [
+  {
+   "label": "Total Receivable",
+   "number_card_name": "Total Receivable"
+  },
+  {
+   "label": "Total Payable",
+   "number_card_name": "Total Payable"
+  },
+  {
+   "label": "Overdue Receivable",
+   "number_card_name": "Overdue Receivable"
+  },
+  {
+   "label": "Cash & Bank Balance",
+   "number_card_name": "Cash & Bank Balance"
+  },
+  {
+   "label": "Committed but Unbilled",
+   "number_card_name": "Committed but Unbilled"
+  },
+  {
+   "label": "Retention Held",
+   "number_card_name": "Retention Held"
+  },
+  {
+   "label": "Budget Utilisation %",
+   "number_card_name": "Budget Utilisation %"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "A3 Constructa",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 9.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "label": "Finance Dashboard",
+   "link_to": "Construction Finance",
+   "type": "Dashboard"
+  }
+ ],
+ "title": "Finance & Accounting"
+}

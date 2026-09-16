@@ -35,13 +35,14 @@ before_tests = "a3_constructa.install.before_tests"
 # Workspace carry a `module`, so they are scoped to this app's module — set the
 # module when creating them in Customize Form, or they will not be exported.
 #
-# The master-data doctypes below (Item Group, Asset Category, Stock Entry Type,
+# The master-data doctypes below (Item Group, Stock Entry Type, Warehouse Type,
 # Workflow and friends) have no `module` field, so there is nothing to scope
-# them by except their names. They are pinned to explicit allow-lists, which are
-# empty until Phase 2 names the records: an empty `in` list exports nothing,
-# whereas an unfiltered entry would export every stock ERPNext Item Group into
-# this app and reinstall them onto every other site. Add names here as records
-# are created — that list is the app's inventory of what it owns.
+# them by except their names. Each is pinned to an explicit allow-list: an
+# unfiltered entry would export every stock ERPNext Item Group into this app and
+# reinstall them onto every other site. Add a name here whenever a record is
+# created - between them these lists are the app's inventory of the master data
+# it owns, and a record missing from them is a record that will not exist on a
+# fresh install.
 fixtures = [
 	# Fixture import runs after the module sync on every `bench migrate`, so for
 	# these doctypes the exported JSON - not the database - is the source of
@@ -67,7 +68,16 @@ fixtures = [
 	# Asset Category is deliberately NOT a fixture: its `accounts` child table is
 	# mandatory and company-specific, so an exported copy would carry this site's
 	# company and chart of accounts. Built in setup/install_defaults.py instead.
-	{"dt": "Stock Entry Type", "filters": [["name", "in", []]]},
+	# Build sheet heads 43, 46 and 48 - the issue, receipt and return note types.
+	{"dt": "Stock Entry Type", "filters": [["name", "in", [
+		"Material Issue Note (MIN)", "Material Receipt Note (MRN)",
+		"Site Material Return",
+		# heads 55 - the small-tools custody cycle
+		"Tool Issue", "Tool Return", "Tool Write-off",
+	]]]},
+	# Head 47 row 16 filters site stores on this warehouse type. "Transit"
+	# (head 44) already ships with ERPNext and is deliberately not re-exported.
+	{"dt": "Warehouse Type", "filters": [["name", "in", ["Site", "Custody"]]]},
 	# Build sheet head 40 row 19 - the documents an import shipment carries.
 	{"dt": "Document Type", "filters": [["name", "in", [
 		"Certificate of Origin", "CNF Invoice",
@@ -92,5 +102,23 @@ fixtures = [
 # app_include_js = "/assets/a3_constructa/js/a3_constructa_desk.js"
 
 # ---------------------------------------------------------------- events
-# doc_events = {}
+# Build sheet head 48 row 19: a material issue must post to the project GL head
+# its Cost Code names, not the item or company default.
+doc_events = {
+	"Stock Entry": {
+		# before_naming runs inside set_new_name, before the series is consumed.
+		"before_naming": "a3_constructa.overrides.stock_entry.set_naming_series",
+		"validate": "a3_constructa.overrides.stock_entry.set_cost_code_accounting",
+	},
+	"Asset": {
+		# Head 51 row 2: number an asset from its category, not one shared series.
+		"before_naming": "a3_constructa.overrides.asset.set_naming_series_from_category",
+	},
+	"Serial No": {
+		# Head 55 row 23 filters the tool register by item group, which ERPNext
+		# leaves empty on every serial it creates.
+		"before_insert": "a3_constructa.overrides.serial_no.set_item_group",
+	},
+}
+
 # scheduler_events = {}

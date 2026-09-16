@@ -2,7 +2,42 @@
 
 Construction ERP extensions for ERPNext v15.
 
-## Running it locally
+## Picking up where you left off
+
+Everything is already built and the demo data is loaded. On a normal day there
+is nothing to set up:
+
+1. **Start Docker Desktop** and wait for the whale icon to stop animating.
+2. Give it **two to three minutes**. The containers carry `restart:
+   unless-stopped`, so they come back on their own.
+3. Open <http://localhost:8092/> and sign in as `Administrator` / the
+   `ADMIN_PASSWORD` in `.env`.
+
+That is the whole routine. Nothing is lost when the machine shuts down: the
+bench, the site database and all the demo records live in Docker volumes, not
+in the containers.
+
+If the page does not load after a few minutes, or you stopped the stack by
+hand, start it explicitly from this folder:
+
+```powershell
+docker compose up -d          # ~2 minutes from cold
+docker compose ps             # all eight should say "running"
+docker compose logs -f backend
+```
+
+Four other benches on this machine (a3-optics, a3-retail, a3-loan, erpnext15)
+start at the same time and compete for memory. If things feel slow, stop the
+ones you are not using — `docker compose down` in their own folders — rather
+than stopping Docker altogether.
+
+| Check | Command |
+|---|---|
+| Is it up? | `curl http://127.0.0.1:8092/api/method/ping` → `{"message":"pong"}` |
+| Something looks stale | `docker compose exec backend bench --site constructa.localhost clear-cache` |
+| After pulling new code | `docker compose exec backend bench --site constructa.localhost migrate` |
+
+## First-time setup
 
 Docker Desktop is the only prerequisite. From this folder:
 

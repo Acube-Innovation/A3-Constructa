@@ -1,0 +1,23 @@
+{
+ "creation": "2026-09-15 14:24:43.714149",
+ "currency": "INR",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Committed but Unbilled",
+ "modified": "2026-09-15 14:24:43.714149",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Committed but Unbilled",
+ "owner": "Administrator",
+ "report_field": "committed_amount",
+ "report_function": "Sum",
+ "report_name": "Budget vs Commitment",
+ "show_full_number": 0,
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Daily",
+ "type": "Report"
+}

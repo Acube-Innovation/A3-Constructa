@@ -103,6 +103,91 @@ def create_asset_categories():
 		doc.insert()
 
 
+# Build sheet head 66 row 11 and head 76 row 58, and the Legend: subcontractor
+# retention is withheld from the certified amount and released at defect-
+# liability expiry, so it is money owed but not yet payable. ERPNext has no
+# native handling, so it needs an account of its own.
+RETENTION_ACCOUNT_NAME = "Retention Payable"
+
+
+def create_retention_account():
+	"""Idempotently create a Retention Payable account per company.
+
+	Placed under the company's payables group so retention shows in current
+	liabilities alongside what is owed to the same subcontractors. Created here
+	rather than as a fixture because account names carry the company abbreviation
+	and the parent differs with each chart of accounts.
+	"""
+	for company in frappe.get_all("Company", fields=["name", "abbr"]):
+		account_name = "%s - %s" % (RETENTION_ACCOUNT_NAME, company.abbr)
+		if frappe.db.exists("Account", account_name):
+			continue
+
+		parent = _payables_parent(company.name)
+		if not parent:
+			# No payables group to hang it off; leave it to the implementation
+			# rather than guess at the chart of accounts.
+			continue
+
+		doc = frappe.new_doc("Account")
+		doc.account_name = RETENTION_ACCOUNT_NAME
+		doc.parent_account = parent
+		doc.company = company.name
+		doc.account_type = "Payable"
+		doc.root_type = "Liability"
+		doc.is_group = 0
+		doc.flags.ignore_permissions = True
+		doc.insert()
+
+
+def _payables_parent(company: str) -> str | None:
+	"""The group account a payable belongs under, however the CoA is named.
+
+	Tried in order of how specific the answer is. The standard chart of accounts
+	leaves `account_type` blank on its "Accounts Payable" group, so matching on
+	type alone finds nothing and falls all the way back to the liability root -
+	which is how retention ended up outside current liabilities the first time.
+	"""
+	groups = frappe.get_all(
+		"Account",
+		filters={"company": company, "is_group": 1, "root_type": "Liability"},
+		fields=["name", "account_type"],
+		order_by="lft",
+	)
+	if not groups:
+		return None
+
+	by_type = [g.name for g in groups if g.account_type == "Payable"]
+	if by_type:
+		return by_type[0]
+
+	for fragment in ("Accounts Payable", "Current Liabilities"):
+		match = [g.name for g in groups if fragment.lower() in g.name.lower()]
+		if match:
+			return match[0]
+
+	return groups[0].name
+
+
+# Head 72 row 39 links ERPNext's Project Profitability report, and head 75 row
+# 51 charts it. That report refuses to run until Standard Working Hours is set,
+# so the app supplies a sensible default rather than shipping a link that errors.
+DEFAULT_STANDARD_WORKING_HOURS = 8
+
+
+def set_standard_working_hours():
+	"""Fill in Standard Working Hours only when nobody has set it."""
+	if frappe.db.get_value("HR Settings", None, "standard_working_hours"):
+		return
+	if not frappe.db.exists("DocType", "HR Settings"):
+		return
+	frappe.db.set_single_value(
+		"HR Settings", "standard_working_hours", DEFAULT_STANDARD_WORKING_HOURS
+	)
+
+
 def run():
 	"""Seed every baseline record. Idempotent."""
 	create_asset_categories()
+	create_retention_account()
+	set_standard_working_hours()
