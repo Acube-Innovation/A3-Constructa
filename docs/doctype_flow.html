@@ -1,0 +1,586 @@
+<!--
+  Source for docs/A3-Constructa-Doctype-Flow.pdf
+
+  A short companion to how_it_works.html: that guide explains the business,
+  this one walks the doctypes in the order a job uses them - what you enter,
+  what the system works out, and what Save and Submit do. Every behaviour
+  described here is in the controllers or hooks; keep it that way when either
+  changes. Regenerate with:
+
+      bench --site <site> execute a3_constructa.demo.build_docs.build_flow
+
+  Same layout rules as the client guide: wkhtmltopdf runs an old WebKit that
+  drops inline SVG and mishandles flexbox, so everything is built from tables.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+	@page { size: A4; margin: 16mm 14mm 18mm 14mm; }
+
+	body {
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 10pt;
+		line-height: 1.45;
+		color: #1f2933;
+		margin: 0;
+	}
+
+	h1 { font-size: 22pt; margin: 0 0 2px 0; color: #14304f; letter-spacing: -0.4px; }
+	h2 {
+		font-size: 14pt; color: #14304f; margin: 0 0 8px 0;
+		border-bottom: 2px solid #14304f; padding-bottom: 4px;
+	}
+	h3 { font-size: 11pt; color: #14304f; margin: 12px 0 5px 0; }
+	p  { margin: 0 0 8px 0; }
+
+	.page { page-break-after: always; }
+	/* The old WebKit in wkhtmltopdf does not honour :last-child here, so the
+	   final page is marked explicitly - otherwise it emits a blank page. */
+	.page.last { page-break-after: auto; }
+
+	.lead { font-size: 11pt; color: #3e4c59; }
+	.muted { color: #6b7785; }
+	.small { font-size: 9pt; }
+	.mono { font-family: "Courier New", monospace; color: #9a5b00; }
+
+	.titleblock { border-top: 7px solid #14304f; padding-top: 12px; margin-bottom: 10px; }
+	.titleblock .sub { font-size: 12pt; color: #3e4c59; }
+
+	table.data { width: 100%; border-collapse: collapse; margin: 6px 0 10px 0; }
+	table.data th {
+		background: #14304f; color: #fff; text-align: left;
+		padding: 5px 7px; font-size: 9pt; font-weight: bold;
+	}
+	table.data td {
+		padding: 5px 7px; border-bottom: 1px solid #dfe3e8;
+		vertical-align: top; font-size: 9pt;
+	}
+	table.data tr:nth-child(even) td { background: #f6f8fa; }
+	td.term { font-weight: bold; color: #14304f; }
+
+	.note {
+		background: #fff8e6; border-left: 4px solid #d99100;
+		padding: 7px 11px; margin: 10px 0; font-size: 9pt;
+	}
+	.note b { color: #8a5a00; }
+
+	/* --- flow diagram ---------------------------------------------------- */
+	table.flow { width: 100%; border-collapse: separate; border-spacing: 0; }
+	table.flow td { vertical-align: middle; }
+
+	.box {
+		border: 1.3px solid #14304f; border-radius: 5px; background: #eef3f8;
+		padding: 6px 8px;
+	}
+	.box .t { font-size: 10pt; font-weight: bold; color: #14304f; display: block; }
+	.box .d { font-size: 8pt; color: #52606d; display: block; margin-top: 2px; line-height: 1.3; }
+	.box.std { background: #fff; border: 1px solid #9aa5b1; }
+	.box.std .t { color: #3e4c59; }
+	.box.end { background: #14304f; }
+	.box.end .t { color: #fff; }
+	.box.end .d { color: #c3d0dd; }
+
+	.arrow  { text-align: center; color: #14304f; font-size: 12pt; width: 20px; }
+	.plus   { text-align: center; color: #9aa5b1; font-size: 11pt; width: 20px; }
+	.arrowd { text-align: center; color: #14304f; font-size: 11pt; padding: 1px 0; line-height: 1.1; }
+
+	.band {
+		background: #f6f8fa; border: 1px solid #dfe3e8; border-radius: 6px;
+		padding: 6px 8px 8px 8px;
+	}
+	.band .label {
+		font-size: 8pt; font-weight: bold; color: #9a5b00;
+		letter-spacing: 1px; display: block; margin-bottom: 5px;
+	}
+
+	.legend { font-size: 8.5pt; color: #52606d; margin: 6px 0 0 0; }
+	.sw { display: inline-block; width: 18px; height: 10px; border-radius: 2px; vertical-align: middle; margin: 0 4px 0 10px; }
+	.sw.own { background: #eef3f8; border: 1.3px solid #14304f; }
+	.sw.std { background: #fff; border: 1px solid #9aa5b1; }
+
+	.strip {
+		background: #14304f; color: #fff; border-radius: 5px;
+		padding: 8px 12px; margin-top: 10px;
+	}
+	.strip b { font-size: 10pt; }
+	.strip span { display: block; color: #c3d0dd; font-size: 9pt; margin-top: 2px; }
+
+	/* three-up explainer: Save / Submit / Cancel & Amend */
+	table.three { width: 100%; border-collapse: separate; border-spacing: 6px 0; margin: 8px -6px 0 -6px; }
+	table.three td {
+		width: 33%; vertical-align: top; border: 1px solid #dfe3e8; border-radius: 5px;
+		padding: 7px 9px; font-size: 9pt; background: #fff;
+	}
+	table.three td b { display: block; color: #14304f; font-size: 10pt; margin-bottom: 2px; }
+
+	/* --- doctype cards --------------------------------------------------- */
+	table.card { width: 100%; border-collapse: collapse; margin: 0 0 11px 0; border: 1px solid #cbd2d9; }
+	table.card td.head { background: #eef3f8; border-bottom: 1.3px solid #14304f; padding: 6px 9px; }
+	table.card .name { font-size: 11.5pt; font-weight: bold; color: #14304f; }
+	table.card .no { float: right; font-family: "Courier New", monospace; font-size: 8.5pt; color: #9a5b00; padding-top: 3px; white-space: nowrap; }
+	table.card .what { display: block; font-size: 9pt; color: #3e4c59; margin-top: 1px; }
+	table.card td.lbl {
+		width: 19%; font-weight: bold; font-size: 8.5pt; color: #14304f;
+		padding: 5px 9px; vertical-align: top; border-top: 1px solid #e4e7eb; background: #fafbfc;
+	}
+	table.card td.txt { font-size: 9pt; padding: 5px 9px; border-top: 1px solid #e4e7eb; vertical-align: top; }
+	table.card td.txt ul { margin: 0; padding-left: 15px; }
+	table.card td.txt li { margin-bottom: 1px; }
+	table.card.std td.head { background: #f6f8fa; border-bottom-color: #9aa5b1; }
+
+	.chip {
+		font-size: 7pt; font-weight: bold; letter-spacing: 0.5px; padding: 1px 5px;
+		border-radius: 3px; vertical-align: middle; margin-left: 5px;
+	}
+	.chip.own { background: #14304f; color: #fff; }
+	.chip.std { background: #e4e7eb; color: #3e4c59; }
+	.chip.sub { background: #d99100; color: #fff; }
+
+	/* BOQ approval states */
+	table.wf { border-collapse: separate; border-spacing: 0; margin: 2px 0 0 0; }
+	table.wf td { vertical-align: middle; font-size: 8.5pt; }
+	.st {
+		border: 1px solid #14304f; border-radius: 4px; padding: 3px 8px;
+		font-weight: bold; color: #14304f; background: #fff; white-space: nowrap;
+	}
+	.st.ok { background: #14304f; color: #fff; }
+	.st.no { border-color: #b44; color: #b44; }
+	.via { text-align: center; color: #52606d; font-size: 7.5pt; padding: 0 6px; line-height: 1.2; }
+	.via .a { color: #14304f; font-size: 11pt; display: block; }
+</style>
+</head>
+<body>
+
+<!-- ================================================== 1. the journey -->
+<div class="page">
+	<div class="titleblock">
+		<h1>How each doctype works</h1>
+		<div class="sub">A3 Constructa &mdash; start to end, in short</div>
+	</div>
+
+	<p>
+		Every screen you fill in is a <b>doctype</b> (a form). A3 Constructa adds
+		16 of its own and puts construction fields on the standard ERPNext ones.
+		This is the order a job uses them.
+	</p>
+
+	<div class="band">
+		<span class="label">1 &middot; SET UP ONCE</span>
+		<table class="flow"><tr>
+			<td width="23%"><div class="box"><span class="t">Cost Head</span>
+				<span class="d">Package of work: University, Hospital</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="23%"><div class="box"><span class="t">WBS</span>
+				<span class="d">Parts of the works: Substructure</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="23%"><div class="box"><span class="t">Cost Code</span>
+				<span class="d">Kind of cost, with its account</span></div></td>
+			<td class="plus">+</td>
+			<td width="23%"><div class="box"><span class="t">Other masters</span>
+				<span class="d">Ports, routes, document rules, approvals, spares</span></div></td>
+		</tr></table>
+	</div>
+	<div class="arrowd">&#9660;</div>
+
+	<div class="band">
+		<span class="label">2 &middot; PLAN</span>
+		<table class="flow"><tr>
+			<td width="31%"><div class="box"><span class="t">BOQ</span>
+				<span class="d">Quantities and rates, approved by sign-off</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="31%"><div class="box"><span class="t">WBS Allocation</span>
+				<span class="d">The approved BOQ split into a budget per part of the works</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="31%"><div class="box"><span class="t">Procurement Plan</span>
+				<span class="d">The date each item must be requested</span></div></td>
+		</tr></table>
+	</div>
+	<div class="arrowd">&#9660;</div>
+
+	<div class="band">
+		<span class="label">3 &middot; BUY</span>
+		<table class="flow"><tr>
+			<td width="31%"><div class="box std"><span class="t">Material Request</span>
+				<span class="d">Site asks, tagged to a cost code</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="31%"><div class="box std"><span class="t">Supplier Quotation</span>
+				<span class="d">Prices compared, one recommended</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="31%"><div class="box std"><span class="t">Purchase Order</span>
+				<span class="d">The money is now committed</span></div></td>
+		</tr></table>
+	</div>
+	<div class="arrowd">&#9660;</div>
+
+	<div class="band">
+		<span class="label">4 &middot; DELIVER</span>
+		<table class="flow"><tr>
+			<td width="31%"><div class="box"><span class="t">Shipment Tracking</span>
+				<span class="d">Supplier to store or site, with its documents</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="31%"><div class="box std"><span class="t">Purchase Receipt</span>
+				<span class="d">What actually arrived (GRN / SMRN)</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="31%"><div class="box std"><span class="t">Landed Cost Voucher</span>
+				<span class="d">Freight, duty and clearing added to cost</span></div></td>
+		</tr></table>
+	</div>
+	<div class="arrowd">&#9660;</div>
+
+	<div class="band">
+		<span class="label">5 &middot; USE &amp; PAY</span>
+		<table class="flow"><tr>
+			<td width="23%"><div class="box std"><span class="t">Stock Entry (MIN)</span>
+				<span class="d">Material issued to the job</span></div></td>
+			<td class="plus">&middot;</td>
+			<td width="23%"><div class="box"><span class="t">Tool Issue</span>
+				<span class="d">Tools handed to a person</span></div></td>
+			<td class="plus">&middot;</td>
+			<td width="23%"><div class="box"><span class="t">Work Certificate</span>
+				<span class="d">Subcontract work, less retention</span></div></td>
+			<td class="arrow">&#9654;</td>
+			<td width="23%"><div class="box end"><span class="t">Invoices &amp; Reports</span>
+				<span class="d">Bills paid, claims raised, cost reported</span></div></td>
+		</tr></table>
+	</div>
+
+	<div class="legend">
+		<span class="sw own"></span>Built for A3 Constructa
+		<span class="sw std"></span>Standard ERPNext, with Constructa fields added
+	</div>
+
+	<div class="strip">
+		<b>Cost Head &rarr; WBS &rarr; Cost Code travel on every line</b>
+		<span>Material Request, Purchase Order, Purchase Receipt, Stock Entry and
+		Expense Claim lines all carry the three tags, so any cost can be added up
+		by package, by part of the works, or by kind of cost.</span>
+	</div>
+
+	<table class="three"><tr>
+		<td><b>Save</b>A draft. Anything can still be changed.</td>
+		<td><b>Submit</b>Final and locked. Stock or money moves now, if the form moves any.</td>
+		<td><b>Cancel &amp; Amend</b>To correct a submitted form: cancel it, then amend. The copy is numbered <span class="mono">-1</span>, <span class="mono">-2</span>&hellip;</td>
+	</tr></table>
+</div>
+
+<!-- ================================================== 2. set up once -->
+<div class="page">
+	<h2>Step 1 &mdash; Set up once</h2>
+
+	<p>
+		These are filled in at the start of a job and then only picked from. None
+		of them is submitted: saving is enough.
+	</p>
+
+	<table class="data">
+		<tr><th style="width:21%">Doctype</th><th style="width:40%">What it holds</th><th>What the system does for you</th></tr>
+		<tr><td class="term">Cost Head</td>
+			<td>The packages of work &mdash; University, Hospital, Road works &mdash; with their project and cost centre.</td>
+			<td>Kept as a tree, so a package can sit inside a bigger one.</td></tr>
+		<tr><td class="term">WBS</td>
+			<td>The parts each package is built from &mdash; Substructure, Superstructure &mdash; under a project and cost head.</td>
+			<td>Also a tree. The <b>level</b> (1, 2, 3&hellip;) is set automatically from where it sits.</td></tr>
+		<tr><td class="term">Cost Code</td>
+			<td>The kind of cost &mdash; concrete, rebar, plant hire. Category (Material, Service, Subcontract, Spare, Rental), plus the <b>account</b> and <b>cost centre</b> it posts to.</td>
+			<td>Material issued against it posts to its account and cost centre. Whoever issues the material never has to pick an account.</td></tr>
+		<tr><td class="term">Approval Matrix</td>
+			<td>Who approves what: by doctype, project, item group, amount band (from / to) and level, with the approving role or user.</td>
+			<td>A register of the approval rules. The BOQ sign-off itself runs through its own approval flow (next page).</td></tr>
+		<tr><td class="term">Port &amp; Service Route</td>
+			<td>Sea, air and land ports; routes between two ports with transport mode, transit days and shipping line.</td>
+			<td>Picked on shipments and freight contracts.</td></tr>
+		<tr><td class="term">Freight Rate Contract</td>
+			<td>The agreed freight rate from a supplier for a route and container type (20FT, 40FT&hellip;), with free days and valid-from / to dates.</td>
+			<td>The rate to check freight charges against.</td></tr>
+		<tr><td class="term">Document Type</td>
+			<td>The kinds of paper a delivery carries &mdash; Certificate of Origin, CNF Invoice, Duty Payment Receipt, Delivery Order.</td>
+			<td>Picked in a shipment&rsquo;s document list.</td></tr>
+		<tr><td class="term">Mandatory Document Rule</td>
+			<td>The documents a shipment must have, optionally only for Import or Domestic. Tick <b>Is Blocking</b> to enforce it.</td>
+			<td>A blocking rule stops a shipment being submitted until every listed document is in with its original received.</td></tr>
+		<tr><td class="term">Asset Spare Part</td>
+			<td>Which spare fits which machine or asset category, with part no., minimum stock, reorder qty, store and preferred supplier.</td>
+			<td>Gives each machine its spares list.</td></tr>
+		<tr><td class="term">Asset Category <span class="chip std">ERPNEXT</span></td>
+			<td>One field added: a numbering series per category, e.g. <span class="mono">HEQ-.####</span> for heavy equipment.</td>
+			<td>New machines are numbered from their category: <span class="mono">HEQ-0001</span>, <span class="mono">VEH-0001</span>.</td></tr>
+	</table>
+
+	<div class="note">
+		<b>Get the three tags right first.</b> Cost Head, WBS and Cost Code are
+		what every later doctype points back to. A missing cost code on an issue
+		line means that cost cannot be reported against the works.
+	</div>
+</div>
+
+<!-- ======================================================== 2. plan -->
+<div class="page">
+	<h2>Step 2 &mdash; Plan</h2>
+
+	<table class="card">
+		<tr><td class="head" colspan="2">
+			<span class="no">BOQ-2026-0001</span>
+			<span class="name">BOQ</span><span class="chip own">CONSTRUCTA</span><span class="chip sub">SUBMITTED</span>
+			<span class="what">The bill of quantities: what the job needs, how much, and at what rate.</span>
+		</td></tr>
+		<tr><td class="lbl">You enter</td><td class="txt">
+			Project, cost head, date and revision no. One line per item with its WBS,
+			cost code, BOQ qty and rate &mdash; then the approved qty and approved rate.
+		</td></tr>
+		<tr><td class="lbl">System works out</td><td class="txt">
+			<b>Amount</b> = qty &times; rate on every line, and the total.
+			<b>Budget amount</b> = approved qty &times; approved rate. The budget reports use this figure.
+		</td></tr>
+		<tr><td class="lbl">Approval</td><td class="txt">
+			<table class="wf">
+				<tr>
+					<td rowspan="2"><span class="st">Draft</span></td>
+					<td rowspan="2" class="via"><span class="a">&#9654;</span>Submit for Approval<br>Quantity Surveyor</td>
+					<td rowspan="2"><span class="st">Pending Approval</span></td>
+					<td class="via"><span class="a">&#9654;</span>Approve &middot; Constructa Admin</td>
+					<td><span class="st ok">Approved</span></td>
+				</tr>
+				<tr>
+					<td class="via" style="padding-top:4px"><span class="a">&#9654;</span>Reject &middot; Constructa Admin</td>
+					<td style="padding-top:4px"><span class="st no">Rejected</span></td>
+				</tr>
+			</table>
+			<div class="small" style="margin-top:4px">
+				Approved means submitted and locked. The Project Manager can still
+				adjust it while it is pending.
+			</div>
+		</td></tr>
+		<tr><td class="lbl">To revise</td><td class="txt">
+			Cancel the approved BOQ (its status becomes Rejected) and amend it. The
+			copy goes through approval again.
+		</td></tr>
+	</table>
+
+	<table class="card">
+		<tr><td class="head" colspan="2">
+			<span class="no">WBSA-2026-0001</span>
+			<span class="name">WBS Allocation</span><span class="chip own">CONSTRUCTA</span>
+			<span class="what">Splits the approved BOQ across the parts of the works, so each WBS has its own budget.</span>
+		</td></tr>
+		<tr><td class="lbl">You enter</td><td class="txt">
+			Project, BOQ, WBS and cost head. Lines with item, cost code, allocated qty
+			and rate. Each line points back to the BOQ line it comes from.
+		</td></tr>
+		<tr><td class="lbl">System works out</td><td class="txt">
+			<b>Allocated amount</b> = qty &times; rate.
+			<b>Balance qty</b> = what is left of that BOQ line after <i>every</i> allocation of it.
+			A negative balance means the line is over-allocated.
+		</td></tr>
+	</table>
+
+	<table class="card">
+		<tr><td class="head" colspan="2">
+			<span class="no">PP-2026-0001</span>
+			<span class="name">Procurement Plan</span><span class="chip own">CONSTRUCTA</span>
+			<span class="what">Works back from the date material is needed on site to the date it must be requested.</span>
+		</td></tr>
+		<tr><td class="lbl">You enter</td><td class="txt">
+			Project and cost head. Lines with item, WBS, cost code, BOQ qty,
+			anticipated qty and <b>required on site</b> date. Lead time is copied from the item.
+		</td></tr>
+		<tr><td class="lbl">System works out</td><td class="txt">
+			<b>Recommended PR date</b> = required-on-site date &minus; lead time. A line
+			with no required date gets no recommendation. Status (Draft, Submitted,
+			Completed, Cancelled) is set by hand.
+		</td></tr>
+	</table>
+</div>
+
+<!-- ================================================= 3-4. buy, deliver -->
+<div class="page">
+	<h2>Step 3 &mdash; Buy</h2>
+
+	<p class="small muted" style="margin-bottom:4px">
+		Standard ERPNext doctypes. Constructa adds the fields below; the buying
+		steps themselves work as ERPNext normally does.
+	</p>
+
+	<table class="data">
+		<tr><th style="width:23%">Doctype</th><th style="width:43%">Constructa adds</th><th>Why it matters</th></tr>
+		<tr><td class="term">Material Request</td>
+			<td>Cost Head, WBS, Cost Code on every line; an <b>Is MAS Item</b> flag.</td>
+			<td>The site&rsquo;s request is tied to the works from the first step.</td></tr>
+		<tr><td class="term">Supplier Quotation</td>
+			<td>Technical evaluation status and remarks; <b>Is Recommended</b> with remarks.</td>
+			<td>The chosen quote is marked, and shows in the Recommended Quotations report.</td></tr>
+		<tr><td class="term">Purchase Order</td>
+			<td>Cost Head, WBS, Cost Code on every line.</td>
+			<td>From here the money counts as <b>committed</b> in Budget vs Commitment.</td></tr>
+	</table>
+
+	<h2 style="margin-top:14px">Step 4 &mdash; Deliver</h2>
+
+	<table class="card">
+		<tr><td class="head" colspan="2">
+			<span class="no">SHP-2026-0001</span>
+			<span class="name">Shipment Tracking</span><span class="chip own">CONSTRUCTA</span><span class="chip sub">SUBMITTED</span>
+			<span class="what">One record that follows a delivery from the supplier to the store or site.</span>
+		</td></tr>
+		<tr><td class="lbl">You enter</td><td class="txt">
+			Project, supplier, purchase order, Domestic or Import, direct to warehouse
+			or site. Then, as it moves: ports and B/L, departure and arrival dates,
+			customs (bill of entry, duty paid), container return, demurrage and
+			detention, inland transporter and LR no. Plus two tables:
+			<ul>
+				<li><b>Milestones</b> &mdash; FAT Cleared &rarr; Vessel Sailed &rarr; Customs Cleared &rarr; &hellip; &rarr; Received at Site, each with planned and actual date.</li>
+				<li><b>Documents</b> &mdash; each paper, its number, and whether the original has been received.</li>
+			</ul>
+		</td></tr>
+		<tr><td class="lbl">On save</td><td class="txt">
+			<b>Transit days</b> = arrival at port &minus; departure from origin.
+			<b>Days late</b> per milestone = actual &minus; planned date.
+			Refuses an arrival before its departure, inland or at sea.
+		</td></tr>
+		<tr><td class="lbl">On submit</td><td class="txt">
+			Checks the blocking Mandatory Document Rules. If a required document is
+			missing, or its original is not ticked as received, submit is refused and
+			the missing documents are named.
+		</td></tr>
+		<tr><td class="lbl">Good to know</td><td class="txt">
+			Keep it as a draft while the shipment moves and submit when it is complete.
+			After submit only the <b>status</b> can change.
+		</td></tr>
+	</table>
+
+	<table class="data">
+		<tr><th style="width:23%">Doctype</th><th style="width:43%">Constructa adds</th><th>Why it matters</th></tr>
+		<tr><td class="term">Purchase Receipt</td>
+			<td>Cost Head, WBS, Cost Code on every line; <b>Is Site Receipt (SMRN)</b>, site receipt no. and receiving site.</td>
+			<td>Records what arrived. Goods taken straight to site are flagged as an SMRN.</td></tr>
+		<tr><td class="term">Landed Cost Voucher</td>
+			<td>Duty % and duty account on each Customs Tariff Number.</td>
+			<td>Freight, duty and clearing go onto the item, so stock carries its true cost.</td></tr>
+	</table>
+</div>
+
+<!-- ===================================================== 5. use & pay -->
+<div class="page">
+	<h2>Step 5 &mdash; Use &amp; pay</h2>
+
+	<table class="card std">
+		<tr><td class="head" colspan="2">
+			<span class="no">MIN-2026-00001 &middot; MRN-2026-00001</span>
+			<span class="name">Stock Entry</span><span class="chip std">ERPNEXT</span><span class="chip sub">SUBMITTED</span>
+			<span class="what">Every stock movement. The <b>type</b> at the top says which kind it is.</span>
+		</td></tr>
+		<tr><td class="lbl">Types</td><td class="txt">
+			Material Issue Note (MIN) &middot; Material Receipt Note (MRN) &middot; Site Material Return &middot;
+			Tool Issue &middot; Tool Return &middot; Tool Write-off
+		</td></tr>
+		<tr><td class="lbl">You enter</td><td class="txt">
+			Items, qty and stores, with Cost Head, WBS and Cost Code on each line.
+			Transport details on the header: mode, transporter, vehicle no., LR no.
+		</td></tr>
+		<tr><td class="lbl">On save</td><td class="txt">
+			An MIN is numbered <span class="mono">MIN-</span> and an MRN <span class="mono">MRN-</span>.
+			Every line with a cost code takes <b>that cost code&rsquo;s account and cost centre</b>,
+			replacing the default. To post a line elsewhere, clear its cost code.
+		</td></tr>
+		<tr><td class="lbl">On submit</td><td class="txt">
+			Stock moves. For an MIN, this is the moment the material becomes a cost to the job.
+		</td></tr>
+	</table>
+
+	<table class="card">
+		<tr><td class="head" colspan="2">
+			<span class="no">TIS-2026-0001</span>
+			<span class="name">Tool Issue</span><span class="chip own">CONSTRUCTA</span><span class="chip sub">SUBMITTED</span>
+			<span class="what">Hands tools to a person. Tools are stock held in that person&rsquo;s custody store, not fixed assets.</span>
+		</td></tr>
+		<tr><td class="lbl">You enter</td><td class="txt">
+			Date, project, site, <b>from</b> store, <b>to</b> the person&rsquo;s custody store, issued to
+			(employee), expected return. Lines: tool, serial no., qty, condition on issue.
+		</td></tr>
+		<tr><td class="lbl">On save</td><td class="txt">
+			Records each tool&rsquo;s <b>value at issue</b>, so a tool lost later is recovered
+			at that value. Status is set from the lines: Issued, Partially Returned or
+			Returned. Lost, Damaged and Written Off are set by hand and kept.
+		</td></tr>
+		<tr><td class="lbl">On submit</td><td class="txt">
+			Creates and submits a <b>Stock Entry</b> (type Tool Issue) that moves the tools into
+			the custody store, dated the issue date. <b>Cancel</b> reverses that entry too.
+		</td></tr>
+		<tr><td class="lbl">Coming back</td><td class="txt">
+			A Stock Entry of type <b>Tool Return</b> moves it back to the store; a lost tool
+			goes out through <b>Tool Write-off</b>.
+		</td></tr>
+	</table>
+
+	<table class="card">
+		<tr><td class="head" colspan="2">
+			<span class="no">WC-2026-0001</span>
+			<span class="name">Work Certificate</span><span class="chip own">CONSTRUCTA</span><span class="chip sub">SUBMITTED</span>
+			<span class="what">Subcontractor work measured for a period, with retention held back.</span>
+		</td></tr>
+		<tr><td class="lbl">You enter</td><td class="txt">
+			Project, cost head, WBS, subcontract PO, supplier, certificate no. and period.
+			Lines: item, cost code, contracted qty, previous qty, this period&rsquo;s qty, rate, retention %.
+		</td></tr>
+		<tr><td class="lbl">On save</td><td class="txt">
+			<b>Amount</b> = this period&rsquo;s qty &times; rate &nbsp;&rarr;&nbsp;
+			<b>Retention</b> = amount &times; retention % &nbsp;&rarr;&nbsp;
+			<b>Net payable</b> = amount &minus; retention, with totals of all three.
+			Refuses a line where previous + this period is more than the contracted qty.
+		</td></tr>
+	</table>
+</div>
+
+<!-- =============================================== 6. the rest + index -->
+<div class="page last">
+	<h2>Step 5, continued &mdash; people, plant and the end of the line</h2>
+
+	<table class="data">
+		<tr><th style="width:24%">Doctype</th><th>Constructa adds / does</th></tr>
+		<tr><td class="term">Asset</td>
+			<td>Make, model, serial, engine and chassis no., capacity, warranty dates and project. Numbered from its category (<span class="mono">HEQ-0001</span>).</td></tr>
+		<tr><td class="term">Timesheet</td>
+			<td>Each line tagged to a WBS, cost code and machine, so hours are costed to the works.</td></tr>
+		<tr><td class="term">Attendance</td>
+			<td>Project and site, so site labour can be spread across the jobs they worked on.</td></tr>
+		<tr><td class="term">Expense Claim</td>
+			<td>Cost Head, WBS and Cost Code on each line.</td></tr>
+		<tr><td class="term">Serial No</td>
+			<td>Its item group is filled in automatically, which is what makes the small-tools register work.</td></tr>
+		<tr><td class="term">Purchase / Sales Invoice</td>
+			<td>Standard ERPNext: supplier bills in, progress claims out to the client.</td></tr>
+	</table>
+
+	<div class="strip" style="margin:4px 0 14px 0">
+		<b>Everything above ends up in the reports</b>
+		<span>Cost Code Wise Costing, Budget vs Commitment, Cost to Complete, BOQ vs
+		Consumption, Shipment TAT, Demurrage &amp; Detention, Tools Outstanding,
+		Cash Flow Forecast and more &mdash; all under A3 Constructa in the sidebar.</span>
+	</div>
+
+	<h2>Quick reference</h2>
+
+	<table class="data">
+		<tr>
+			<th style="width:24%">Constructa doctype</th>
+			<th style="width:21%">Number looks like</th>
+			<th style="width:14%">Finish with</th>
+			<th>Worked out for you</th>
+		</tr>
+		<tr><td class="term">Cost Head / WBS / Cost Code</td><td class="mono">its own code</td><td>Save</td><td>WBS level</td></tr>
+		<tr><td class="term">BOQ</td><td class="mono">BOQ-2026-0001</td><td>Approval</td><td>Amount, budget amount, total</td></tr>
+		<tr><td class="term">WBS Allocation</td><td class="mono">WBSA-2026-0001</td><td>Save</td><td>Allocated amount, balance qty</td></tr>
+		<tr><td class="term">Procurement Plan</td><td class="mono">PP-2026-0001</td><td>Save</td><td>Recommended PR date</td></tr>
+		<tr><td class="term">Shipment Tracking</td><td class="mono">SHP-2026-0001</td><td>Submit</td><td>Transit days, days late, document check</td></tr>
+		<tr><td class="term">Tool Issue</td><td class="mono">TIS-2026-0001</td><td>Submit</td><td>Value at issue, status, the stock movement</td></tr>
+		<tr><td class="term">Work Certificate</td><td class="mono">WC-2026-0001</td><td>Submit</td><td>Amount, retention, net payable</td></tr>
+		<tr><td class="term">Approval Matrix</td><td class="mono">AM-0001</td><td>Save</td><td>&mdash;</td></tr>
+		<tr><td class="term">Mandatory Document Rule</td><td class="mono">MDR-0001</td><td>Save</td><td>&mdash;</td></tr>
+		<tr><td class="term">Freight Rate Contract</td><td class="mono">FRC-2026-0001</td><td>Save</td><td>&mdash;</td></tr>
+		<tr><td class="term">Asset Spare Part</td><td class="mono">ASP-0001</td><td>Save</td><td>&mdash;</td></tr>
+		<tr><td class="term">Port / Service Route / Document Type</td><td class="mono">its own name</td><td>Save</td><td>&mdash;</td></tr>
+	</table>
+</div>
+
+</body>
+</html>

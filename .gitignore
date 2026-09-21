@@ -11,4 +11,5 @@ node_modules
 # build artefact, regenerated with:
 #   bench --site <site> execute a3_constructa.demo.build_docs.build_pdf
 #   bench --site <site> execute a3_constructa.demo.build_docs.build_guide
+#   bench --site <site> execute a3_constructa.demo.build_docs.build_flow
 docs/*.pdf
