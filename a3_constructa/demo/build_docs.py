@@ -19,6 +19,9 @@ OUTPUT = "docs/A3-Constructa-How-It-Works.pdf"
 GUIDE_SOURCE = "docs/maintenance_guide.html"
 GUIDE_OUTPUT = "docs/A3-Constructa-Maintenance-Guide.pdf"
 
+FLOW_SOURCE = "docs/doctype_flow.html"
+FLOW_OUTPUT = "docs/A3-Constructa-Doctype-Flow.pdf"
+
 # wkhtmltopdf takes its page setup from arguments, not from @page rules, so the
 # margins here have to match the ones in the stylesheet.
 PDF_OPTIONS = {
@@ -71,4 +74,13 @@ def build_guide() -> str:
 		source=GUIDE_SOURCE,
 		output=GUIDE_OUTPUT,
 		footer="A3 Constructa - Maintenance guide (internal)",
+	)
+
+
+def build_flow() -> str:
+	"""Render the short doctype-by-doctype walkthrough."""
+	return build_pdf(
+		source=FLOW_SOURCE,
+		output=FLOW_OUTPUT,
+		footer="A3 Constructa - How each doctype works",
 	)
