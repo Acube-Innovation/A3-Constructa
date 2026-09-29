@@ -1,17 +1,62 @@
 {
  "charts": [],
- "content": "[{\"id\": \"pr_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Procurement</b></span>\", \"col\": 12}}, {\"id\": \"card_pr_creation_by_project_team\", \"type\": \"card\", \"data\": {\"card_name\": \"PR Creation by Project Team\", \"col\": 4}}, {\"id\": \"card_pr_approval_workflow\", \"type\": \"card\", \"data\": {\"card_name\": \"PR Approval Workflow\", \"col\": 4}}, {\"id\": \"card_rfq_process\", \"type\": \"card\", \"data\": {\"card_name\": \"RFQ Process\", \"col\": 4}}, {\"id\": \"card_quotation_receipt\", \"type\": \"card\", \"data\": {\"card_name\": \"Quotation Receipt\", \"col\": 4}}, {\"id\": \"card_budget_commitment\", \"type\": \"card\", \"data\": {\"card_name\": \"Budget Commitment\", \"col\": 4}}, {\"id\": \"card_vendor_selection_&_approval\", \"type\": \"card\", \"data\": {\"card_name\": \"Vendor Selection & Approval\", \"col\": 4}}, {\"id\": \"card_purchase_order_(po)\", \"type\": \"card\", \"data\": {\"card_name\": \"Purchase Order (PO)\", \"col\": 4}}, {\"id\": \"card_cost_comparison\", \"type\": \"card\", \"data\": {\"card_name\": \"Cost Comparison\", \"col\": 4}}, {\"id\": \"card_contract_/_subcontract_po\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract / Subcontract PO\", \"col\": 4}}]",
+ "content": "[{\"id\": \"proc_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Procurement Overview\", \"col\": 12}}, {\"id\": \"pr_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Procurement</b></span>\", \"col\": 12}}, {\"id\": \"card_boq_procurement\", \"type\": \"card\", \"data\": {\"card_name\": \"BOQ Procurement\", \"col\": 4}}, {\"id\": \"card_pr_creation_by_project_team\", \"type\": \"card\", \"data\": {\"card_name\": \"PR Creation by Project Team\", \"col\": 4}}, {\"id\": \"card_pr_approval_workflow\", \"type\": \"card\", \"data\": {\"card_name\": \"PR Approval Workflow\", \"col\": 4}}, {\"id\": \"card_rfq_process\", \"type\": \"card\", \"data\": {\"card_name\": \"RFQ Process\", \"col\": 4}}, {\"id\": \"card_quotation_receipt\", \"type\": \"card\", \"data\": {\"card_name\": \"Quotation Receipt\", \"col\": 4}}, {\"id\": \"card_budget_commitment\", \"type\": \"card\", \"data\": {\"card_name\": \"Budget Commitment\", \"col\": 4}}, {\"id\": \"card_vendor_selection_&_approval\", \"type\": \"card\", \"data\": {\"card_name\": \"Vendor Selection & Approval\", \"col\": 4}}, {\"id\": \"card_purchase_order_(po)\", \"type\": \"card\", \"data\": {\"card_name\": \"Purchase Order (PO)\", \"col\": 4}}, {\"id\": \"card_cost_comparison\", \"type\": \"card\", \"data\": {\"card_name\": \"Cost Comparison\", \"col\": 4}}, {\"id\": \"card_contract_/_subcontract_po\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract / Subcontract PO\", \"col\": 4}}, {\"id\": \"card_procurement_classification\", \"type\": \"card\", \"data\": {\"card_name\": \"Procurement Classification\", \"col\": 4}}]",
  "creation": "2026-09-15 12:43:54.700177",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "Procurement Overview",
+   "label": "Procurement Overview"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "hide_custom": 0,
- "icon": "purchase",
+ "icon": "buying",
  "idx": 0,
  "indicator_color": "green",
  "is_hidden": 0,
  "label": "Procurement",
  "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "BOQ Procurement",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Material request from BOQ",
+   "link_count": 0,
+   "link_to": "Material Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Award procurement status",
+   "link_count": 0,
+   "link_to": "Award Procurement Status",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "BOQ",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Award procurement view",
+   "link_count": 0,
+   "link_to": "award-procurement",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
   {
    "hidden": 0,
    "is_query_report": 0,
@@ -390,9 +435,112 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Procurement Classification",
+   "link_count": 9,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Consumables",
+   "link_count": 0,
+   "link_to": "Item Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Construction Materials",
+   "link_count": 0,
+   "link_to": "Construction Materials Items",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Item",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Services",
+   "link_count": 0,
+   "link_to": "Item Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subcontract Works",
+   "link_count": 0,
+   "link_to": "Subcontracting Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Spare Parts",
+   "link_count": 0,
+   "link_to": "Spare Parts Items",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Item",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Heavy Equipment",
+   "link_count": 0,
+   "link_to": "Asset Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Vehicles",
+   "link_count": 0,
+   "link_to": "Vehicle",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental / Hire Equipment",
+   "link_count": 0,
+   "link_to": "Rental Items",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Item",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Temporary Works Material",
+   "link_count": 0,
+   "link_to": "Temporary Works Items",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Item",
+   "type": "Link"
   }
  ],
- "modified": "2026-09-15 12:46:11.397244",
+ "modified": "2026-09-22 13:43:13.324650",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Procurement",

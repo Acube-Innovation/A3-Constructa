@@ -1,0 +1,45 @@
+/* Award Procurement View: the parts only this page draws. The shared
+   stylesheet (_shared/overview.css) is placed in front of this one. */
+
+.ov-heading {
+	display: grid;
+	gap: 4px;
+}
+
+.ov-heading-title {
+	margin: 0;
+	color: var(--ov-ink);
+	font-size: var(--text-2xl, 20px);
+	font-weight: 600;
+}
+
+a:hover .ov-heading-title {
+	text-decoration: underline;
+}
+
+.ov-heading-meta {
+	margin: 0;
+	color: var(--ov-ink-2);
+	font-size: var(--text-sm, 13px);
+}
+
+.ov-hero-stages {
+	display: grid;
+	gap: 10px;
+	margin-top: 4px;
+}
+
+.ov-docs {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+	gap: 16px;
+	align-items: start;
+}
+
+.ov-list-title {
+	margin: 0;
+	padding: 14px 18px 4px;
+	color: var(--ov-ink);
+	font-size: var(--text-base, 14px);
+	font-weight: 600;
+}

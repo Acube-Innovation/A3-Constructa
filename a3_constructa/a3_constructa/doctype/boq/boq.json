@@ -10,6 +10,7 @@
   "naming_series",
   "project",
   "cost_head",
+  "awarded_quotation",
   "cb_1",
   "boq_date",
   "revision_no",
@@ -45,6 +46,14 @@
    "in_list_view": 1,
    "label": "Cost Head",
    "options": "Cost Head"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "awarded_quotation",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Awarded Quotation",
+   "options": "Awarded Quotation"
   },
   {
    "fieldname": "cb_1",
@@ -126,7 +135,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-15 11:42:16.347786",
+ "modified": "2026-09-22 13:11:56.682225",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ",

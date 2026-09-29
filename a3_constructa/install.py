@@ -46,19 +46,23 @@ def before_install():
 
 
 def after_install():
+	from a3_constructa.setup import custom_html_blocks
 	from a3_constructa.setup.install_defaults import run as install_defaults
 
 	create_roles()
 	install_defaults()
+	custom_html_blocks.sync()
 	frappe.db.commit()
 
 
 def after_migrate():
-	"""Keep roles and defaults in sync on every `bench migrate`."""
+	"""Keep roles, defaults and Custom HTML Blocks in sync on every `bench migrate`."""
+	from a3_constructa.setup import custom_html_blocks
 	from a3_constructa.setup.install_defaults import run as install_defaults
 
 	create_roles()
 	install_defaults()
+	custom_html_blocks.sync()
 
 
 def before_tests():
