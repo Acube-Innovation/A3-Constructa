@@ -1,0 +1,322 @@
+/* Planning & Budgeting Overview: the parts only this dashboard draws. The
+   shared stylesheet (_shared/overview.css) is placed in front of this one. */
+
+/* ---------- Order book ---------- */
+
+.ov-hero-money {
+	font-size: clamp(34px, 5vw, 48px);
+	overflow-wrap: anywhere;
+}
+
+.ov-hero-progress {
+	display: grid;
+	gap: 6px;
+	margin-top: 4px;
+}
+
+.ov-meter-head {
+	display: flex;
+	justify-content: space-between;
+	color: var(--ov-ink-2);
+	font-size: var(--text-sm, 13px);
+}
+
+.ov-meter-head strong {
+	color: var(--ov-ink);
+}
+
+.ov-hero-split {
+	display: grid;
+	grid-template-columns: auto auto;
+	justify-content: space-between;
+	gap: 6px 16px;
+	margin: 4px 0 0;
+	padding-top: 12px;
+	border-top: 1px solid var(--ov-border);
+	font-size: var(--text-sm, 13px);
+}
+
+.ov-hero-split dt {
+	color: var(--ov-ink-2);
+	font-weight: 400;
+}
+
+.ov-hero-split dd {
+	margin: 0;
+	color: var(--ov-ink);
+	font-weight: 500;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-text-link {
+	color: var(--ov-ink);
+	font-weight: 500;
+	border-bottom: 1px solid var(--ov-border);
+}
+
+.ov-text-link:hover {
+	border-bottom-color: currentColor;
+}
+
+/* ---------- Award timeline ---------- */
+
+.ov-timeline {
+	position: relative;
+	margin: 0;
+	padding: 4px 0 8px;
+}
+
+.ov-tl-row {
+	display: grid;
+	grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 9rem;
+	column-gap: 16px;
+	border-top: 1px solid var(--ov-border);
+}
+
+.ov-tl-row.ov-tl-head {
+	border-top: 0;
+}
+
+.ov-tl-label {
+	display: grid;
+	align-content: center;
+	gap: 2px;
+	min-width: 0;
+	padding: 10px 0 10px 18px;
+}
+
+a.ov-tl-label:hover .ov-tl-title {
+	text-decoration: underline;
+}
+
+.ov-tl-title {
+	overflow: hidden;
+	color: var(--ov-ink);
+	font-weight: 500;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-tl-meta {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	overflow: hidden;
+	color: var(--ov-ink-3);
+	font-size: 12px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-tl-issue {
+	color: var(--ov-ink-2);
+}
+
+.ov-tl-issue .ov-icon {
+	width: 14px;
+	height: 14px;
+}
+
+.ov-tl-track {
+	position: relative;
+	min-height: 64px;
+}
+
+.ov-tl-track:focus-visible {
+	outline-offset: -2px;
+}
+
+.ov-tl-bar {
+	position: absolute;
+	top: 50%;
+	height: 12px;
+	overflow: hidden;
+	border-radius: 4px;
+	background: var(--ov-track);
+	transform: translateY(-50%);
+}
+
+.ov-tl-track:hover .ov-tl-bar,
+.ov-tl-track:focus-visible .ov-tl-bar {
+	box-shadow: 0 0 0 2px var(--ov-surface), 0 0 0 3px var(--ov-series);
+}
+
+.ov-tl-progress {
+	height: 100%;
+	background: var(--ov-series);
+}
+
+.ov-tl-today {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background: var(--ov-ink-3);
+	opacity: 0.55;
+}
+
+.ov-tl-nodates {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	color: var(--ov-ink-3);
+	font-size: 12px;
+	transform: translateY(-50%);
+}
+
+.ov-tl-axis {
+	position: relative;
+	height: 30px;
+}
+
+.ov-tl-tick,
+.ov-tl-today-label {
+	position: absolute;
+	bottom: 6px;
+	transform: translateX(-50%);
+	font-size: 11px;
+	white-space: nowrap;
+}
+
+.ov-tl-tick {
+	color: var(--ov-ink-3);
+}
+
+.ov-tl-today-label {
+	z-index: 1;
+	padding: 0 4px;
+	background: var(--ov-surface);
+	color: var(--ov-ink);
+	font-weight: 600;
+}
+
+.ov-tl-value {
+	display: grid;
+	align-content: center;
+	justify-items: end;
+	gap: 2px;
+	padding: 10px 18px 10px 0;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-tl-value strong {
+	color: var(--ov-ink);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ov-tl-value span {
+	color: var(--ov-ink-3);
+	font-size: 12px;
+}
+
+.ov-tl-head .ov-tl-value {
+	align-content: end;
+	padding-bottom: 6px;
+	color: var(--ov-ink-3);
+	font-size: 11px;
+}
+
+@media (max-width: 760px) {
+	.ov-tl-row {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+
+	.ov-tl-label {
+		grid-row: 1;
+	}
+
+	.ov-tl-value {
+		grid-row: 1;
+		grid-column: 2;
+	}
+
+	.ov-tl-track {
+		grid-row: 2;
+		grid-column: 1 / -1;
+		min-height: 28px;
+		margin: 0 18px 10px;
+	}
+
+	.ov-tl-head .ov-tl-label,
+	.ov-tl-head .ov-tl-value {
+		display: none;
+	}
+
+	.ov-tl-axis {
+		grid-column: 1 / -1;
+		margin: 0 18px;
+	}
+}
+
+/* ---------- Budget allocated to WBS ---------- */
+
+.ov-meters {
+	margin: 0;
+	padding: 4px 0;
+	list-style: none;
+}
+
+.ov-meter-row {
+	display: grid;
+	grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) minmax(0, 17rem);
+	align-items: center;
+	gap: 16px;
+	padding: 14px 18px;
+	border-top: 1px solid var(--ov-border);
+}
+
+.ov-meters > li:first-child > .ov-meter-row {
+	border-top: 0;
+}
+
+a.ov-meter-row:hover {
+	background: var(--ov-subtle);
+}
+
+.ov-meter-label {
+	overflow: hidden;
+	color: var(--ov-ink);
+	font-weight: 500;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-meter-row .ov-meter {
+	display: block;
+}
+
+.ov-meter-fill {
+	display: block;
+}
+
+.ov-meter-fill.is-over {
+	background: var(--ov-critical);
+}
+
+.ov-meter-figure {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 4px 8px;
+	color: var(--ov-ink-2);
+	font-size: var(--text-sm, 13px);
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-meter-figure strong {
+	color: var(--ov-ink);
+}
+
+@media (max-width: 760px) {
+	.ov-meter-row {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 8px;
+	}
+
+	.ov-meter-figure {
+		justify-content: flex-start;
+	}
+}

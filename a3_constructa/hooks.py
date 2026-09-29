@@ -101,6 +101,11 @@ fixtures = [
 # app_include_css = "/assets/a3_constructa/css/a3_constructa_desk.css"
 # app_include_js = "/assets/a3_constructa/js/a3_constructa_desk.js"
 
+# Material Request gains Get Items From > BOQ.
+doctype_js = {
+	"Material Request": "public/js/material_request.js",
+}
+
 # ---------------------------------------------------------------- events
 # Build sheet head 48 row 19: a material issue must post to the project GL head
 # its Cost Code names, not the item or company default.
@@ -118,6 +123,11 @@ doc_events = {
 		# Head 55 row 23 filters the tool register by item group, which ERPNext
 		# leaves empty on every serial it creates.
 		"before_insert": "a3_constructa.overrides.serial_no.set_item_group",
+	},
+	# A request line fetched from a BOQ must still match its BOQ line; warn when
+	# the requests for a line add up to more than it approved.
+	"Material Request": {
+		"validate": "a3_constructa.overrides.material_request.validate_boq_lines",
 	},
 }
 

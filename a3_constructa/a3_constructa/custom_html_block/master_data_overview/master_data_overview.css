@@ -1,0 +1,300 @@
+/* Master Data Overview: the parts only this dashboard draws. The shared
+   stylesheet (_shared/overview.css) is placed in front of this one. */
+
+/* ---------- Not-started chips ---------- */
+
+.ov-hero-todo {
+	display: grid;
+	gap: 10px;
+	margin-top: 4px;
+}
+
+.ov-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ov-chip {
+	display: inline-flex;
+	padding: 6px 11px;
+	border: 1px solid var(--ms-border);
+	border-radius: var(--ms-r-pill);
+	background: var(--ms-green-050);
+	color: var(--ms-ink-3);
+	font-size: 12px;
+	line-height: 1.2;
+	white-space: nowrap;
+	transition: border-color 120ms ease;
+}
+
+.ov-chip:hover {
+	border-color: var(--ms-green-600);
+}
+
+/* ---------- Master area tiles ---------- */
+
+.ov-areas {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+	gap: var(--ms-gap-tile);
+}
+
+.ov-area {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 132px;
+	padding: 16px 18px;
+	border: 1px solid var(--ms-border-tile);
+	border-radius: var(--ms-r-tile);
+	background: var(--ms-surface);
+	transition: border-color 120ms ease;
+}
+
+.ov-area.is-empty,
+.ov-area.is-restricted {
+	border-color: var(--ms-border-quiet);
+	background: var(--ms-surface-quiet);
+}
+
+a.ov-area:hover {
+	border-color: var(--ms-green-600);
+}
+
+.ov-area-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+	color: var(--ms-ink);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+/* The status is a dot; the footer and the screen-reader text spell it out. */
+.ov-area-head .ov-icon {
+	width: 8px;
+	height: 8px;
+	margin-top: 5px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.ov-area-head .ov-icon svg {
+	display: none;
+}
+
+.ov-area-head .ov-icon.is-muted {
+	color: var(--ms-inactive-dot);
+}
+
+/* No access keeps its lock. */
+.ov-area.is-restricted .ov-area-head .ov-icon {
+	width: 14px;
+	height: 14px;
+	margin-top: 1px;
+	border-radius: 0;
+	background: none;
+	color: var(--ms-inactive-num);
+}
+
+.ov-area.is-restricted .ov-area-head .ov-icon svg {
+	display: block;
+}
+
+.ov-area-figure {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	margin: 0;
+}
+
+.ov-area-count {
+	color: var(--ms-green-800);
+	font-family: var(--ms-font-display);
+	font-size: 30px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.ov-area.is-empty .ov-area-count,
+.ov-area.is-restricted .ov-area-count {
+	color: var(--ms-inactive-num);
+}
+
+.ov-area-unit {
+	color: var(--ms-muted);
+	font-size: 12.5px;
+}
+
+.ov-facts {
+	display: flex;
+	flex-wrap: wrap;
+	align-content: start;
+	gap: 4px 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	color: var(--ms-muted);
+	font-size: 11.5px;
+}
+
+.ov-facts li {
+	display: inline-flex;
+	gap: 4px;
+}
+
+.ov-fact-value {
+	color: var(--ms-ink-2);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-area-foot {
+	margin: auto 0 0;
+	padding-top: 10px;
+	border-top: 1px solid var(--ms-rule);
+	color: var(--ms-muted);
+	font-size: 11.5px;
+}
+
+.ov-area.is-empty .ov-area-foot,
+.ov-area.is-restricted .ov-area-foot {
+	border-top-color: var(--ms-border-quiet);
+	color: var(--ms-muted-2);
+}
+
+/* ---------- Recently added ---------- */
+
+.ov-initial {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--ms-green-100);
+	color: var(--ms-green-600);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+/* ---------- Column chart (records per month) ---------- */
+
+.ov-chart {
+	position: relative;
+	margin: 0;
+	padding: 28px 24px 16px;
+}
+
+.ov-plot {
+	position: relative;
+	height: 190px;
+	margin-left: 36px;
+}
+
+.ov-gridline {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: var(--ms-rule);
+}
+
+.ov-gridline.is-base {
+	background: var(--ms-border);
+}
+
+.ov-tick {
+	position: absolute;
+	right: calc(100% + 8px);
+	transform: translateY(-50%);
+	color: var(--ms-muted);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.ov-columns {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+}
+
+.ov-col {
+	position: relative;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	height: 100%;
+	cursor: default;
+}
+
+.ov-col:focus-visible {
+	outline-offset: -2px;
+	border-radius: var(--ms-r-chip);
+}
+
+.ov-col-bar {
+	position: relative;
+	width: 100%;
+	max-width: 46px;
+	border-radius: 6px 6px 0 0;
+	background: linear-gradient(180deg, var(--ms-green-400), var(--ms-green-600));
+}
+
+.ov-col:hover .ov-col-bar,
+.ov-col:focus-visible .ov-col-bar {
+	background: linear-gradient(180deg, var(--ms-green-600), var(--ms-green-800));
+}
+
+/* A month with nothing added: a stub on the baseline, not a gap. */
+.ov-col .ov-col-bar.is-zero {
+	min-height: 3px;
+	border-radius: 0;
+	background: var(--ms-border-quiet);
+}
+
+.ov-col-cap {
+	position: absolute;
+	bottom: calc(100% + 4px);
+	left: 50%;
+	transform: translateX(-50%);
+	color: var(--ms-green-600);
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ov-xlabels {
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+	margin: 10px 0 0 36px;
+	color: var(--ms-muted);
+	font-size: 11px;
+	text-align: center;
+}
+
+.ov-xlabels span:nth-child(odd) {
+	visibility: var(--ov-odd-labels, visible);
+}
+
+@media (max-width: 560px) {
+	.ov-chart {
+		--ov-odd-labels: hidden;
+	}
+
+	.ov-columns,
+	.ov-xlabels {
+		gap: 4px;
+	}
+}

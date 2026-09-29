@@ -1,0 +1,311 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-09-22 13:10:01.077360",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "title",
+  "customer",
+  "project",
+  "quotation",
+  "cb_1",
+  "award_date",
+  "award_reference",
+  "company",
+  "currency",
+  "status",
+  "sb_contract",
+  "contract_value",
+  "approved_variations",
+  "revised_contract_value",
+  "cb_2",
+  "start_date",
+  "end_date",
+  "time_extension_days",
+  "revised_end_date",
+  "cb_3",
+  "retention_percent",
+  "advance_percent",
+  "defects_liability_months",
+  "sb_components",
+  "components",
+  "sb_timeline",
+  "milestones",
+  "progress_percent",
+  "sb_scope",
+  "scope"
+ ],
+ "fields": [
+  {
+   "default": "AQ-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "AQ-.YYYY.-.####",
+   "reqd": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name of Works",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Client",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "description": "The quotation that won the award, if it was raised in ERPNext.",
+   "fieldname": "quotation",
+   "fieldtype": "Link",
+   "label": "Our Quotation",
+   "options": "Quotation"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "award_date",
+   "fieldtype": "Date",
+   "label": "Award Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "award_reference",
+   "fieldtype": "Data",
+   "label": "Award / LOA Reference"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "remember_last_selected_value": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Draft\nAwarded\nIn Progress\nOn Hold\nCompleted\nCancelled"
+  },
+  {
+   "fieldname": "sb_contract",
+   "fieldtype": "Section Break",
+   "label": "Contract"
+  },
+  {
+   "description": "The total of the components below.",
+   "fieldname": "contract_value",
+   "fieldtype": "Currency",
+   "label": "Contract Value",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_variations",
+   "fieldtype": "Currency",
+   "label": "Approved Variations",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "revised_contract_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Revised Contract Value",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "Completion Date"
+  },
+  {
+   "fieldname": "time_extension_days",
+   "fieldtype": "Int",
+   "label": "Approved Extension (Days)",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "revised_end_date",
+   "fieldtype": "Date",
+   "label": "Revised Completion Date",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "retention_percent",
+   "fieldtype": "Percent",
+   "label": "Retention %"
+  },
+  {
+   "fieldname": "advance_percent",
+   "fieldtype": "Percent",
+   "label": "Advance %"
+  },
+  {
+   "fieldname": "defects_liability_months",
+   "fieldtype": "Int",
+   "label": "Defects Liability (Months)"
+  },
+  {
+   "description": "The packages of work the award covers. Link each one to the BOQ that prices it.",
+   "fieldname": "sb_components",
+   "fieldtype": "Section Break",
+   "label": "Components"
+  },
+  {
+   "fieldname": "components",
+   "fieldtype": "Table",
+   "label": "Components",
+   "options": "Awarded Quotation Component"
+  },
+  {
+   "fieldname": "sb_timeline",
+   "fieldtype": "Section Break",
+   "label": "Timeline"
+  },
+  {
+   "fieldname": "milestones",
+   "fieldtype": "Table",
+   "label": "Milestones",
+   "options": "Awarded Quotation Milestone"
+  },
+  {
+   "description": "Weightage of the completed milestones.",
+   "fieldname": "progress_percent",
+   "fieldtype": "Percent",
+   "label": "Progress",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sb_scope",
+   "fieldtype": "Section Break",
+   "label": "Scope and Terms"
+  },
+  {
+   "fieldname": "scope",
+   "fieldtype": "Text Editor",
+   "label": "Scope and Terms"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-22 13:10:01.077360",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Awarded Quotation",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "customer,project",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}
