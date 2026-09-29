@@ -22,6 +22,12 @@ GUIDE_OUTPUT = "docs/A3-Constructa-Maintenance-Guide.pdf"
 FLOW_SOURCE = "docs/doctype_flow.html"
 FLOW_OUTPUT = "docs/A3-Constructa-Doctype-Flow.pdf"
 
+GAP_SOURCE = "docs/boq_wbs_gap_analysis.html"
+GAP_OUTPUT = "docs/A3-Constructa-BOQ-WBS-Gap-Analysis.pdf"
+
+WBS_SOURCE = "docs/construction_wbs.html"
+WBS_OUTPUT = "docs/A3-Constructa-Construction-WBS.pdf"
+
 # wkhtmltopdf takes its page setup from arguments, not from @page rules, so the
 # margins here have to match the ones in the stylesheet.
 PDF_OPTIONS = {
@@ -83,4 +89,22 @@ def build_flow() -> str:
 		source=FLOW_SOURCE,
 		output=FLOW_OUTPUT,
 		footer="A3 Constructa - How each doctype works",
+	)
+
+
+def build_gap() -> str:
+	"""Render the BOQ -> WBS -> Item mapping gap analysis."""
+	return build_pdf(
+		source=GAP_SOURCE,
+		output=GAP_OUTPUT,
+		footer="A3 Constructa - BOQ to WBS gap analysis",
+	)
+
+
+def build_wbs() -> str:
+	"""Render the construction WBS planning document."""
+	return build_pdf(
+		source=WBS_SOURCE,
+		output=WBS_OUTPUT,
+		footer="A3 Constructa - Construction WBS",
 	)
