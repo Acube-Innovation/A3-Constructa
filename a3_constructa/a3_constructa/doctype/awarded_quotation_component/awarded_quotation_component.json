@@ -1,0 +1,123 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-22 13:10:01.077360",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "component",
+  "cost_head",
+  "boq",
+  "qty",
+  "rate",
+  "amount",
+  "sb_1",
+  "description",
+  "uom",
+  "cb_1",
+  "boq_status",
+  "boq_amount"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "component",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Component",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "cost_head",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cost Head",
+   "options": "Cost Head"
+  },
+  {
+   "columns": 2,
+   "fieldname": "boq",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "BOQ",
+   "options": "BOQ"
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty"
+  },
+  {
+   "columns": 1,
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Rate",
+   "options": "currency"
+  },
+  {
+   "columns": 2,
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "boq.status",
+   "fieldname": "boq_status",
+   "fieldtype": "Data",
+   "label": "BOQ Status",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "boq.total_amount",
+   "fieldname": "boq_amount",
+   "fieldtype": "Currency",
+   "label": "BOQ Total",
+   "options": "currency",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-22 13:10:01.077360",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Awarded Quotation Component",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

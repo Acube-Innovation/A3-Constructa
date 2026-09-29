@@ -1,0 +1,986 @@
+/* Shared by every "<Workspace> Overview" block: custom_html_blocks.py puts this
+   file in front of each block's own stylesheet. It lives in the block's shadow
+   root, so nothing here can leak into the desk, and no app stylesheet can reach
+   in: the MASECO style guide's tokens live here, on the block's root element,
+   which also carries the guide's `maseco` class.
+
+   Contrast: every text colour below is at least 4.5:1 on the surface it sits on,
+   in both themes. The guide's --ms-inactive-num is 4.4:1 on white, so it is used
+   only for numerals of 24px and up and for icons; small text uses --ms-muted-2. */
+
+.ov {
+	/* ---------- MASECO tokens ---------- */
+
+	--ms-green-900: #1d3a26;
+	--ms-green-800: #1d4227;
+	--ms-green-600: #2f6b3d;
+	--ms-green-400: #6fae5c;
+	--ms-green-100: #e4efdd;
+	--ms-green-050: #f2f6ef;
+
+	--ms-navy-700: #1f3864;
+	--ms-navy-400: #4a6da8;
+	--ms-amber-700: #8a6412;
+	--ms-amber-050: #fbf0da;
+
+	--ms-surface: #ffffff;
+	--ms-surface-quiet: #fbfcf9;
+	--ms-border: #e0e8da;
+	--ms-border-quiet: #e6ebe1;
+	--ms-rule: #edf1e9;
+	--ms-row-hover: #f7faf4;
+	--ms-ink: #17251b;
+	--ms-ink-2: #35463a;
+	--ms-ink-3: #43543f;
+	--ms-muted: #556356;
+	--ms-muted-2: #5f6e59;
+	--ms-inactive-num: #6e7d68;
+	--ms-inactive-dot: #cdd7c8;
+
+	/* Colours the guide's recipes give inline, named so the dark set can swap them. */
+	--ms-track: #e9efe4;
+	--ms-track-bar: #eef2ea;
+	--ms-border-tile: #dbe6d3;
+	--ms-border-accent: #cfe0c6;
+	--ms-panel-ink: #ffffff;
+	--ms-panel-eyebrow: #9dbb92;
+	--ms-panel-note: #bcd4b3;
+	/* The mark inside a filled status icon. */
+	--ms-on-status: #ffffff;
+
+	--ms-font-ui: "Public Sans", Helvetica, Arial, sans-serif;
+	--ms-font-display: Newsreader, Georgia, serif;
+
+	--ms-r-card: 16px;
+	--ms-r-tile: 14px;
+	--ms-r-chip: 8px;
+	--ms-r-pill: 999px;
+	--ms-gap: 16px;
+	--ms-gap-tile: 14px;
+	--ms-section-gap: 32px;
+	--ms-pad-card: 22px 24px;
+	--ms-pad-row: 14px 18px;
+
+	/* ---------- The names the overview rules use, pointed at the tokens ---------- */
+
+	--ov-ink: var(--ms-ink);
+	--ov-ink-2: var(--ms-muted);
+	--ov-ink-3: var(--ms-muted-2);
+	--ov-surface: var(--ms-surface);
+	--ov-subtle: var(--ms-row-hover);
+	--ov-border: var(--ms-border);
+	--ov-grid: var(--ms-rule);
+	--ov-radius: var(--ms-r-card);
+
+	--ov-series: var(--ms-green-600);
+	--ov-series-hover: var(--ms-green-800);
+	--ov-track: var(--ms-track);
+	--ov-other: var(--ms-inactive-dot);
+
+	/* Procurement stages: one hue, softer to stronger as the goods get closer. */
+	--ov-stage-requested: var(--ms-green-400);
+	--ov-stage-ordered: var(--ms-green-600);
+	--ov-stage-received: var(--ms-green-900);
+	--ov-stage-track: var(--ms-track-bar);
+
+	/* Status colours never carry meaning alone: every use sits beside an icon and
+	   a text label. The guide has no error colour, so critical keeps its red. */
+	--ov-good: var(--ms-green-600);
+	--ov-warning: var(--ms-amber-700);
+	--ov-critical: #d03b3b;
+	--ov-critical-tint: color-mix(in srgb, var(--ov-critical) 12%, var(--ms-surface));
+
+	color: var(--ms-ink-2);
+	font-family: var(--ms-font-ui);
+	font-size: 13.5px;
+}
+
+/* The guide is light only. This set keeps its hues and roles on the dark desk:
+   "strong" steps (800, 600, 700) turn light, "soft" ones (400, 100, 050) turn dim. */
+.ov[data-theme="dark"] {
+	--ms-green-800: #b4dca5;
+	--ms-green-600: #8cc67a;
+	--ms-green-400: #4f8c43;
+	--ms-green-100: #233a26;
+	--ms-green-050: #111612;
+
+	--ms-navy-700: #9db8e6;
+	--ms-navy-400: #4a6da8;
+	--ms-amber-700: #e2b456;
+	--ms-amber-050: #3b2f14;
+
+	--ms-surface: #1a201b;
+	--ms-surface-quiet: #161b17;
+	--ms-border: #2f3b31;
+	--ms-border-quiet: #283129;
+	--ms-rule: #252d26;
+	--ms-row-hover: #212922;
+	--ms-ink: #e9efe6;
+	--ms-ink-2: #cfd9cc;
+	--ms-ink-3: #bfcbbb;
+	--ms-muted: #a9b6a5;
+	--ms-muted-2: #a2af9e;
+	--ms-inactive-num: #95a391;
+	--ms-inactive-dot: #465348;
+
+	--ms-track: #29332b;
+	--ms-track-bar: #252e27;
+	--ms-border-tile: #34443a;
+	--ms-border-accent: #35523a;
+	--ms-on-status: #111612;
+
+	--ov-stage-requested: #3f6f37;
+	--ov-stage-ordered: #6fae5c;
+	--ov-stage-received: #b4dca5;
+}
+
+.ov *,
+.ov *::before,
+.ov *::after {
+	box-sizing: border-box;
+}
+
+.ov a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.ov :focus-visible {
+	outline: 2px solid var(--ms-green-600);
+	outline-offset: 2px;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+/* ---------- Tabs ---------- */
+
+.ov-tabs {
+	display: flex;
+	gap: 28px;
+	border-bottom: 1px solid var(--ms-border);
+	overflow-x: auto;
+}
+
+.ov-tab {
+	padding: 10px 0 12px;
+	border: 0;
+	background: none;
+	color: var(--ms-muted);
+	font: inherit;
+	font-weight: 500;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: color 120ms ease;
+}
+
+.ov-tab:hover {
+	color: var(--ms-ink);
+}
+
+.ov-tab[aria-selected="true"] {
+	color: var(--ms-green-600);
+	box-shadow: inset 0 -2px 0 var(--ms-green-600);
+}
+
+.ov-editing-note {
+	margin: 12px 0 0;
+	color: var(--ms-muted);
+	font-size: 12.5px;
+}
+
+.ov.is-editing .ov-panel {
+	display: none;
+}
+
+.ov.is-editing .ov-tabs {
+	opacity: 0.55;
+	pointer-events: none;
+}
+
+/* ---------- Panel: the page canvas the cards sit on ---------- */
+
+.ov-panel {
+	display: grid;
+	gap: var(--ms-section-gap);
+	margin-top: 16px;
+	padding: 24px;
+	border-radius: var(--ms-r-card);
+	background: var(--ms-green-050);
+	transition: opacity 120ms ease;
+}
+
+@media (max-width: 560px) {
+	.ov-panel {
+		padding: 16px;
+	}
+}
+
+.ov.is-refreshing .ov-panel {
+	opacity: 0.55;
+}
+
+.ov-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 16px;
+}
+
+/* The lede. */
+.ov-intro {
+	margin: 0;
+	color: var(--ms-ink);
+	font-family: var(--ms-font-display);
+	font-size: 19px;
+	line-height: 1.4;
+}
+
+.ov-stamp {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--ms-muted);
+	font-size: 12.5px;
+}
+
+.ov-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 14px;
+	border: 1px solid var(--ms-border);
+	border-radius: var(--ms-r-pill);
+	background: transparent;
+	color: var(--ms-ink-3);
+	font: inherit;
+	font-size: 12.5px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: border-color 120ms ease;
+}
+
+.ov-button:hover {
+	border-color: var(--ms-green-600);
+}
+
+.ov-button.ov-refresh {
+	border-color: var(--ms-border-accent);
+	background: var(--ms-green-100);
+	color: var(--ms-green-600);
+}
+
+.ov-button.ov-refresh:hover {
+	border-color: var(--ms-green-600);
+}
+
+.ov-button:disabled {
+	cursor: default;
+	opacity: 0.6;
+}
+
+.ov-icon {
+	display: inline-flex;
+	flex: none;
+	width: 16px;
+	height: 16px;
+}
+
+.ov-icon svg {
+	width: 100%;
+	height: 100%;
+}
+
+.ov-icon.is-good { color: var(--ov-good); }
+.ov-icon.is-warning { color: var(--ov-warning); }
+.ov-icon.is-critical { color: var(--ov-critical); }
+.ov-icon.is-muted { color: var(--ms-inactive-num); }
+
+.ov-icon .mark {
+	stroke: var(--ms-on-status);
+	stroke-width: 1.75;
+}
+
+.ov-icon.is-critical .mark {
+	stroke: #ffffff;
+}
+
+.ov-card {
+	padding: var(--ms-pad-card);
+	border: 1px solid var(--ms-border);
+	border-radius: var(--ms-r-card);
+	background: var(--ms-surface);
+}
+
+/* ---------- Sections ---------- */
+
+.ov-section {
+	display: grid;
+	gap: 14px;
+	min-width: 0;
+}
+
+.ov-section-head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.ov-section-title {
+	margin: 0;
+	color: var(--ms-ink);
+	font-family: var(--ms-font-display);
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.ov-section-caption {
+	margin: 4px 0 0;
+	color: var(--ms-muted);
+	font-size: 12.5px;
+}
+
+.ov-split {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+	gap: var(--ms-section-gap) var(--ms-gap);
+	align-items: start;
+}
+
+/* ---------- Summary: hero + KPI cards ---------- */
+
+.ov-summary {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: var(--ms-gap);
+}
+
+@media (max-width: 900px) {
+	.ov-summary {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.ov-hero {
+	display: grid;
+	align-content: start;
+	gap: 14px;
+}
+
+/* The eyebrow over a figure. */
+.ov-label {
+	margin: 0;
+	color: var(--ms-muted);
+	font-size: 11px;
+	font-weight: 400;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.ov-hero-figure {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	margin: 0;
+}
+
+.ov-hero-value {
+	color: var(--ms-green-800);
+	font-family: var(--ms-font-display);
+	font-size: 58px;
+	font-weight: 400;
+	line-height: 0.9;
+	letter-spacing: -0.01em;
+}
+
+.ov-hero-of {
+	color: var(--ms-ink-2);
+	font-size: 14px;
+}
+
+.ov-meter {
+	height: 8px;
+	border-radius: var(--ms-r-pill);
+	background: var(--ms-track);
+	overflow: hidden;
+}
+
+.ov-meter-fill {
+	height: 100%;
+	border-radius: var(--ms-r-pill);
+	background: linear-gradient(90deg, var(--ms-green-600), var(--ms-green-400));
+}
+
+.ov-hero-caption {
+	margin: 0;
+	color: var(--ms-muted);
+	font-size: 12.5px;
+}
+
+.ov-kpis {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--ms-gap);
+}
+
+@media (max-width: 520px) {
+	.ov-kpis {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.ov-kpi {
+	display: grid;
+	align-content: start;
+	gap: 8px;
+}
+
+/* kpi() marks a card is-zero when there is nothing to count and is-attention
+   when a warning or critical icon leads the figure. */
+.ov-kpi-value {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	color: var(--ms-green-800);
+	font-family: var(--ms-font-display);
+	font-size: 34px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.ov-kpi.is-zero .ov-kpi-value {
+	color: var(--ms-inactive-num);
+}
+
+.ov-kpi.is-attention .ov-kpi-value {
+	color: var(--ms-amber-700);
+}
+
+.ov-kpi-value .ov-icon {
+	width: 20px;
+	height: 20px;
+}
+
+.ov-kpi-note {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin: 0;
+	color: var(--ms-muted);
+	font-size: 12px;
+}
+
+.ov-kpi-note .ov-icon {
+	width: 14px;
+	height: 14px;
+}
+
+/* The page's one headline figure. Light on dark, whatever the state rules say. */
+.ov-kpi.ov-stat-panel {
+	border-color: transparent;
+	background: var(--ms-green-900);
+}
+
+.ov[data-theme="dark"] .ov-kpi.ov-stat-panel {
+	border-color: var(--ms-border-accent);
+}
+
+.ov-kpi.ov-stat-panel .ov-label {
+	color: var(--ms-panel-eyebrow);
+}
+
+.ov-kpi.ov-stat-panel .ov-kpi-value {
+	color: var(--ms-panel-ink);
+	font-size: 44px;
+}
+
+.ov-kpi.ov-stat-panel .ov-kpi-note {
+	color: var(--ms-panel-note);
+}
+
+/* ---------- Row lists ---------- */
+
+.ov-rows {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ov-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: var(--ms-pad-row);
+	border-top: 1px solid var(--ms-rule);
+	transition: background-color 120ms ease;
+}
+
+.ov-rows > li:first-child > .ov-row {
+	border-top: 0;
+}
+
+a.ov-row:hover {
+	background: var(--ms-row-hover);
+}
+
+.ov-row-main {
+	flex: 1;
+	min-width: 0;
+}
+
+.ov-row-title {
+	display: block;
+	overflow: hidden;
+	color: var(--ms-ink);
+	font-size: 13.5px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-row.is-ok .ov-row-title {
+	color: var(--ms-ink-2);
+}
+
+.ov-row-meta {
+	display: block;
+	overflow: hidden;
+	margin-top: 2px;
+	color: var(--ms-muted);
+	font-size: 11.5px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-row-count {
+	color: var(--ms-ink);
+	font-family: var(--ms-font-display);
+	font-size: 20px;
+	font-weight: 400;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-row.is-ok .ov-row-meta,
+.ov-row.is-ok .ov-row-count {
+	color: var(--ms-muted-2);
+}
+
+.ov-row:has(> .ov-icon.is-warning) .ov-row-meta,
+.ov-row:has(> .ov-icon.is-warning) .ov-row-count {
+	color: var(--ms-amber-700);
+}
+
+/* A status icon leading a row sits in a chip, drawn as its mark alone. */
+.ov-row > .ov-icon:first-child {
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border-radius: var(--ms-r-chip);
+	background: var(--ms-rule);
+}
+
+.ov-row > .ov-icon:first-child svg {
+	width: 14px;
+	height: 14px;
+}
+
+.ov-row > .ov-icon:is(.is-good, .is-warning, .is-critical):first-child svg > :not(.mark) {
+	display: none;
+}
+
+.ov-row > .ov-icon:is(.is-good, .is-warning, .is-critical):first-child .mark {
+	stroke: currentColor;
+	stroke-width: 2;
+}
+
+.ov-row > .ov-icon.is-good:first-child {
+	background: var(--ms-green-100);
+	color: var(--ms-green-600);
+}
+
+.ov-row > .ov-icon.is-warning:first-child {
+	background: var(--ms-amber-050);
+	color: var(--ms-amber-700);
+}
+
+.ov-row > .ov-icon.is-critical:first-child {
+	background: var(--ov-critical-tint);
+}
+
+.ov-chevron {
+	color: var(--ms-inactive-num);
+}
+
+/* A date or amount at the end of a row. */
+.ov-row-when {
+	color: var(--ms-muted);
+	font-size: 12.5px;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-row-when.is-late {
+	color: var(--ms-ink);
+	font-weight: 600;
+}
+
+.ov-list-card {
+	padding: 0;
+	overflow: hidden;
+}
+
+/* ---------- Bar lists (composition) ---------- */
+
+.ov-breakdowns {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--ms-gap);
+}
+
+@media (max-width: 760px) {
+	.ov-breakdowns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.ov-breakdown {
+	position: relative;
+	display: grid;
+	align-content: start;
+	gap: 12px;
+}
+
+.ov-breakdown-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.ov-breakdown-title {
+	margin: 0;
+	color: var(--ms-ink);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.ov-breakdown-total {
+	color: var(--ms-muted);
+	font-size: 12px;
+}
+
+/* Label, bar, value. Every row spans the list's three columns (subgrid), so the
+   value column fits the widest value and all the tracks line up. */
+.ov-bars {
+	display: grid;
+	grid-template-columns: minmax(90px, 0.6fr) minmax(0, 1fr) minmax(28px, max-content);
+	gap: 2px 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ov-bars > li,
+.ov-bar-row {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+}
+
+.ov-bar-row {
+	align-items: center;
+	padding: 6px 8px;
+	margin: 0 -8px;
+	border-radius: var(--ms-r-chip);
+	transition: background-color 120ms ease;
+}
+
+a.ov-bar-row:hover,
+a.ov-bar-row:focus-visible {
+	background: var(--ms-row-hover);
+}
+
+.ov-bar-label {
+	overflow: hidden;
+	color: var(--ms-ink-2);
+	font-size: 13px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-bar-track {
+	display: grid;
+	grid-column: 2 / -1;
+	grid-template-columns: subgrid;
+	align-items: center;
+	min-width: 0;
+}
+
+.ov-bar-track::before {
+	content: "";
+	grid-area: 1 / 1;
+	height: 10px;
+	border-radius: var(--ms-r-pill);
+	background: var(--ms-track-bar);
+}
+
+/* The bar's inline width leaves room for a value label at its end; here the
+   value has a column of its own, so that room is zero. */
+.ov-bar {
+	--ov-bar-label-room: 0px;
+	grid-area: 1 / 1;
+	justify-self: start;
+	min-width: 2px;
+	height: 10px;
+	border-radius: var(--ms-r-pill);
+	background: linear-gradient(90deg, var(--ms-green-600), var(--ms-green-400));
+}
+
+/* Side by side, the second series of a pair is navy. */
+.ov-breakdowns > .ov-breakdown:nth-child(even) .ov-bar:not(.is-other) {
+	background: linear-gradient(90deg, var(--ms-navy-700), var(--ms-navy-400));
+}
+
+.ov-bar.is-other {
+	background: var(--ov-other);
+}
+
+.ov-bar-value {
+	grid-area: 1 / 2;
+	justify-self: end;
+	color: var(--ms-ink);
+	font-size: 12px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+/* ---------- Procurement stages ---------- */
+
+.ov-stages {
+	position: relative;
+	display: block;
+	height: 10px;
+	overflow: hidden;
+	border-radius: var(--ms-r-pill);
+	background: var(--ov-stage-track);
+}
+
+.ov-stage {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	border-radius: var(--ms-r-pill);
+}
+
+.ov-stage-requested { background: var(--ov-stage-requested); }
+.ov-stage-ordered { background: var(--ov-stage-ordered); }
+.ov-stage-received { background: var(--ov-stage-received); }
+
+.ov-stage-figures,
+.ov-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 12px;
+	color: var(--ms-muted);
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-stage-figures > span,
+.ov-legend > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.ov-swatch {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: var(--ms-r-pill);
+}
+
+/* Rows with a stage bar: awards, components. */
+.ov-list-legend {
+	padding: 14px 18px 4px;
+}
+
+.ov-row.ov-progress-row {
+	display: grid;
+	grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) minmax(0, 11rem) 16px;
+	gap: 16px;
+}
+
+.ov-progress-cell {
+	display: grid;
+	gap: 6px;
+	min-width: 0;
+}
+
+.ov-money-cell {
+	display: grid;
+	justify-items: end;
+	gap: 2px;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-money-cell strong {
+	color: var(--ms-ink);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ov-money-cell span {
+	color: var(--ms-muted);
+	font-size: 12px;
+}
+
+@media (max-width: 760px) {
+	.ov-row.ov-progress-row {
+		grid-template-columns: minmax(0, 1fr) 16px;
+		gap: 8px;
+	}
+
+	.ov-progress-row > :not(.ov-chevron) {
+		grid-column: 1;
+	}
+
+	.ov-progress-row > .ov-chevron {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.ov-money-cell {
+		justify-items: start;
+	}
+}
+
+/* ---------- Tooltip ---------- */
+
+.ov-tooltip {
+	position: absolute;
+	z-index: 2;
+	padding: 6px 10px;
+	border: 1px solid var(--ms-border);
+	border-radius: var(--ms-r-chip);
+	background: var(--ms-surface);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+	color: var(--ms-muted);
+	font-size: 12px;
+	white-space: nowrap;
+	pointer-events: none;
+	transform: translate(-50%, calc(-100% - 8px));
+}
+
+.ov-tooltip strong {
+	display: block;
+	color: var(--ms-ink);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* ---------- Table view ---------- */
+
+.ov-table-wrap {
+	overflow-x: auto;
+	padding: 6px 24px 14px;
+}
+
+.ov-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.ov-table th,
+.ov-table td {
+	padding: 8px 0;
+	border-bottom: 1px solid var(--ms-rule);
+	text-align: left;
+}
+
+.ov-table th {
+	color: var(--ms-muted);
+	font-weight: 500;
+}
+
+.ov-table td {
+	color: var(--ms-ink-2);
+}
+
+.ov-table td:last-child,
+.ov-table th:last-child {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Empty, loading, error ---------- */
+
+.ov-empty {
+	margin: 0;
+	padding: 20px 0 8px;
+	color: var(--ms-muted-2);
+	font-size: 12.5px;
+	text-align: center;
+}
+
+.ov-rows .ov-empty,
+.ov-list-card > .ov-empty,
+.ov-chart-card > .ov-empty {
+	padding: 28px 18px;
+}
+
+.ov-skeleton {
+	display: grid;
+	gap: var(--ms-gap);
+}
+
+.ov-skeleton span {
+	display: block;
+	height: 120px;
+	border: 1px solid var(--ms-border-quiet);
+	border-radius: var(--ms-r-card);
+	background: var(--ms-surface-quiet);
+}
+
+.ov-skeleton span:first-child {
+	height: 170px;
+}
+
+.ov-error {
+	display: grid;
+	justify-items: center;
+	gap: 12px;
+	padding: 40px 16px;
+	color: var(--ms-muted);
+	text-align: center;
+}
+
+.ov-footnote {
+	margin: 0;
+	color: var(--ms-muted);
+	font-size: 11.5px;
+}
+
+/* Author display rules above (grid, flex) would otherwise beat [hidden]. */
+.ov [hidden] {
+	display: none !important;
+}
+
+/* Not .ov-list-card: the chart's tooltip and peak label may rise above the plot. */
+.ov-chart-card {
+	padding: 0;
+}
