@@ -1,8 +1,13 @@
 {
  "charts": [],
- "content": "[{\"id\": \"hr_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>HR &amp; Time</b></span>\", \"col\": 12}}, {\"id\": \"card_hr_core\", \"type\": \"card\", \"data\": {\"card_name\": \"HR Core\", \"col\": 4}}, {\"id\": \"card_attendance_&_time_keeping\", \"type\": \"card\", \"data\": {\"card_name\": \"Attendance & Time Keeping\", \"col\": 4}}, {\"id\": \"card_leave_&_holiday\", \"type\": \"card\", \"data\": {\"card_name\": \"Leave & Holiday\", \"col\": 4}}, {\"id\": \"card_payroll\", \"type\": \"card\", \"data\": {\"card_name\": \"Payroll\", \"col\": 4}}, {\"id\": \"card_expenses\", \"type\": \"card\", \"data\": {\"card_name\": \"Expenses\", \"col\": 4}}, {\"id\": \"card_timesheet\", \"type\": \"card\", \"data\": {\"card_name\": \"Timesheet\", \"col\": 4}}, {\"id\": \"card_hr_analytics\", \"type\": \"card\", \"data\": {\"card_name\": \"HR Analytics\", \"col\": 4}}]",
+ "content": "[{\"id\": \"hr_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"HR & Time Overview\", \"col\": 12}}, {\"id\": \"hr_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>HR &amp; Time</b></span>\", \"col\": 12}}, {\"id\": \"card_hr_core\", \"type\": \"card\", \"data\": {\"card_name\": \"HR Core\", \"col\": 4}}, {\"id\": \"card_attendance_&_time_keeping\", \"type\": \"card\", \"data\": {\"card_name\": \"Attendance & Time Keeping\", \"col\": 4}}, {\"id\": \"card_leave_&_holiday\", \"type\": \"card\", \"data\": {\"card_name\": \"Leave & Holiday\", \"col\": 4}}, {\"id\": \"card_payroll\", \"type\": \"card\", \"data\": {\"card_name\": \"Payroll\", \"col\": 4}}, {\"id\": \"card_expenses\", \"type\": \"card\", \"data\": {\"card_name\": \"Expenses\", \"col\": 4}}, {\"id\": \"card_timesheet\", \"type\": \"card\", \"data\": {\"card_name\": \"Timesheet\", \"col\": 4}}, {\"id\": \"card_hr_analytics\", \"type\": \"card\", \"data\": {\"card_name\": \"HR Analytics\", \"col\": 4}}]",
  "creation": "2026-09-15 14:11:39.588865",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "HR & Time Overview",
+   "label": "HR & Time Overview"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "hide_custom": 0,
@@ -503,7 +508,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-15 14:11:39.588865",
+ "modified": "2026-10-06 07:40:55.710093",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "HR & Time",

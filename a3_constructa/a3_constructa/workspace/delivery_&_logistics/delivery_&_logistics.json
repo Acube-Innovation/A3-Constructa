@@ -1,8 +1,13 @@
 {
  "charts": [],
- "content": "[{\"id\": \"dl_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Delivery &amp; Logistics</b></span>\", \"col\": 12}}, {\"id\": \"card_domestic_purchase\", \"type\": \"card\", \"data\": {\"card_name\": \"Domestic Purchase\", \"col\": 4}}, {\"id\": \"card_import_purchase\", \"type\": \"card\", \"data\": {\"card_name\": \"Import Purchase\", \"col\": 4}}, {\"id\": \"card_document_tracking\", \"type\": \"card\", \"data\": {\"card_name\": \"Document Tracking\", \"col\": 4}}, {\"id\": \"card_logistics_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Logistics Reports\", \"col\": 4}}]",
+ "content": "[{\"id\": \"dl_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Delivery & Logistics Overview\", \"col\": 12}}, {\"id\": \"dl_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Delivery &amp; Logistics</b></span>\", \"col\": 12}}, {\"id\": \"card_domestic_purchase\", \"type\": \"card\", \"data\": {\"card_name\": \"Domestic Purchase\", \"col\": 4}}, {\"id\": \"card_import_purchase\", \"type\": \"card\", \"data\": {\"card_name\": \"Import Purchase\", \"col\": 4}}, {\"id\": \"card_document_tracking\", \"type\": \"card\", \"data\": {\"card_name\": \"Document Tracking\", \"col\": 4}}, {\"id\": \"card_logistics_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Logistics Reports\", \"col\": 4}}]",
  "creation": "2026-09-15 13:22:51.345201",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "Delivery & Logistics Overview",
+   "label": "Delivery & Logistics Overview"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "hide_custom": 0,
@@ -286,7 +291,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-22 12:05:45.130859",
+ "modified": "2026-10-06 07:33:32.938045",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Delivery & Logistics",

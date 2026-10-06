@@ -1,0 +1,160 @@
+/* Inventory Movement Overview: the parts only this dashboard draws. The shared
+   stylesheet (_shared/overview.css) is placed in front of this one. */
+
+.ov-hero-issue {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	color: var(--ov-ink);
+	font-size: var(--text-sm, 13px);
+	font-weight: 500;
+}
+
+/* ---------- Where the stock sits: stores, transit, site ---------- */
+
+.ov-mix {
+	--ov-mix-store: var(--ms-navy-700);
+	--ov-mix-transit: var(--ms-green-400);
+	--ov-mix-site: var(--ms-green-600);
+
+	display: grid;
+	gap: 10px;
+	margin-top: 4px;
+	padding-top: 14px;
+	border-top: 1px solid var(--ov-border);
+}
+
+.ov-mix-bar {
+	display: flex;
+	gap: 2px;
+	height: 10px;
+	overflow: hidden;
+	border-radius: var(--ms-r-pill);
+	background: var(--ms-track-bar);
+}
+
+.ov-mix-part {
+	flex-basis: 0;
+	min-width: 0;
+}
+
+.ov-mix-part.is-store,
+.ov-swatch.is-store { background: var(--ov-mix-store); }
+.ov-mix-part.is-transit,
+.ov-swatch.is-transit { background: var(--ov-mix-transit); }
+.ov-mix-part.is-site,
+.ov-swatch.is-site { background: var(--ov-mix-site); }
+
+.ov-mix-legend {
+	display: grid;
+	grid-template-columns: 10px minmax(0, 1fr) max-content minmax(3.2em, max-content);
+	gap: 0 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ov-mix-legend > li,
+.ov-mix-row {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+	align-items: center;
+}
+
+.ov-mix-row {
+	margin: 0 -8px;
+	padding: 5px 8px;
+	border-radius: var(--ms-r-chip);
+	transition: background-color 120ms ease;
+}
+
+a.ov-mix-row:hover,
+a.ov-mix-row:focus-visible {
+	background: var(--ms-row-hover);
+}
+
+.ov-mix-label {
+	overflow: hidden;
+	color: var(--ms-ink-2);
+	font-size: 13px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-mix-value {
+	color: var(--ms-ink);
+	font-size: 12.5px;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.ov-mix-share {
+	color: var(--ms-muted);
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
+
+/* ---------- Bar lists: the label on a line of its own ----------
+
+   Entry types, item names and cost codes run long here, so each label sits
+   above its bar at full width instead of being cut short beside it. */
+
+.ov-bars {
+	grid-template-columns: minmax(0, 1fr) minmax(28px, max-content);
+	gap: 4px 12px;
+}
+
+.ov-bar-label {
+	grid-column: 1 / -1;
+}
+
+.ov-bar-track {
+	grid-column: 1 / -1;
+}
+
+.ov-bar-row {
+	gap: 4px 12px;
+	padding-block: 5px 7px;
+}
+
+/* A long title wraps; the total beside it stays on one line. */
+.ov-breakdown-total {
+	white-space: nowrap;
+}
+
+/* ---------- Narrow screens: let row text wrap rather than vanish ---------- */
+
+@media (max-width: 560px) {
+	.ov-row-title,
+	.ov-row-meta {
+		white-space: normal;
+	}
+
+	/* Latest movements: amount and date drop under the entry. */
+	.ov-move-row {
+		flex-wrap: wrap;
+		row-gap: 6px;
+	}
+
+	.ov-move-row > .ov-row-main {
+		flex: 1 1 calc(100% - 28px);
+		order: 1;
+	}
+
+	.ov-move-row > .ov-chevron {
+		order: 2;
+	}
+
+	.ov-move-row > .ov-money-cell {
+		display: flex;
+		flex-basis: 100%;
+		align-items: baseline;
+		gap: 10px;
+		order: 3;
+	}
+}
