@@ -31,6 +31,10 @@ def validate(doc, method=None):
 	apply_terms(doc, award)
 	doc.project = doc.project or award.project
 	set_standard_terms(doc)
+	# Catalogue 4.2: on an award billed by milestones, the schedule follows them.
+	from a3_constructa.api.milestone_billing import apply_to_order
+
+	apply_to_order(doc, frappe.get_doc("Awarded Quotation", doc.awarded_quotation))
 	award_boqs = boqs_of(doc.awarded_quotation)
 	for row in doc.items:
 		resolve_line(doc, row, award_boqs)

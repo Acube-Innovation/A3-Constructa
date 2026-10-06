@@ -177,7 +177,12 @@ doc_events = {
 		"before_submit": "a3_constructa.overrides.quotation.check_margin_approval",
 		"on_cancel": "a3_constructa.overrides.quotation.set_cancelled_state",
 	},
-	"Sales Invoice": {"validate": ACTIVE_COST_CODE},
+	# Catalogue 4.2: a cancelled or deleted milestone invoice frees its milestone.
+	"Sales Invoice": {
+		"validate": ACTIVE_COST_CODE,
+		"on_cancel": "a3_constructa.api.milestone_billing.release_milestone",
+		"on_trash": "a3_constructa.api.milestone_billing.release_milestone",
+	},
 	"BOQ": {"validate": ACTIVE_COST_CODE},
 	"Budget Transfer": {"validate": ACTIVE_COST_CODE},
 	# Catalogue 1.7, 9.9: a line with a cost code posts to the cost code's account

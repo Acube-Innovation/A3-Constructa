@@ -65,6 +65,10 @@ class AwardedQuotation(Document):
 
 	def on_update(self):
 		self.link_component_boqs()
+		# The programme sets the payment schedule of the award's submitted orders.
+		from a3_constructa.api.milestone_billing import sync_submitted_orders
+
+		sync_submitted_orders(self)
 
 	def link_component_boqs(self):
 		"""Point each component's BOQ back at this award.
@@ -108,6 +112,15 @@ class AwardedQuotation(Document):
 			if row.status == "Completed":
 				completed += 1
 				completed_weight += flt(row.weightage)
+
+		# Catalogue 4.2: a completed milestone's billing % falls due on an award billed by milestones.
+		from a3_constructa.api.milestone_billing import is_due
+
+		components = {c.component for c in self.components}
+		for row in self.milestones:
+			if row.component and row.component not in components:
+				frappe.throw(_("Row {0}: {1} is not a component of this award.").format(row.idx, frappe.bold(row.component)))
+			row.billing_due = int(is_due(self, row))
 
 		if total_weight > 100:
 			frappe.throw(_("Milestone weightage adds up to {0}%. It cannot be more than 100%.").format(total_weight))

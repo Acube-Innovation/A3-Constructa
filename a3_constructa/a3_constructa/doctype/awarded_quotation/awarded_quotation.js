@@ -142,3 +142,31 @@ function hand_over(frm) {
 		d.show();
 	});
 }
+
+// Catalogue 4.2: bill the milestones that are due.
+frappe.ui.form.on("Awarded Quotation", {
+	refresh(frm) {
+		if (frm.is_new() || (frm.doc.billing_basis || "Milestones") !== "Milestones") return;
+		const due = (frm.doc.milestones || []).filter((m) => m.billing_due);
+		if (!due.length) return;
+		frm.dashboard.add_comment(
+			due.length === 1 ? __("1 milestone is due for billing.") : __("{0} milestones are due for billing.", [due.length]),
+			"orange",
+			true
+		);
+		frm.add_custom_button(__("Bill due milestones"), () => {
+			if (frm.is_dirty()) {
+				frappe.msgprint(__("Save the award first."));
+				return;
+			}
+			frappe.xcall("a3_constructa.api.milestone_billing.bill_due_milestones", { award: frm.doc.name }).then((names) => {
+				frm.reload_doc();
+				frappe.msgprint({
+					title: __("Draft invoices made"),
+					indicator: "green",
+					message: names.map((n) => `<a href="/app/sales-invoice/${n}">${n}</a>`).join("<br>"),
+				});
+			});
+		});
+	},
+});
