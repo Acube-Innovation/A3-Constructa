@@ -1,0 +1,253 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-07 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "crew_name",
+  "trade",
+  "foreman",
+  "foreman_name",
+  "cb_1",
+  "company",
+  "project",
+  "is_active",
+  "sb_members",
+  "members",
+  "sb_cost",
+  "headcount",
+  "daily_cost",
+  "cb_2",
+  "standard_output",
+  "output_uom",
+  "unit_labour_cost"
+ ],
+ "fields": [
+  {
+   "default": "CRW-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "CRW-.####",
+   "reqd": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "crew_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Crew Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "trade",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Trade",
+   "options": "Tiling\nMasonry\nConcrete\nSteel fixing\nFormwork\nCarpentry\nElectrical\nPlumbing\nPainting\nPlant operators\nGeneral labour",
+   "reqd": 1
+  },
+  {
+   "description": "Added to the members as Foreman if not already there.",
+   "fieldname": "foreman",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "in_list_view": 1,
+   "label": "Foreman",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "foreman.employee_name",
+   "fieldname": "foreman_name",
+   "fieldtype": "Data",
+   "label": "Foreman Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "remember_last_selected_value": 1,
+   "reqd": 1
+  },
+  {
+   "description": "The site the crew works on by default.",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Active"
+  },
+  {
+   "fieldname": "sb_members",
+   "fieldtype": "Section Break",
+   "label": "Members"
+  },
+  {
+   "description": "An employee can be an active member of one active crew at a time.",
+   "fieldname": "members",
+   "fieldtype": "Table",
+   "label": "Members",
+   "options": "Crew Member"
+  },
+  {
+   "fieldname": "sb_cost",
+   "fieldtype": "Section Break",
+   "label": "Cost and Output"
+  },
+  {
+   "fieldname": "headcount",
+   "fieldtype": "Int",
+   "label": "Active Members",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "description": "The active members' daily rates added up: what one crew-day costs.",
+   "fieldname": "daily_cost",
+   "fieldtype": "Currency",
+   "label": "Daily Cost",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "What the crew produces in a normal day, in the unit below.",
+   "fieldname": "standard_output",
+   "fieldtype": "Float",
+   "label": "Standard Output"
+  },
+  {
+   "fieldname": "output_uom",
+   "fieldtype": "Link",
+   "label": "Output UOM",
+   "options": "UOM"
+  },
+  {
+   "description": "Daily cost ÷ standard output.",
+   "fieldname": "unit_labour_cost",
+   "fieldtype": "Currency",
+   "label": "Labour Cost per Unit",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-07 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Crew",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  }
+ ],
+ "search_fields": "crew_name,trade,project",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "crew_name",
+ "track_changes": 1
+}
