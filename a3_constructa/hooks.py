@@ -113,7 +113,10 @@ doc_events = {
 	"Stock Entry": {
 		# before_naming runs inside set_new_name, before the series is consumed.
 		"before_naming": "a3_constructa.overrides.stock_entry.set_naming_series",
-		"validate": "a3_constructa.overrides.stock_entry.set_cost_code_accounting",
+		"validate": [
+			"a3_constructa.overrides.stock_entry.set_cost_code_accounting",
+			"a3_constructa.overrides.wbs_posting.validate_active_wbs",
+		],
 	},
 	"Asset": {
 		# Head 51 row 2: number an asset from its category, not one shared series.
@@ -127,8 +130,16 @@ doc_events = {
 	# A request line fetched from a BOQ must still match its BOQ line; warn when
 	# the requests for a line add up to more than it approved.
 	"Material Request": {
-		"validate": "a3_constructa.overrides.material_request.validate_boq_lines",
+		"validate": [
+			"a3_constructa.overrides.material_request.validate_boq_lines",
+			"a3_constructa.overrides.wbs_posting.validate_active_wbs",
+		],
 	},
+	# Catalogue 1.2: only an Active WBS node accepts postings.
+	"Purchase Order": {"validate": "a3_constructa.overrides.wbs_posting.validate_active_wbs"},
+	"Timesheet": {"validate": "a3_constructa.overrides.wbs_posting.validate_active_wbs"},
+	"WBS Allocation": {"validate": "a3_constructa.overrides.wbs_posting.validate_active_wbs"},
+	"Variation Order": {"validate": "a3_constructa.overrides.wbs_posting.validate_active_wbs"},
 }
 
 # scheduler_events = {}

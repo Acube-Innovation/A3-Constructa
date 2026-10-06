@@ -3,25 +3,37 @@
  "allow_rename": 1,
  "autoname": "field:wbs_code",
  "creation": "2026-09-15 11:07:50.503097",
+ "default_view": "Tree",
  "doctype": "DocType",
  "editable_grid": 1,
- "default_view": "Tree",
  "engine": "InnoDB",
  "field_order": [
   "wbs_code",
   "wbs_name",
+  "node_type",
   "wbs_level",
   "cb_1",
   "project",
   "cost_head",
+  "status",
+  "responsible_person",
+  "responsible_person_name",
   "sb_1",
   "parent_wbs",
   "is_group",
   "lft",
   "rgt",
   "old_parent",
-  "sb_2",
-  "status"
+  "sb_location",
+  "location",
+  "building",
+  "cb_location",
+  "floor",
+  "zone",
+  "sb_boq",
+  "boq",
+  "cb_boq",
+  "boq_item"
  ],
  "fields": [
   {
@@ -40,6 +52,18 @@
    "reqd": 1
   },
   {
+   "default": "WBS",
+   "description": "Cost Head: a top-level grouping. Work Package: a group of WBS nodes under a sub-head. WBS: a node that takes postings.",
+   "fieldname": "node_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Node Type",
+   "options": "Cost Head\nWork Package\nWBS",
+   "reqd": 1
+  },
+  {
+   "description": "Set from the node's depth in the tree",
    "fieldname": "wbs_level",
    "fieldtype": "Int",
    "in_list_view": 1,
@@ -54,14 +78,39 @@
    "fieldname": "project",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Project",
    "options": "Project"
   },
   {
    "fieldname": "cost_head",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Cost Head",
    "options": "Cost Head"
+  },
+  {
+   "default": "Draft",
+   "description": "Draft, then Active. An Active node can go On Hold and back, or be Completed. Only Active nodes accept postings.",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nActive\nOn Hold\nCompleted"
+  },
+  {
+   "fieldname": "responsible_person",
+   "fieldtype": "Link",
+   "label": "Responsible Person",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "responsible_person.employee_name",
+   "fieldname": "responsible_person_name",
+   "fieldtype": "Data",
+   "label": "Responsible Person Name",
+   "read_only": 1
   },
   {
    "fieldname": "sb_1",
@@ -113,23 +162,64 @@
    "read_only": 1
   },
   {
-   "fieldname": "sb_2",
-   "fieldtype": "Section Break"
+   "collapsible": 0,
+   "fieldname": "sb_location",
+   "fieldtype": "Section Break",
+   "label": "Location"
   },
   {
-   "default": "Active",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Status",
-   "options": "Draft\nActive\nOn Hold\nCompleted"
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location"
+  },
+  {
+   "fieldname": "building",
+   "fieldtype": "Data",
+   "label": "Building"
+  },
+  {
+   "fieldname": "cb_location",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "floor",
+   "fieldtype": "Data",
+   "label": "Floor"
+  },
+  {
+   "fieldname": "zone",
+   "fieldtype": "Data",
+   "label": "Zone"
+  },
+  {
+   "fieldname": "sb_boq",
+   "fieldtype": "Section Break",
+   "label": "BOQ Reference"
+  },
+  {
+   "fieldname": "boq",
+   "fieldtype": "Link",
+   "label": "BOQ",
+   "options": "BOQ"
+  },
+  {
+   "fieldname": "cb_boq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "boq",
+   "description": "The BOQ line this node delivers. Click the field to pick from the BOQ's lines.",
+   "fieldname": "boq_item",
+   "fieldtype": "Data",
+   "label": "BOQ Line"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-10-06 11:13:28.440748",
+ "modified": "2026-10-06 11:32:50.073154",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "WBS",
@@ -176,7 +266,7 @@
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
- "search_fields": "wbs_name,project",
+ "search_fields": "wbs_name,project,node_type",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

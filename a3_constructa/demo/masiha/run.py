@@ -16,6 +16,7 @@ STAGES = [
 	("setup", "a3_constructa.demo.masiha.setup.run"),  # step 1: company, people, controls
 	("masters", "a3_constructa.demo.masiha.masters.run"),  # step 1: masters
 	("planning", "a3_constructa.demo.masiha.planning.run"),  # steps 2-4
+	("wbs", "a3_constructa.demo.masiha.wbs.run"),  # P-01A: node types, location, BOQ line, status cases
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13
