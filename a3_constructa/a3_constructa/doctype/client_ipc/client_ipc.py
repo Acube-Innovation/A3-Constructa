@@ -116,6 +116,12 @@ class ClientIPC(Document):
 		else:
 			self.status = "Certified"
 
+	def on_submit(self):
+		# An opening certificate records a claim invoiced before certificates were kept;
+		# that invoice is the award's, so it is linked to it if it was not already.
+		if self.opening_invoice and not frappe.db.get_value("Sales Invoice", self.opening_invoice, "awarded_quotation"):
+			frappe.db.set_value("Sales Invoice", self.opening_invoice, "awarded_quotation", self.awarded_quotation, update_modified=False)
+
 	def on_cancel(self):
 		if self.sales_invoice and not self.opening_invoice and frappe.db.get_value("Sales Invoice", self.sales_invoice, "docstatus") == 1:
 			frappe.throw(_("Cancel invoice {0} first.").format(self.sales_invoice))

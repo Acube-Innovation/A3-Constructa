@@ -631,15 +631,44 @@ function nice_scale(max) {
 // routes inside the desk with the filters applied.
 // The list view is named, so a doctype whose default view is the tree (WBS,
 // Cost Head) still opens filtered.
+//
+// The filters travel in the URL. A list remembers its last filters (in the user's
+// list settings, and in the view the desk keeps open), and a standard filter from
+// there - the bar above the list - was merged with the new ones: a list opened from
+// a second row still carried the first row's filter. So the remembered filters are
+// emptied, keeping the user's other list settings, before the list is opened.
 function list_link(doctype, filters, content, attrs = {}) {
-	const link = el("a", { ...attrs, href: `/app/${frappe.router.slug(doctype)}/view/list` }, content);
+	const href = list_url(doctype, filters);
+	const link = el("a", { ...attrs, href }, content);
 	link.addEventListener("click", (event) => {
 		if (!is_plain_click(event)) return;
 		event.preventDefault();
-		frappe.route_options = { ...filters };
-		frappe.set_route("List", doctype, "List");
+		frappe.route_options = null;
+		const open = () => frappe.router.push_state(href);
+		forget_list_filters(doctype).then(open, open);
 	});
 	return link;
+}
+
+function forget_list_filters(doctype) {
+	const cached = frappe.views?.list_view?.[`List/${doctype}/List`];
+	const view = cached?.filter_area ? cached.filter_area.clear(false) : Promise.resolve();
+	return view.then(() =>
+		frappe.model.user_settings.get(doctype).then((settings) => {
+			if (!settings.List?.filters?.length) return;
+			settings.List = { ...settings.List, filters: [] };
+			return frappe.model.user_settings.update(doctype, settings);
+		})
+	);
+}
+
+function list_url(doctype, filters) {
+	const params = new URLSearchParams();
+	for (const [field, value] of Object.entries(filters || {})) {
+		params.append(field, Array.isArray(value) ? JSON.stringify(value) : value);
+	}
+	const query = params.toString();
+	return `/app/${frappe.router.slug(doctype)}/view/list${query ? `?${query}` : ""}`;
 }
 
 function report_link(report, filters, content, attrs = {}) {
