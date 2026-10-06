@@ -34,6 +34,7 @@ STAGES = [
 	("contracts_overview", "a3_constructa.demo.masiha.contracts_overview.run"),  # D-03: a case for every overview check
 	("contract_terms", "a3_constructa.demo.masiha.contract_terms.run"),  # P-04A: terms on awards and the hospital's order
 	("milestone_billing", "a3_constructa.demo.masiha.milestone_billing.run"),  # P-04B: the hospital billed by milestones
+	("client_ipc", "a3_constructa.demo.masiha.client_ipc.run"),  # P-04C: advance, IPCs, retention on the Administrative Centre
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

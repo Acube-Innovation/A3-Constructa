@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"sb_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Sales &amp; Billing</b></span>\", \"col\": 12}}, {\"id\": \"card_contract_terms\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Terms\", \"col\": 4}}, {\"id\": \"card_milestone_billing\", \"type\": \"card\", \"data\": {\"card_name\": \"Milestone Billing\", \"col\": 4}}, {\"id\": \"card_advances\", \"type\": \"card\", \"data\": {\"card_name\": \"Advances\", \"col\": 4}}, {\"id\": \"card_retention\", \"type\": \"card\", \"data\": {\"card_name\": \"Retention\", \"col\": 4}}, {\"id\": \"card_invoicing_collections\", \"type\": \"card\", \"data\": {\"card_name\": \"Invoicing & Collections\", \"col\": 4}}]",
+ "content": "[{\"id\": \"sb_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Sales &amp; Billing</b></span>\", \"col\": 12}}, {\"id\": \"card_contract_terms\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Terms\", \"col\": 4}}, {\"id\": \"card_milestone_billing\", \"type\": \"card\", \"data\": {\"card_name\": \"Milestone Billing\", \"col\": 4}}, {\"id\": \"card_advances\", \"type\": \"card\", \"data\": {\"card_name\": \"Advances\", \"col\": 4}}, {\"id\": \"card_interim_payment_certificates\", \"type\": \"card\", \"data\": {\"card_name\": \"Interim Payment Certificates\", \"col\": 4}}, {\"id\": \"card_retention\", \"type\": \"card\", \"data\": {\"card_name\": \"Retention\", \"col\": 4}}, {\"id\": \"card_invoicing_collections\", \"type\": \"card\", \"data\": {\"card_name\": \"Invoicing & Collections\", \"col\": 4}}]",
  "creation": "2026-10-06 17:32:26.653589",
  "custom_blocks": [],
  "docstatus": 0,
@@ -95,7 +95,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Advances",
-   "link_count": 1,
+   "link_count": 2,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -112,12 +112,64 @@
   },
   {
    "hidden": 0,
+   "is_query_report": 1,
+   "label": "Advance Recovery",
+   "link_count": 0,
+   "link_to": "Advance Recovery",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Awarded Quotation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
    "is_query_report": 0,
-   "label": "Retention",
-   "link_count": 1,
+   "label": "Interim Payment Certificates",
+   "link_count": 2,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Client IPC",
+   "link_count": 0,
+   "link_to": "Client IPC",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "IPC Register",
+   "link_count": 0,
+   "link_to": "IPC Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Client IPC",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Retention",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Retention Ledger",
+   "link_count": 0,
+   "link_to": "Retention Ledger",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Awarded Quotation",
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -202,7 +254,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-06 18:05:52.893949",
+ "modified": "2026-10-06 18:18:46.610804",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Sales & Billing",

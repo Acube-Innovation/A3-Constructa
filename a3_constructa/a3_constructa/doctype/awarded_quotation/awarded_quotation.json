@@ -27,6 +27,7 @@
   "end_date",
   "time_extension_days",
   "revised_end_date",
+  "practical_completion_date",
   "cb_3",
   "retention_percent",
   "contract_type",
@@ -35,6 +36,8 @@
   "advance_percent",
   "advance_recovery_percent",
   "defects_liability_months",
+  "retention_release_1",
+  "retention_release_2",
   "sb_components",
   "components",
   "sb_timeline",
@@ -270,12 +273,34 @@
    "fieldtype": "Select",
    "label": "Billing Basis",
    "options": "Milestones\nProgress claims"
+  },
+  {
+   "description": "Releases the first half of the retention; the defects liability period runs from here.",
+   "fieldname": "practical_completion_date",
+   "fieldtype": "Date",
+   "label": "Practical Completion"
+  },
+  {
+   "fieldname": "retention_release_1",
+   "fieldtype": "Link",
+   "label": "Retention Release (1st half)",
+   "no_copy": 1,
+   "options": "Sales Invoice",
+   "read_only": 1
+  },
+  {
+   "fieldname": "retention_release_2",
+   "fieldtype": "Link",
+   "label": "Retention Release (2nd half)",
+   "no_copy": 1,
+   "options": "Sales Invoice",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-10-06 18:04:14.092106",
+ "modified": "2026-10-06 18:16:21.909072",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Awarded Quotation",

@@ -169,6 +169,49 @@ def _payables_parent(company: str) -> str | None:
 	return groups[0].name
 
 
+# Catalogue 4.3-4.5 (P-04C): client billing needs two accounts of its own. Retention
+# the client holds back is still ours, so it is an asset until released; an advance
+# the client paid is owed back as work is certified, so it is a liability until
+# recovered. Neither carries an account type: they appear only on tax rows of the
+# certificate's invoice, which take no party.
+RETENTION_RECEIVABLE = "Retention Receivable"
+CUSTOMER_ADVANCES = "Advances from Customers"
+
+
+def create_contract_accounts():
+	"""Idempotently create Retention Receivable and Advances from Customers per company."""
+	for company in frappe.get_all("Company", fields=["name", "abbr"]):
+		for account_name, root_type, fragments in (
+			(RETENTION_RECEIVABLE, "Asset", ("Accounts Receivable", "Current Assets")),
+			(CUSTOMER_ADVANCES, "Liability", ("Current Liabilities", "Accounts Payable")),
+		):
+			if frappe.db.exists("Account", f"{account_name} - {company.abbr}"):
+				continue
+			parent = _group(company.name, root_type, fragments)
+			if not parent:
+				continue
+			doc = frappe.new_doc("Account")
+			doc.update({"account_name": account_name, "parent_account": parent, "company": company.name,
+			            "root_type": root_type, "is_group": 0})
+			doc.flags.ignore_permissions = True
+			doc.insert()
+
+
+def contract_account(company: str, account_name: str) -> str | None:
+	abbr = frappe.get_cached_value("Company", company, "abbr")
+	name = f"{account_name} - {abbr}"
+	return name if frappe.db.exists("Account", name) else None
+
+
+def _group(company: str, root_type: str, fragments) -> str | None:
+	groups = frappe.get_all("Account", filters={"company": company, "is_group": 1, "root_type": root_type}, pluck="name", order_by="lft")
+	for fragment in fragments:
+		match = [g for g in groups if fragment.lower() in g.lower()]
+		if match:
+			return match[0]
+	return groups[0] if groups else None
+
+
 # Head 72 row 39 links ERPNext's Project Profitability report, and head 75 row
 # 51 charts it. That report refuses to run until Standard Working Hours is set,
 # so the app supplies a sensible default rather than shipping a link that errors.
@@ -215,6 +258,7 @@ def run():
 	"""Seed every baseline record. Idempotent."""
 	create_asset_categories()
 	create_retention_account()
+	create_contract_accounts()
 	set_standard_working_hours()
 	keep_number_on_amend()
 	init_settings()

@@ -1,0 +1,376 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-06 18:14:33.251316",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "awarded_quotation",
+  "ipc_no",
+  "customer",
+  "project",
+  "company",
+  "currency",
+  "cb_1",
+  "sales_order",
+  "period_from",
+  "period_to",
+  "status",
+  "opening_invoice",
+  "sb_lines",
+  "items",
+  "materials_on_site",
+  "sb_deductions",
+  "retention_percent",
+  "retention_cap",
+  "retention_this_period",
+  "retention_cumulative",
+  "cb_2",
+  "advance_recovery_percent",
+  "advance_recovered_this_period",
+  "advance_recovered_to_date",
+  "advance_balance",
+  "sb_totals",
+  "claimed_amount",
+  "certified_amount",
+  "cb_3",
+  "gross_this_period",
+  "net_due",
+  "sales_invoice",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "IPC-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "IPC-.YYYY.-.####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "awarded_quotation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Awarded Quotation",
+   "options": "Awarded Quotation",
+   "reqd": 1
+  },
+  {
+   "description": "Counts per award.",
+   "fieldname": "ipc_no",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "IPC No.",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.project",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Link",
+   "label": "Sales Order",
+   "options": "Sales Order",
+   "read_only": 1
+  },
+  {
+   "fieldname": "period_from",
+   "fieldtype": "Date",
+   "label": "Period From",
+   "reqd": 1
+  },
+  {
+   "fieldname": "period_to",
+   "fieldtype": "Date",
+   "label": "Period To",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Draft",
+   "description": "Draft, then Submitted to Client while the client checks the claim. Submitting the certificate means it is Certified.",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nSubmitted to Client\nCertified\nInvoiced"
+  },
+  {
+   "description": "Only for work invoiced before certificates were kept here: this certificate records that invoice. No deductions, no new invoice.",
+   "fieldname": "opening_invoice",
+   "fieldtype": "Link",
+   "label": "Opening Invoice",
+   "no_copy": 1,
+   "options": "Sales Invoice"
+  },
+  {
+   "fieldname": "sb_lines",
+   "fieldtype": "Section Break",
+   "label": "Work Done"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Lines",
+   "options": "Client IPC Item"
+  },
+  {
+   "description": "Materials delivered for the works but not yet built in, if the contract pays for them.",
+   "fieldname": "materials_on_site",
+   "fieldtype": "Currency",
+   "label": "Materials on Site",
+   "options": "currency"
+  },
+  {
+   "fieldname": "sb_deductions",
+   "fieldtype": "Section Break",
+   "label": "Retention and Advance"
+  },
+  {
+   "fieldname": "retention_percent",
+   "fieldtype": "Percent",
+   "label": "Retention %",
+   "read_only": 1
+  },
+  {
+   "description": "The order's retention cap % of the revised contract value.",
+   "fieldname": "retention_cap",
+   "fieldtype": "Currency",
+   "label": "Retention Cap",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "retention_this_period",
+   "fieldtype": "Currency",
+   "label": "Retention This Period",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "retention_cumulative",
+   "fieldtype": "Currency",
+   "label": "Retention to Date",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "advance_recovery_percent",
+   "fieldtype": "Percent",
+   "label": "Advance Recovery %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "advance_recovered_this_period",
+   "fieldtype": "Currency",
+   "label": "Advance Recovered This Period",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "advance_recovered_to_date",
+   "fieldtype": "Currency",
+   "label": "Advance Recovered to Date",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "advance_balance",
+   "fieldtype": "Currency",
+   "label": "Advance Still to Recover",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_totals",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "fieldname": "claimed_amount",
+   "fieldtype": "Currency",
+   "label": "Claimed Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "certified_amount",
+   "fieldtype": "Currency",
+   "label": "Certified Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Certified work and materials on site this period.",
+   "fieldname": "gross_this_period",
+   "fieldtype": "Currency",
+   "label": "Gross This Period",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "description": "Gross less retention and advance recovery.",
+   "fieldname": "net_due",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Net Due (before VAT)",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "label": "Sales Invoice",
+   "no_copy": 1,
+   "options": "Sales Invoice",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Client IPC",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-10-06 18:14:33.251316",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Client IPC",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "awarded_quotation,ipc_no,status",
+ "show_title_field_in_link": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "awarded_quotation",
+ "track_changes": 1
+}

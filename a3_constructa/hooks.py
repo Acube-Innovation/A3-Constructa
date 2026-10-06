@@ -180,8 +180,8 @@ doc_events = {
 	# Catalogue 4.2: a cancelled or deleted milestone invoice frees its milestone.
 	"Sales Invoice": {
 		"validate": ACTIVE_COST_CODE,
-		"on_cancel": "a3_constructa.api.milestone_billing.release_milestone",
-		"on_trash": "a3_constructa.api.milestone_billing.release_milestone",
+		"on_cancel": "a3_constructa.api.client_billing.release_links",
+		"on_trash": "a3_constructa.api.client_billing.release_links",
 	},
 	"BOQ": {"validate": ACTIVE_COST_CODE},
 	"Budget Transfer": {"validate": ACTIVE_COST_CODE},

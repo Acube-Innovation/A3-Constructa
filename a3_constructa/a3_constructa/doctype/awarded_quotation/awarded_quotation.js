@@ -170,3 +170,44 @@ frappe.ui.form.on("Awarded Quotation", {
 		});
 	},
 });
+
+// Catalogue 4.3-4.5: interim certificates, the advance against its bank guarantee,
+// and the retention released in two halves.
+frappe.ui.form.on("Awarded Quotation", {
+	refresh(frm) {
+		if (frm.is_new() || !["Awarded", "In Progress", "On Hold", "Completed"].includes(frm.doc.status)) return;
+		frm.add_custom_button(__("Client IPC"), () => frappe.new_doc("Client IPC", { awarded_quotation: frm.doc.name }), __("Create"));
+		if (frm.doc.advance_percent) {
+			frm.add_custom_button(__("Advance Invoice"), () => advance_invoice(frm), __("Create"));
+		}
+		[1, 2].forEach((half) => {
+			const ready = half === 1 ? frm.doc.practical_completion_date && !frm.doc.retention_release_1
+				: frm.doc.retention_release_1 && !frm.doc.retention_release_2;
+			if (!ready) return;
+			frm.add_custom_button(half === 1 ? __("Release retention: first half") : __("Release retention: second half"), () =>
+				frappe.xcall("a3_constructa.api.client_billing.release_retention", { award: frm.doc.name, half })
+					.then((name) => frappe.set_route("Form", "Sales Invoice", name))
+			, __("Retention"));
+		});
+	},
+});
+
+function advance_invoice(frm) {
+	const d = new frappe.ui.Dialog({
+		title: __("Advance invoice for {0}", [frm.doc.name]),
+		fields: [
+			{ fieldtype: "HTML", options: `<p class="text-muted">${__("{0}% of the contract value, billed against the client's bank guarantee and recovered on the IPCs at {1}%.", [frm.doc.advance_percent, frm.doc.advance_recovery_percent || 0])}</p>` },
+			{ fieldtype: "Link", fieldname: "bank_guarantee", label: __("Bank Guarantee"), options: "Bank Guarantee", reqd: 1,
+			  get_query: () => ({ filters: { customer: frm.doc.customer, docstatus: 1, bg_type: "Receiving" } }),
+			  description: __("A submitted Receiving guarantee from the client's bank. Make one in Bank Guarantee first if needed.") },
+			{ fieldtype: "Currency", fieldname: "amount", label: __("Amount"), options: frm.doc.currency,
+			  description: __("Leave blank for the full advance still to bill.") },
+		],
+		primary_action_label: __("Create"),
+		primary_action(values) {
+			frappe.xcall("a3_constructa.api.client_billing.make_advance_invoice", { award: frm.doc.name, ...values })
+				.then((name) => { d.hide(); frappe.set_route("Form", "Sales Invoice", name); });
+		},
+	});
+	d.show();
+}
