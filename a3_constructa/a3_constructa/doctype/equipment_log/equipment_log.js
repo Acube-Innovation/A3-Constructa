@@ -17,13 +17,17 @@ frappe.ui.form.on("Equipment Log", {
 	},
 	asset(frm) {
 		if (!frm.doc.asset) return;
-		frappe.db.get_value("Asset", frm.doc.asset, ["project", "location", "current_meter", "wbs", "cost_code"]).then(({ message: a }) => {
+		frappe.xcall("a3_constructa.a3_constructa.doctype.equipment_log.equipment_log.asset_defaults", { asset: frm.doc.asset }).then((a) => {
 			if (!a) return;
+			frm.set_value({ asset_name: a.asset_name, company: a.company, is_hired: a.is_hired, meter_type: a.meter_type || "Hours",
+			                internal_rate: a.is_hired ? 0 : a.internal_hourly_rate });
 			if (!frm.doc.project && a.project) frm.set_value("project", a.project);
 			if (!frm.doc.site && a.location) frm.set_value("site", a.location);
 			if (!frm.doc.wbs && a.wbs) frm.set_value("wbs", a.wbs);
 			if (!frm.doc.cost_code && a.cost_code) frm.set_value("cost_code", a.cost_code);
-			if (!flt(frm.doc.meter_start)) frm.set_value("meter_start", a.current_meter);
+			if (!flt(frm.doc.meter_start)) frm.set_value("meter_start", a.meter_start);
+			amount(frm);
+			frm.refresh();
 		});
 	},
 	worked_hours: (frm) => amount(frm),

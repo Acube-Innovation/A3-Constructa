@@ -38,6 +38,7 @@ class EquipmentLog(Document):
 
 	def set_defaults(self, asset):
 		self.company = asset.company
+		self.asset_name = asset.asset_name
 		self.is_hired = asset.is_hired
 		self.meter_type = asset.meter_type or "Hours"
 		self.project = self.project or asset.project
@@ -136,3 +137,18 @@ def last_meter(asset, on=None, exclude=None) -> float:
 
 def update_meter(asset):
 	frappe.db.set_value("Asset", asset, "current_meter", last_meter(asset), update_modified=False)
+
+
+@frappe.whitelist()
+def asset_defaults(asset: str) -> dict:
+	"""What a new log takes from its machine. Site staff log plant without reading the
+	asset register (ERPNext gives the stock roles only select on Asset), so this asks
+	for Equipment Log access instead."""
+	if not (frappe.has_permission("Equipment Log", "create") or frappe.has_permission("Equipment Log", "write")):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	a = frappe.db.get_value("Asset", asset, ["asset_name", "company", "project", "location", "wbs", "cost_code", "is_hired",
+	                                         "internal_hourly_rate", "meter_type", "current_meter"], as_dict=True)
+	if not a:
+		return {}
+	a.meter_start = last_meter(asset) or flt(a.current_meter)
+	return a

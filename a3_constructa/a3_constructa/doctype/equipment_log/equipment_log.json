@@ -57,7 +57,6 @@
    "reqd": 1
   },
   {
-   "fetch_from": "asset.asset_name",
    "fieldname": "asset_name",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -92,7 +91,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "asset.company",
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
@@ -128,7 +126,6 @@
    "options": "Cost Code"
   },
   {
-   "fetch_from": "asset.is_hired",
    "fieldname": "is_hired",
    "fieldtype": "Check",
    "label": "Hired Plant",
@@ -140,7 +137,6 @@
    "label": "Meter and Hours"
   },
   {
-   "fetch_from": "asset.meter_type",
    "fieldname": "meter_type",
    "fieldtype": "Data",
    "label": "Meter",
@@ -188,7 +184,6 @@
    "label": "Charge to the Job"
   },
   {
-   "fetch_from": "asset.internal_hourly_rate",
    "fieldname": "internal_rate",
    "fieldtype": "Currency",
    "label": "Internal Rate",
@@ -243,7 +238,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-07 11:00:00.000000",
+ "modified": "2026-10-07 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Equipment Log",
