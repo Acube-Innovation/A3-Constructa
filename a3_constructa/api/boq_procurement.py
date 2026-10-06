@@ -144,7 +144,9 @@ def boq_lines(boqs: list[str]) -> list[dict]:
 	rows = frappe.get_list(
 		"BOQ",
 		# An allowance line has no item to buy; the item lines drawing from it do.
-		filters=[["BOQ", "name", "in", boqs], ["BOQ Item", "name", "is", "set"], ["BOQ Item", "is_allowance", "=", 0]],
+		# A work item without an item code (P-03C) carries budget but has nothing to requisition.
+		filters=[["BOQ", "name", "in", boqs], ["BOQ Item", "name", "is", "set"], ["BOQ Item", "is_allowance", "=", 0],
+		         ["BOQ Item", "item_code", "is", "set"]],
 		fields=[
 			"name as boq",
 			"project",

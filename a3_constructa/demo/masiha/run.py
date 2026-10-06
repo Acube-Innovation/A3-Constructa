@@ -30,6 +30,7 @@ STAGES = [
 	("crm_overview", "a3_constructa.demo.masiha.crm_overview.run"),  # D-02: a case for every overview check
 	("change_events", "a3_constructa.demo.masiha.change_events.run"),  # P-03A: change events in every status
 	("variations", "a3_constructa.demo.masiha.variations.run"),  # P-03B: variation orders in every status, budget moves
+	("handover", "a3_constructa.demo.masiha.handover.run"),  # P-03C: the hospital is won and handed over in one step
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

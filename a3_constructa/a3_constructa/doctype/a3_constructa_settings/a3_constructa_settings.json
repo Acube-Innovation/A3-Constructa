@@ -9,7 +9,9 @@
   "budget_check_action",
   "budget_tolerance_percent",
   "sb_quotation",
-  "min_margin_percent"
+  "min_margin_percent",
+  "sb_handover",
+  "default_contract_item"
  ],
  "fields": [
   {
@@ -44,13 +46,25 @@
    "fieldname": "min_margin_percent",
    "fieldtype": "Percent",
    "label": "Minimum Quotation Margin %"
+  },
+  {
+   "fieldname": "sb_handover",
+   "fieldtype": "Section Break",
+   "label": "Award Handover"
+  },
+  {
+   "description": "Sales Order lines for work whose cost head names no contract works item use this item.",
+   "fieldname": "default_contract_item",
+   "fieldtype": "Link",
+   "label": "Default Contract Works Item",
+   "options": "Item"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-06 14:34:56.295797",
+ "modified": "2026-10-06 16:45:18.320400",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "A3 Constructa Settings",

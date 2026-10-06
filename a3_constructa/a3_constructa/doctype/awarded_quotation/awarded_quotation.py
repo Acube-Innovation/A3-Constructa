@@ -52,8 +52,9 @@ class AwardedQuotation(Document):
 		for row in self.components:
 			if not row.boq:
 				continue
-			boq_project, boq_award = frappe.db.get_value("BOQ", row.boq, ["project", "awarded_quotation"])
-			if self.project and boq_project != self.project:
+			boq_project, boq_award, stage = frappe.db.get_value("BOQ", row.boq, ["project", "awarded_quotation", "boq_stage"])
+			# A tender BOQ priced the bid before there was a project (P-03C).
+			if self.project and stage != "Tender" and boq_project != self.project:
 				frappe.throw(
 					_("Row {0}: BOQ {1} is for project {2}, not {3}.").format(
 						row.idx, row.boq, boq_project, self.project

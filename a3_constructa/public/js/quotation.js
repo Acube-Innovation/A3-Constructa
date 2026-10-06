@@ -90,3 +90,18 @@ function show_margin_state(frm) {
 		);
 	}
 }
+
+// Catalogue 3.7: a won quotation becomes the award.
+frappe.ui.form.on("Quotation", {
+	refresh(frm) {
+		if (frm.doc.docstatus !== 1 || ["Lost", "Cancelled", "Expired"].includes(frm.doc.status)) return;
+		frm.add_custom_button(__("Awarded Quotation"), () => {
+			frappe
+				.xcall("a3_constructa.api.award_handover.make_awarded_quotation", { quotation: frm.doc.name })
+				.then((r) => {
+					if (r.existing) frappe.show_alert({ message: __("{0} already awards this quotation.", [r.name]), indicator: "blue" });
+					frappe.set_route("Form", "Awarded Quotation", r.name);
+				});
+		}, __("Create"));
+	},
+});

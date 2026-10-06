@@ -177,10 +177,10 @@ class BOQ(Document):
 				row.item_code = None
 				row.item_name = (row.description or "")[:140]
 				row.boq_qty = row.rate = row.approved_qty = row.approved_rate = 0
-			elif not row.item_code and self.boq_stage != "Tender":
-				frappe.throw(_("Row {0}: pick the item, or tick Allowance for a provisional sum.").format(row.idx))
 			elif not row.item_code and not (row.description or "").strip():
-				frappe.throw(_("Row {0}: a tender line without an item needs its description from the bill.").format(row.idx))
+				# P-03C: a line without an item is a work item (site clearance, a
+				# subcontracted package): it carries budget but nothing to requisition.
+				frappe.throw(_("Row {0}: pick the item, or describe the work, or tick Allowance for a provisional sum.").format(row.idx))
 			elif not row.item_code:
 				# The bill's wording stands in for the item name, so the lines grid shows it.
 				row.item_name = (row.description or "")[:140]
