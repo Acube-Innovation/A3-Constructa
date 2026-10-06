@@ -28,6 +28,11 @@ CUSTOM_HTML_BLOCKS = {
 	"Master Data Overview": "master_data_overview",
 	"Planning & Budgeting Overview": "planning_overview",
 	"Procurement Overview": "procurement_overview",
+	"Delivery & Logistics Overview": "delivery_logistics_overview",
+	"Inventory Movement Overview": "inventory_movement_overview",
+	"Asset & Equipment Overview": "asset_equipment_overview",
+	"HR & Time Overview": "hr_time_overview",
+	"Finance & Accounting Overview": "finance_accounting_overview",
 	# Drawn by the Award Procurement page, not by a workspace.
 	"Award Procurement View": "award_procurement_view",
 }

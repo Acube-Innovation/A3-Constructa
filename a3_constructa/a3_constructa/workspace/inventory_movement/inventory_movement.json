@@ -1,8 +1,13 @@
 {
  "charts": [],
- "content": "[{\"id\": \"im_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Inventory Movement</b></span>\", \"col\": 12}}, {\"id\": \"card_warehouse_stock\", \"type\": \"card\", \"data\": {\"card_name\": \"Warehouse Stock\", \"col\": 4}}, {\"id\": \"card_min_(material_issue_note)\", \"type\": \"card\", \"data\": {\"card_name\": \"MIN (Material Issue Note)\", \"col\": 4}}, {\"id\": \"card_transit_(barge_/_truck)\", \"type\": \"card\", \"data\": {\"card_name\": \"Transit (Barge / Truck)\", \"col\": 4}}, {\"id\": \"card_in_transit_stock\", \"type\": \"card\", \"data\": {\"card_name\": \"In-Transit Stock\", \"col\": 4}}, {\"id\": \"card_mrn_(material_receipt_note)\", \"type\": \"card\", \"data\": {\"card_name\": \"MRN (Material Receipt Note)\", \"col\": 4}}, {\"id\": \"card_site_stock\", \"type\": \"card\", \"data\": {\"card_name\": \"Site Stock\", \"col\": 4}}, {\"id\": \"card_material_issue_to_wbs_/_cost_code\", \"type\": \"card\", \"data\": {\"card_name\": \"Material Issue to WBS / Cost Code\", \"col\": 4}}, {\"id\": \"card_project_consumption_/_cost\", \"type\": \"card\", \"data\": {\"card_name\": \"Project Consumption / Cost\", \"col\": 4}}, {\"id\": \"card_stock_governance\", \"type\": \"card\", \"data\": {\"card_name\": \"Stock Governance\", \"col\": 4}}]",
+ "content": "[{\"id\": \"im_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Inventory Movement Overview\", \"col\": 12}}, {\"id\": \"im_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Inventory Movement</b></span>\", \"col\": 12}}, {\"id\": \"card_warehouse_stock\", \"type\": \"card\", \"data\": {\"card_name\": \"Warehouse Stock\", \"col\": 4}}, {\"id\": \"card_min_(material_issue_note)\", \"type\": \"card\", \"data\": {\"card_name\": \"MIN (Material Issue Note)\", \"col\": 4}}, {\"id\": \"card_transit_(barge_/_truck)\", \"type\": \"card\", \"data\": {\"card_name\": \"Transit (Barge / Truck)\", \"col\": 4}}, {\"id\": \"card_in_transit_stock\", \"type\": \"card\", \"data\": {\"card_name\": \"In-Transit Stock\", \"col\": 4}}, {\"id\": \"card_mrn_(material_receipt_note)\", \"type\": \"card\", \"data\": {\"card_name\": \"MRN (Material Receipt Note)\", \"col\": 4}}, {\"id\": \"card_site_stock\", \"type\": \"card\", \"data\": {\"card_name\": \"Site Stock\", \"col\": 4}}, {\"id\": \"card_material_issue_to_wbs_/_cost_code\", \"type\": \"card\", \"data\": {\"card_name\": \"Material Issue to WBS / Cost Code\", \"col\": 4}}, {\"id\": \"card_project_consumption_/_cost\", \"type\": \"card\", \"data\": {\"card_name\": \"Project Consumption / Cost\", \"col\": 4}}, {\"id\": \"card_stock_governance\", \"type\": \"card\", \"data\": {\"card_name\": \"Stock Governance\", \"col\": 4}}]",
  "creation": "2026-09-15 13:39:03.987051",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "Inventory Movement Overview",
+   "label": "Inventory Movement Overview"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "hide_custom": 0,
@@ -394,7 +399,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-15 13:39:03.987051",
+ "modified": "2026-10-06 07:40:55.710091",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Inventory Movement",

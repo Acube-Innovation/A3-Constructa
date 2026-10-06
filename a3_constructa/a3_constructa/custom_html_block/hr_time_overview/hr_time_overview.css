@@ -1,0 +1,179 @@
+/* HR & Time Overview: the parts only this dashboard draws. The shared
+   stylesheet (_shared/overview.css) is placed in front of this one. */
+
+/* ---------- Today, under the headcount ---------- */
+
+.ov-today {
+	display: grid;
+	gap: 10px;
+	margin-top: 4px;
+	padding-top: 14px;
+	border-top: 1px solid var(--ov-border);
+}
+
+.ov-today-cells {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.ov-today-cell {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	min-width: 0;
+	padding: 9px 12px;
+	border: 1px solid var(--ms-border-quiet);
+	border-radius: var(--ms-r-chip);
+	background: var(--ms-surface-quiet);
+	transition: border-color 120ms ease;
+}
+
+a.ov-today-cell:hover {
+	border-color: var(--ms-green-600);
+}
+
+.ov-today-value {
+	color: var(--ms-green-800);
+	font-family: var(--ms-font-display);
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-today-cell.is-zero .ov-today-value {
+	color: var(--ms-inactive-num);
+}
+
+.ov-today-label {
+	overflow: hidden;
+	color: var(--ms-muted);
+	font-size: 11.5px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ---------- Awaiting approval ---------- */
+
+.ov-list-more {
+	margin: 0;
+	padding: 10px 18px 12px;
+	border-top: 1px solid var(--ms-rule);
+	color: var(--ms-muted);
+	font-size: 12px;
+}
+
+/* ---------- Column chart (payroll cost per month) ---------- */
+
+.ov-chart {
+	position: relative;
+	margin: 0;
+	padding: 28px 24px 16px;
+}
+
+.ov-plot {
+	position: relative;
+	height: 190px;
+	margin-left: 36px;
+}
+
+.ov-gridline {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: var(--ms-rule);
+}
+
+.ov-gridline.is-base {
+	background: var(--ms-border);
+}
+
+.ov-tick {
+	position: absolute;
+	right: calc(100% + 8px);
+	transform: translateY(-50%);
+	color: var(--ms-muted);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.ov-columns {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+}
+
+.ov-col {
+	position: relative;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	height: 100%;
+	cursor: default;
+}
+
+.ov-col:focus-visible {
+	outline-offset: -2px;
+	border-radius: var(--ms-r-chip);
+}
+
+.ov-col-bar {
+	position: relative;
+	width: 100%;
+	max-width: 46px;
+	border-radius: 6px 6px 0 0;
+	background: linear-gradient(180deg, var(--ms-green-400), var(--ms-green-600));
+}
+
+.ov-col:hover .ov-col-bar,
+.ov-col:focus-visible .ov-col-bar {
+	background: linear-gradient(180deg, var(--ms-green-600), var(--ms-green-800));
+}
+
+/* A month with no payroll: a stub on the baseline, not a gap. */
+.ov-col .ov-col-bar.is-zero {
+	min-height: 3px;
+	border-radius: 0;
+	background: var(--ms-border-quiet);
+}
+
+.ov-col-cap {
+	position: absolute;
+	bottom: calc(100% + 4px);
+	left: 50%;
+	transform: translateX(-50%);
+	color: var(--ms-green-600);
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ov-xlabels {
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+	margin: 10px 0 0 36px;
+	color: var(--ms-muted);
+	font-size: 11px;
+	text-align: center;
+}
+
+.ov-xlabels span:nth-child(odd) {
+	visibility: var(--ov-odd-labels, visible);
+}
+
+@media (max-width: 560px) {
+	.ov-chart {
+		--ov-odd-labels: hidden;
+	}
+
+	.ov-columns,
+	.ov-xlabels {
+		gap: 4px;
+	}
+}

@@ -1,0 +1,277 @@
+/* Finance & Accounting Overview: the parts only this dashboard draws. The
+   shared stylesheet (_shared/overview.css) is placed in front of this one. */
+
+/* ---------- Hero: cash & bank ---------- */
+
+/* Money runs longer than a count, so the headline steps down a size. */
+.ov-hero-value.ov-hero-money {
+	font-size: 48px;
+	overflow-wrap: anywhere;
+}
+
+@media (max-width: 560px) {
+	.ov-hero-value.ov-hero-money {
+		font-size: 38px;
+	}
+}
+
+.ov-hero-accounts {
+	display: grid;
+	gap: 6px;
+	margin-top: 4px;
+	padding-top: 12px;
+	border-top: 1px solid var(--ov-border);
+}
+
+.ov-accounts {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ov-account {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	align-items: baseline;
+	gap: 10px;
+	margin: 0 -8px;
+	padding: 6px 8px;
+	border-radius: var(--ms-r-chip);
+	transition: background-color 120ms ease;
+}
+
+a.ov-account:hover {
+	background: var(--ms-row-hover);
+}
+
+.ov-account-name {
+	overflow: hidden;
+	color: var(--ms-ink-2);
+	font-size: 13px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-account-type {
+	color: var(--ms-muted);
+	font-size: 11.5px;
+}
+
+.ov-account-balance {
+	color: var(--ms-ink);
+	font-size: 13px;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	text-align: right;
+}
+
+/* ---------- Row lists ---------- */
+
+.ov-list-more {
+	margin: 0;
+	padding: 10px 18px 14px;
+	border-top: 1px solid var(--ms-rule);
+	color: var(--ms-muted);
+	font-size: 12px;
+}
+
+/* Projects: the shared progress row, its meter drawn from spans. */
+.ov-progress-cell .ov-meter,
+.ov-progress-cell .ov-meter-fill {
+	display: block;
+}
+
+/* ---------- Commitment tiles: four across, two when narrow, one on a phone ---------- */
+
+.ov-tiles {
+	container-type: inline-size;
+}
+
+.ov-tiles > .ov-kpis {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@container (max-width: 860px) {
+	.ov-tiles > .ov-kpis {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@container (max-width: 440px) {
+	.ov-tiles > .ov-kpis {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* ---------- Column chart (cash in and out per month) ---------- */
+
+.ov-chart {
+	position: relative;
+	margin: 0;
+	padding: 20px 24px 16px;
+}
+
+.ov-chart-legend {
+	margin-bottom: 26px;
+}
+
+.ov-swatch.is-in {
+	background: var(--ms-green-600);
+}
+
+.ov-swatch.is-out {
+	background: var(--ms-navy-400);
+}
+
+.ov-plot {
+	position: relative;
+	height: 190px;
+	margin-left: 40px;
+}
+
+.ov-gridline {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: var(--ms-rule);
+}
+
+.ov-gridline.is-base {
+	background: var(--ms-border);
+}
+
+.ov-tick {
+	position: absolute;
+	right: calc(100% + 8px);
+	transform: translateY(-50%);
+	color: var(--ms-muted);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.ov-columns {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+}
+
+.ov-col {
+	position: relative;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	height: 100%;
+	cursor: default;
+}
+
+.ov-col:focus-visible {
+	outline-offset: -2px;
+	border-radius: var(--ms-r-chip);
+}
+
+.ov-col-pair {
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	gap: 3px;
+	width: 100%;
+	max-width: 60px;
+	height: 100%;
+}
+
+.ov-col-bar {
+	position: relative;
+	flex: 1;
+	border-radius: 5px 5px 0 0;
+}
+
+.ov-col-bar.is-in {
+	background: linear-gradient(180deg, var(--ms-green-400), var(--ms-green-600));
+}
+
+.ov-col-bar.is-out {
+	background: linear-gradient(180deg, var(--ms-navy-400), var(--ms-navy-700));
+}
+
+.ov-col:hover .ov-col-bar,
+.ov-col:focus-visible .ov-col-bar {
+	filter: brightness(0.88);
+}
+
+.ov[data-theme="dark"] .ov-col:hover .ov-col-bar,
+.ov[data-theme="dark"] .ov-col:focus-visible .ov-col-bar {
+	filter: brightness(1.15);
+}
+
+/* A month with no movement: a stub on the baseline, not a gap. */
+.ov-col .ov-col-bar.is-zero {
+	min-height: 3px;
+	border-radius: 0;
+	background: var(--ms-border-quiet);
+}
+
+.ov-col-cap {
+	position: absolute;
+	bottom: calc(100% + 4px);
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ov-col-cap.is-in {
+	color: var(--ms-green-600);
+}
+
+.ov-col-cap.is-out {
+	color: var(--ms-navy-700);
+}
+
+.ov-xlabels {
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+	margin: 10px 0 0 40px;
+	color: var(--ms-muted);
+	font-size: 11px;
+	text-align: center;
+}
+
+.ov-xlabels span:nth-child(odd) {
+	visibility: var(--ov-odd-labels, visible);
+}
+
+@media (max-width: 560px) {
+	.ov-chart {
+		--ov-odd-labels: hidden;
+		padding: 16px 14px 14px;
+	}
+
+	.ov-columns,
+	.ov-xlabels {
+		gap: 4px;
+	}
+
+	.ov-col-pair {
+		gap: 1px;
+	}
+}
+
+/* The chart/table toggle keeps to one line beside a wrapping caption. */
+.ov-section-head > .ov-button {
+	flex: none;
+	white-space: nowrap;
+}
+
+/* Every money column of the table lines up on the right. */
+.ov-flow-table .ov-table th:not(:first-child),
+.ov-flow-table .ov-table td:not(:first-child) {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
