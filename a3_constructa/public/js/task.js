@@ -38,7 +38,8 @@ function pick_line(frm) {
 		const label = (l) => [l.boq_ref, (l.description || l.item_name || "").slice(0, 90), `${l.boq_qty} ${l.uom || ""}`].filter(Boolean).join(" · ");
 		const d = new frappe.ui.Dialog({
 			title: __("BOQ line of {0}", [frm.doc.subject]),
-			fields: [{ fieldtype: "Select", fieldname: "line", label: __("Line"), reqd: 1, options: lines.map((l) => ({ value: l.name, label: label(l) })) }],
+			fields: [{ fieldtype: "Select", fieldname: "line", label: __("Line"), reqd: 1, default: frm.doc.boq_item,
+			           options: lines.map((l) => ({ value: l.name, label: label(l) })) }],
 			primary_action_label: __("Use this line"),
 			primary_action({ line }) {
 				const l = lines.find((x) => x.name === line);

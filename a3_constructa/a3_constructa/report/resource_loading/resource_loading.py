@@ -60,12 +60,13 @@ def columns(view, groups, rows):
 	names = dict(frappe.get_all("Item", filters={"name": ["in", groups]}, fields=["name", "item_name"], as_list=True)) if view == "Material" else {}
 	for g in groups:
 		label = g if view != "Material" else f"{names.get(g) or g} ({uoms.get(g) or ''})".replace(" ()", "")
-		cols.append({"fieldname": key(g), "label": label, "fieldtype": "Float", "precision": 1 if view == "Material" else 0, "width": 130})
+		cols.append({"fieldname": key(g), "label": label, "width": 130,
+		             **({"fieldtype": "Float", "precision": 1} if view == "Material" else {"fieldtype": "Int"})})
 	if view == "Labour":
 		cols.append({"fieldname": "peak", "label": _("Peak headcount"), "fieldtype": "Int", "width": 120})
-		cols.append({"fieldname": "man_days", "label": _("Man-days"), "fieldtype": "Float", "precision": 0, "width": 100})
+		cols.append({"fieldname": "man_days", "label": _("Man-days"), "fieldtype": "Int", "width": 100})
 	elif view == "Equipment":
-		cols.append({"fieldname": "machine_days", "label": _("Machine-days"), "fieldtype": "Float", "precision": 0, "width": 110})
+		cols.append({"fieldname": "machine_days", "label": _("Machine-days"), "fieldtype": "Int", "width": 110})
 	return cols
 
 
@@ -90,9 +91,12 @@ def build(view, rows, weeks, groups):
 			if view == "Equipment":
 				row["machine_days"] = sum(by_week[w].values())
 		data.append(row)
+	if view == "Material":
+		# A delivery list: only the weeks something is needed by.
+		data = [r for r in data if any(flt(r[key(g)]) for g in groups)]
 	chart = None
 	if groups and view != "Material":
-		chart = {"data": {"labels": [frappe.format(w, {"fieldtype": "Date"}) for w in weeks],
+		chart = {"data": {"labels": [f"{w.day} {w.strftime('%b')}" for w in weeks],
 		                  "datasets": [{"name": g, "values": [r[key(g)] for r in data]} for g in groups]},
 		         "type": "bar", "barOptions": {"stacked": 1}, "height": 260}
 	return data, chart
