@@ -167,8 +167,13 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-09-22 13:10:01.077360",
+ "links": [
+  {
+   "link_doctype": "Change Event",
+   "link_fieldname": "variation_order"
+  }
+ ],
+ "modified": "2026-10-06 15:50:28.932490",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Variation Order",

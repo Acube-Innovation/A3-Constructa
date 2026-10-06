@@ -10,6 +10,7 @@ def get_data():
 		"transactions": [
 			{"label": _("Planning"), "items": ["BOQ"]},
 			{"label": _("Orders"), "items": ["Sales Order", "Variation Order"]},
+			{"label": _("Change"), "items": ["Change Event"]},
 			{"label": _("Delivery"), "items": ["Deliverable"]},
 		],
 	}
