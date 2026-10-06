@@ -19,6 +19,7 @@ STAGES = [
 	("wbs", "a3_constructa.demo.masiha.wbs.run"),  # P-01A: node types, location, BOQ line, status cases
 	("allowances", "a3_constructa.demo.masiha.allowances.run"),  # P-01B: allowance lines, allocations in every state
 	("budget", "a3_constructa.demo.masiha.budget.run"),  # P-01C: revision reason, budget transfers in every state
+	("ledger", "a3_constructa.demo.masiha.ledger.run"),  # P-01D: WBS and cost code on invoices, journals, claims, GL
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

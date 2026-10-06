@@ -54,6 +54,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Cost Code",
+   "link_filters": "[[\"Cost Code\", \"status\", \"=\", \"Active\"]]",
    "options": "Cost Code"
   },
   {
@@ -99,7 +100,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-10-06 12:01:07.292787",
+ "modified": "2026-10-06 12:22:09.250822",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "WBS Allocation Item",

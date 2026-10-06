@@ -107,6 +107,10 @@ doctype_js = {
 }
 
 # ---------------------------------------------------------------- events
+ACTIVE_WBS = "a3_constructa.overrides.wbs_posting.validate_active_wbs"
+ACTIVE_COST_CODE = "a3_constructa.overrides.cost_code_accounting.validate_active_cost_codes"
+COST_CODE_ACCOUNTING = "a3_constructa.overrides.cost_code_accounting.apply_cost_code_accounting"
+
 # Build sheet head 48 row 19: a material issue must post to the project GL head
 # its Cost Code names, not the item or company default.
 doc_events = {
@@ -115,7 +119,8 @@ doc_events = {
 		"before_naming": "a3_constructa.overrides.stock_entry.set_naming_series",
 		"validate": [
 			"a3_constructa.overrides.stock_entry.set_cost_code_accounting",
-			"a3_constructa.overrides.wbs_posting.validate_active_wbs",
+			ACTIVE_WBS,
+			ACTIVE_COST_CODE,
 		],
 	},
 	"Asset": {
@@ -132,14 +137,34 @@ doc_events = {
 	"Material Request": {
 		"validate": [
 			"a3_constructa.overrides.material_request.validate_boq_lines",
-			"a3_constructa.overrides.wbs_posting.validate_active_wbs",
+			ACTIVE_WBS,
+			ACTIVE_COST_CODE,
 		],
 	},
-	# Catalogue 1.2: only an Active WBS node accepts postings.
-	"Purchase Order": {"validate": "a3_constructa.overrides.wbs_posting.validate_active_wbs"},
-	"Timesheet": {"validate": "a3_constructa.overrides.wbs_posting.validate_active_wbs"},
-	"WBS Allocation": {"validate": "a3_constructa.overrides.wbs_posting.validate_active_wbs"},
-	"Variation Order": {"validate": "a3_constructa.overrides.wbs_posting.validate_active_wbs"},
+	# Catalogue 1.2: only an Active WBS node accepts postings. Catalogue 1.3:
+	# only an Active cost code can be used.
+	"Purchase Order": {"validate": [ACTIVE_WBS, ACTIVE_COST_CODE]},
+	"Timesheet": {"validate": [ACTIVE_WBS, ACTIVE_COST_CODE]},
+	"WBS Allocation": {"validate": [ACTIVE_WBS, ACTIVE_COST_CODE]},
+	"Variation Order": {"validate": ACTIVE_WBS},
+	"Purchase Receipt": {"validate": ACTIVE_COST_CODE},
+	"Request for Quotation": {"validate": ACTIVE_COST_CODE},
+	"Supplier Quotation": {"validate": ACTIVE_COST_CODE},
+	"Sales Order": {"validate": ACTIVE_COST_CODE},
+	"Sales Invoice": {"validate": ACTIVE_COST_CODE},
+	"BOQ": {"validate": ACTIVE_COST_CODE},
+	"Budget Transfer": {"validate": ACTIVE_COST_CODE},
+	# Catalogue 1.7, 9.9: a line with a cost code posts to the cost code's account
+	# and cost centre; invoice lines from an order are checked three ways.
+	"Purchase Invoice": {
+		"validate": [
+			ACTIVE_COST_CODE,
+			COST_CODE_ACCOUNTING,
+			"a3_constructa.overrides.cost_code_accounting.check_three_way_match",
+		],
+	},
+	"Journal Entry": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},
+	"Expense Claim": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},
 }
 
 # scheduler_events = {}

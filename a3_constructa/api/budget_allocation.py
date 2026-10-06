@@ -124,7 +124,8 @@ def wbs_committed_and_actual(project, wbs, cost_code=None):
 	gl = frappe.db.sql(
 		"""
 		select sum(gle.debit) - sum(gle.credit) from `tabGL Entry` gle
-		where gle.is_cancelled = 0 and gle.wbs in %(nodes)s""" + (" and gle.cost_code = %(cost_code)s" if cost_code else ""),
+		inner join `tabAccount` acc on acc.name = gle.account and acc.root_type = 'Expense'
+		where gle.is_cancelled = 0 and gle.voucher_type != 'Stock Entry' and gle.wbs in %(nodes)s""" + (" and gle.cost_code = %(cost_code)s" if cost_code else ""),
 		values,
 	)[0][0]
 	issued = frappe.db.sql(

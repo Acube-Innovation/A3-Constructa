@@ -440,9 +440,12 @@ def _budget(readable, ordered) -> dict:
 		)[0].amount
 	)
 
+	# Cost rows only, and no Stock Entry: material issued is counted below.
+	expense_accounts = frappe.get_all("Account", filters={"root_type": "Expense"}, pluck="name") or [""]
 	ledger = frappe.get_list(
 		"GL Entry",
-		filters=_scoped("GL Entry", {"is_cancelled": 0, "cost_code": ["is", "set"]}),
+		filters=_scoped("GL Entry", {"is_cancelled": 0, "cost_code": ["is", "set"], "account": ["in", expense_accounts],
+		                             "voucher_type": ["!=", "Stock Entry"]}),
 		fields=["sum(debit) as debit", "sum(credit) as credit"],
 	)[0]
 	issued = frappe.get_list(

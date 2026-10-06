@@ -161,7 +161,11 @@ def get_actual(filters, field):
 			"""
 			select {gl_field} as grouping, sum(gle.debit) - sum(gle.credit) as amount
 			from `tabGL Entry` gle
-			where {conditions}
+			-- Cost only, and not a Stock Entry: material issued is counted from the
+			-- stock ledger below. Since P-01D the dimensions are on every GL row a
+			-- line makes, including stock and Stock Received But Not Billed.
+			inner join `tabAccount` acc on acc.name = gle.account and acc.root_type = 'Expense'
+			where gle.voucher_type != 'Stock Entry' and {conditions}
 			group by {gl_field}
 			""".format(gl_field=gl_field, conditions=" and ".join(conditions)),
 			values, as_dict=True,

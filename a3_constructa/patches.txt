@@ -8,3 +8,4 @@ a3_constructa.patches.remove_procurement_classification_workspace
 a3_constructa.patches.set_wbs_node_type_and_status
 a3_constructa.patches.submit_valid_wbs_allocations
 a3_constructa.patches.backfill_budget_revision_log
+a3_constructa.patches.backfill_wbs_cost_code_on_ledger

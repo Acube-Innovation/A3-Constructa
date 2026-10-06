@@ -29,6 +29,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "From Cost Code",
+   "link_filters": "[[\"Cost Code\", \"status\", \"=\", \"Active\"]]",
    "options": "Cost Code"
   },
   {
@@ -46,6 +47,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "To Cost Code",
+   "link_filters": "[[\"Cost Code\", \"status\", \"=\", \"Active\"]]",
    "options": "Cost Code"
   },
   {
@@ -74,7 +76,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-10-06 12:08:37.396265",
+ "modified": "2026-10-06 12:22:09.250822",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Budget Transfer Item",

@@ -15,7 +15,8 @@
   "account",
   "cost_center",
   "uom",
-  "status"
+  "status",
+  "disabled"
  ],
  "fields": [
   {
@@ -73,12 +74,21 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Active\nInactive"
+  },
+  {
+   "default": "0",
+   "description": "Set from Status. ERPNext's accounting-dimension pickers leave out disabled records.",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Disabled",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-15 11:07:52.531039",
+ "modified": "2026-10-06 12:32:53.056484",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Cost Code",

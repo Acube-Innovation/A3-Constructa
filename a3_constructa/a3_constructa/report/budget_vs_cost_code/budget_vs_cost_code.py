@@ -115,6 +115,9 @@ def get_actual(filters):
 		"""
 		select gle.cost_code as cost_code, sum(gle.debit) - sum(gle.credit) as amount
 		from `tabGL Entry` gle
+		-- Cost only: since P-01D the WBS and cost code are on every GL row a line
+		-- makes, including stock and Stock Received But Not Billed.
+		inner join `tabAccount` acc on acc.name = gle.account and acc.root_type = 'Expense'
 		where {conditions}
 		group by gle.cost_code
 		""".format(conditions=" and ".join(conditions)),
