@@ -29,7 +29,10 @@
   "revised_end_date",
   "cb_3",
   "retention_percent",
+  "contract_type",
+  "retention_cap_percent",
   "advance_percent",
+  "advance_recovery_percent",
   "defects_liability_months",
   "sb_components",
   "components",
@@ -238,12 +241,32 @@
    "fieldname": "scope",
    "fieldtype": "Text Editor",
    "label": "Scope and Terms"
+  },
+  {
+   "default": "Lump Sum",
+   "description": "Lump Sum: a fixed price. Re-measured: paid on quantities actually done. Cost Plus: cost plus a fee.",
+   "fieldname": "contract_type",
+   "fieldtype": "Select",
+   "label": "Contract Type",
+   "options": "Lump Sum\nRe-measured\nCost Plus"
+  },
+  {
+   "description": "Retention stops once it reaches this share of the contract value.",
+   "fieldname": "retention_cap_percent",
+   "fieldtype": "Percent",
+   "label": "Retention Cap %"
+  },
+  {
+   "description": "Share of each interim certificate deducted to repay the advance.",
+   "fieldname": "advance_recovery_percent",
+   "fieldtype": "Percent",
+   "label": "Advance Recovery %"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-22 13:10:01.077360",
+ "modified": "2026-10-06 17:54:52.151018",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Awarded Quotation",

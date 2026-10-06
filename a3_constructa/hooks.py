@@ -111,6 +111,7 @@ doctype_js = {
 	"Purchase Order": "public/js/approvals.js",
 	"Opportunity": "public/js/opportunity.js",
 	"Quotation": "public/js/quotation.js",
+	"Sales Order": "public/js/sales_order.js",
 }
 
 # ---------------------------------------------------------------- events
@@ -165,7 +166,11 @@ doc_events = {
 	"Purchase Receipt": {"validate": ACTIVE_COST_CODE},
 	"Request for Quotation": {"validate": ACTIVE_COST_CODE},
 	"Supplier Quotation": {"validate": ACTIVE_COST_CODE},
-	"Sales Order": {"validate": ACTIVE_COST_CODE},
+	# Catalogue 4.1: an awarded order carries the contract's terms, a BOQ line and WBS per line.
+	"Sales Order": {
+		"validate": [ACTIVE_COST_CODE, "a3_constructa.overrides.sales_order.validate"],
+		"before_submit": "a3_constructa.overrides.sales_order.before_submit",
+	},
 	# Catalogue 2.7: a tender quotation's margin, revisions and margin approval.
 	"Quotation": {
 		"validate": "a3_constructa.overrides.quotation.validate",

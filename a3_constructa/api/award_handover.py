@@ -226,14 +226,18 @@ def ensure_sales_order(a, mode, done):
 	# Each line is 100 units, one per percent of its value, as on the project's first
 	# order: a progress claim bills the percentage completed, whatever the unit measured.
 	if mode == "Per BOQ line" and a.quotation and frappe.db.get_value("Quotation", a.quotation, "boq"):
-		for row in frappe.get_doc("Quotation", a.quotation).items:
+		q = frappe.get_doc("Quotation", a.quotation)
+		for row in q.items:
 			measured = _("{0} {1} at {2}").format(frappe.format(row.qty, {"fieldtype": "Float"}), row.uom or "",
 			                                     frappe.format(row.rate, {"fieldtype": "Currency", "options": "currency"}, doc=row))
-			so.append("items", line(contract_item(row.cost_head), flt(row.amount),
-			                        f"{row.boq_ref or ''} {row.description or row.item_name} ({measured})".strip(), delivery))
+			# P-04A: each line names the BOQ line it bills; the order fills in its WBS.
+			so.append("items", {**line(contract_item(row.cost_head), flt(row.amount),
+			                           f"{row.boq_ref or ''} {row.description or row.item_name} ({measured})".strip(), delivery),
+			                    "boq": q.boq, "boq_ref": row.boq_ref, "boq_item": row.boq_item})
 	else:
 		for row in a.components:
-			so.append("items", line(contract_item(row.cost_head), flt(row.amount), row.description or row.component, delivery))
+			so.append("items", {**line(contract_item(row.cost_head), flt(row.amount), row.description or row.component, delivery),
+			                    "boq": row.boq})
 	agreed = [flt(row.rate) for row in so.items]
 	so.run_method("set_missing_values")
 	# The award's prices stand, whatever the selling price list says.

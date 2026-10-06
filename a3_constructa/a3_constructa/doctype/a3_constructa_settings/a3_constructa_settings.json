@@ -11,7 +11,9 @@
   "sb_quotation",
   "min_margin_percent",
   "sb_handover",
-  "default_contract_item"
+  "default_contract_item",
+  "contract_payment_terms",
+  "contract_taxes"
  ],
  "fields": [
   {
@@ -58,13 +60,27 @@
    "fieldtype": "Link",
    "label": "Default Contract Works Item",
    "options": "Item"
+  },
+  {
+   "description": "Payment terms an awarded Sales Order takes when it has none.",
+   "fieldname": "contract_payment_terms",
+   "fieldtype": "Link",
+   "label": "Contract Payment Terms",
+   "options": "Payment Terms Template"
+  },
+  {
+   "description": "Sales taxes (VAT) an awarded Sales Order takes when it has none.",
+   "fieldname": "contract_taxes",
+   "fieldtype": "Link",
+   "label": "Contract Taxes",
+   "options": "Sales Taxes and Charges Template"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-06 16:45:18.320400",
+ "modified": "2026-10-06 17:54:52.151018",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "A3 Constructa Settings",
