@@ -1,6 +1,5 @@
 {
  "creation": "2026-09-15 15:53:53.974936",
- "currency": "INR",
  "docstatus": 0,
  "doctype": "Number Card",
  "function": "Count",
@@ -8,16 +7,14 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Cash & Bank Balance",
- "modified": "2026-09-15 15:53:53.974936",
+ "method": "a3_constructa.api.finance_cards.cash_and_bank_balance",
+ "modified": "2026-10-06 08:23:17.912007",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Cash & Bank Balance",
  "owner": "Administrator",
- "report_field": "balance",
- "report_function": "Sum",
- "report_name": "Cash and Bank Balance",
  "show_full_number": 0,
- "show_percentage_stats": 1,
+ "show_percentage_stats": 0,
  "stats_time_interval": "Daily",
- "type": "Report"
+ "type": "Custom"
 }
