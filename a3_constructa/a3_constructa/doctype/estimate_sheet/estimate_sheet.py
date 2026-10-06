@@ -20,6 +20,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, getdate, today
 
+from a3_constructa.a3_constructa.doctype.boq.boq import refresh_pricing
+
 PER_DAY = ("Labour", "Equipment")
 
 
@@ -68,9 +70,11 @@ class EstimateSheet(Document):
 
 	def on_update(self):
 		frappe.db.set_value("BOQ Item", self.boq_item, {"cost_rate": self.unit_cost, "estimate_sheet": self.name}, update_modified=False)
+		refresh_pricing(self.boq)
 
 	def on_trash(self):
 		frappe.db.set_value("BOQ Item", self.boq_item, {"cost_rate": 0, "estimate_sheet": None}, update_modified=False)
+		refresh_pricing(self.boq)
 
 	@frappe.whitelist()
 	def fetch_prices(self):

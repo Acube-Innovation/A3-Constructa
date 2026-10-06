@@ -26,6 +26,21 @@
   "customer",
   "sb_1",
   "items",
+  "sb_pricing",
+  "overhead_percent",
+  "profit_percent",
+  "risk_percent",
+  "contingency_amount",
+  "cb_pricing",
+  "cost_total",
+  "preliminaries_total",
+  "unpriced_lines",
+  "cb_pricing_2",
+  "overhead_amount",
+  "profit_amount",
+  "risk_amount",
+  "selling_total",
+  "margin_percent",
   "sb_2",
   "total_amount",
   "amended_from"
@@ -168,6 +183,101 @@
    "reqd": 1
   },
   {
+   "collapsible": 0,
+   "description": "Selling rate = cost rate × (1 + overhead + profit + risk). Contingency is added on top at face value.",
+   "fieldname": "sb_pricing",
+   "fieldtype": "Section Break",
+   "label": "Pricing"
+  },
+  {
+   "fieldname": "overhead_percent",
+   "fieldtype": "Percent",
+   "label": "Overhead %"
+  },
+  {
+   "fieldname": "profit_percent",
+   "fieldtype": "Percent",
+   "label": "Profit %"
+  },
+  {
+   "fieldname": "risk_percent",
+   "fieldtype": "Percent",
+   "label": "Risk %"
+  },
+  {
+   "description": "Kept as an allowance line that is never allocated to a WBS node.",
+   "fieldname": "contingency_amount",
+   "fieldtype": "Currency",
+   "label": "Contingency",
+   "options": "currency"
+  },
+  {
+   "fieldname": "cb_pricing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Priced lines at cost rate, plus preliminaries and other allowances.",
+   "fieldname": "cost_total",
+   "fieldtype": "Currency",
+   "label": "Cost Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "preliminaries_total",
+   "fieldtype": "Currency",
+   "label": "Preliminaries",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "unpriced_lines",
+   "fieldtype": "Int",
+   "label": "Lines Without a Cost Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_pricing_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overhead_amount",
+   "fieldtype": "Currency",
+   "label": "Overhead",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "profit_amount",
+   "fieldtype": "Currency",
+   "label": "Profit",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "risk_amount",
+   "fieldtype": "Currency",
+   "label": "Risk",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "selling_total",
+   "fieldtype": "Currency",
+   "in_list_view": 0,
+   "label": "Selling Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "description": "(Selling − cost − contingency) ÷ selling: overhead, profit and risk as a share of the price.",
+   "fieldname": "margin_percent",
+   "fieldtype": "Percent",
+   "label": "Margin %",
+   "read_only": 1
+  },
+  {
    "fieldname": "sb_2",
    "fieldtype": "Section Break"
   },
@@ -193,7 +303,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-06 13:35:55.807128",
+ "modified": "2026-10-06 14:04:53.858072",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ",

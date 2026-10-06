@@ -41,7 +41,7 @@ def execute(filters=None):
 			"cost_head": l.cost_head,
 			"boq": l.boq,
 			"line": f"{l.idx} · {l.description if l.is_allowance else l.item_code}",
-			"line_type": _("Allowance") if l.is_allowance else _("Item"),
+			"line_type": _("Contingency") if l.is_contingency else _("Allowance") if l.is_allowance else _("Item"),
 			"uom": None if l.is_allowance else l.uom,
 			"approved_amount": approved_amount,
 			"balance_amount": balance_amount,
@@ -91,7 +91,7 @@ def get_lines(filters):
 	return frappe.db.sql(
 		"""
 		select boq.name as boq, boq.project, boq.cost_head, line.name as boq_item, line.idx, line.item_code,
-		       line.description, line.uom, line.is_allowance, line.approved_qty, line.approved_rate, line.budget_amount
+		       line.description, line.uom, line.is_allowance, line.is_contingency, line.approved_qty, line.approved_rate, line.budget_amount
 		from `tabBOQ Item` line
 		inner join `tabBOQ` boq on boq.name = line.parent and line.parenttype = 'BOQ'
 		where {conditions}

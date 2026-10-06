@@ -13,8 +13,73 @@ class BOQ(Document):
 	def validate(self):
 		self.validate_stage()
 		self.set_revision()
+		self.sync_contingency()
 		self.validate_allowance_lines()
 		self.calculate_amounts()
+		self.calculate_pricing()
+
+	def sync_contingency(self):
+		"""Catalogue 2.6: the contingency lives as one allowance line, kept to the
+		header's amount, so it is in the BOQ total but never allocated to the works."""
+		rows = [row for row in self.items if row.is_contingency]
+		amount = flt(self.contingency_amount)
+		if amount < 0:
+			frappe.throw(_("Contingency cannot be negative."))
+		if not amount:
+			for row in rows:
+				self.remove(row)
+			return
+		row = rows[0] if rows else self.append("items", {"is_allowance": 1, "is_contingency": 1})
+		for extra in rows[1:]:
+			self.remove(extra)
+		row.update({"is_allowance": 1, "description": _("Contingency"), "amount": amount, "cost_head": row.cost_head or self.cost_head,
+		            "boq_ref": row.boq_ref or _("CONT")})
+
+	def calculate_pricing(self):
+		"""Catalogue 2.6: from cost to selling price.
+
+		Cost: priced lines at their estimate's cost rate × qty, plus allowance lines
+		at their amount (preliminaries among them); lines that draw from an
+		allowance are inside it, so they are not counted again. Selling: cost ×
+		(1 + overhead + profit + risk), plus the contingency at face value. Margin
+		is the markup's share of the selling price; the contingency is neither cost
+		nor margin.
+		"""
+		for field in ("overhead_percent", "profit_percent", "risk_percent"):
+			if flt(self.get(field)) < 0:
+				frappe.throw(_("{0} cannot be negative.").format(self.meta.get_label(field)))
+		markup = (flt(self.overhead_percent) + flt(self.profit_percent) + flt(self.risk_percent)) / 100
+		factor = 1 + markup
+		prelim_heads = preliminaries_heads()
+
+		cost = preliminaries = 0.0
+		unpriced = 0
+		for row in self.items:
+			if row.is_contingency:
+				row.selling_rate, row.margin_percent = flt(row.amount), 0
+				continue
+			if row.is_allowance:
+				cost += flt(row.amount)
+				if row.cost_head in prelim_heads:
+					preliminaries += flt(row.amount)
+				row.selling_rate = flt(row.amount) * factor
+			else:
+				row.selling_rate = flt(row.cost_rate) * factor
+				if not row.draws_from_allowance:
+					cost += flt(row.cost_rate) * flt(row.boq_qty)
+					if not flt(row.cost_rate):
+						unpriced += 1
+			row.margin_percent = markup / factor * 100 if flt(row.selling_rate) else 0
+
+		self.cost_total = cost
+		self.preliminaries_total = preliminaries
+		self.unpriced_lines = unpriced
+		self.overhead_amount = cost * flt(self.overhead_percent) / 100
+		self.profit_amount = cost * flt(self.profit_percent) / 100
+		self.risk_amount = cost * flt(self.risk_percent) / 100
+		self.selling_total = cost * factor + flt(self.contingency_amount)
+		markup_amount = self.overhead_amount + self.profit_amount + self.risk_amount
+		self.margin_percent = markup_amount / self.selling_total * 100 if self.selling_total else 0
 
 	def validate_stage(self):
 		"""Catalogue 2.4: a Tender BOQ is the client's bill priced for a bid, before
@@ -195,3 +260,25 @@ def drawn_value(row):
 	"""What an item line spends of its allowance: its approved value once it has
 	approved figures, its estimate before that."""
 	return flt(row.budget_amount) if flt(row.approved_qty) else flt(row.amount)
+
+
+def preliminaries_heads():
+	"""Cost heads flagged Preliminaries, with every cost head below them."""
+	heads = set()
+	for top in frappe.get_all("Cost Head", filters={"is_preliminaries": 1}, fields=["name", "lft", "rgt"]):
+		heads.update(frappe.get_all("Cost Head", filters={"lft": [">=", top.lft], "rgt": ["<=", top.rgt]}, pluck="name"))
+	return heads
+
+
+def refresh_pricing(boq: str):
+	"""Recompute a draft BOQ's selling figures after a line's cost rate changed on
+	its Estimate Sheet, without a full save of the BOQ."""
+	doc = frappe.get_doc("BOQ", boq)
+	if doc.docstatus != 0:
+		return
+	doc.calculate_pricing()
+	for row in doc.items:
+		row.db_set({"selling_rate": row.selling_rate, "margin_percent": row.margin_percent}, update_modified=False)
+	doc.db_set({field: doc.get(field) for field in (
+		"cost_total", "preliminaries_total", "unpriced_lines", "overhead_amount", "profit_amount", "risk_amount",
+		"selling_total", "margin_percent")}, update_modified=False)

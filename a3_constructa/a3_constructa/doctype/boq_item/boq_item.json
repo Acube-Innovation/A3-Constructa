@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "is_allowance",
+  "is_contingency",
   "boq_ref",
   "item_code",
   "item_name",
@@ -27,6 +28,8 @@
   "estimate_sheet",
   "cb_estimate",
   "cost_rate",
+  "selling_rate",
+  "margin_percent",
   "sb_3",
   "approved_qty",
   "approved_rate",
@@ -47,6 +50,14 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Allowance"
+  },
+  {
+   "default": "0",
+   "description": "Kept from the BOQ's Contingency; never allocated to a WBS node.",
+   "fieldname": "is_contingency",
+   "fieldtype": "Check",
+   "label": "Contingency",
+   "read_only": 1
   },
   {
    "columns": 1,
@@ -144,7 +155,7 @@
    "label": "Rate"
   },
   {
-   "columns": 2,
+   "columns": 1,
    "description": "Qty x rate. On an allowance line, enter the allowance amount here.",
    "fieldname": "amount",
    "fieldtype": "Currency",
@@ -181,6 +192,23 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Cost Rate",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "description": "Cost rate × (1 + overhead + profit + risk). On an allowance line, the selling amount of the allowance.",
+   "fieldname": "selling_rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Selling Rate",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "margin_percent",
+   "fieldtype": "Percent",
+   "label": "Margin %",
    "no_copy": 1,
    "read_only": 1
   },
@@ -248,7 +276,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-10-06 13:50:33.154510",
+ "modified": "2026-10-06 14:04:53.858072",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ Item",

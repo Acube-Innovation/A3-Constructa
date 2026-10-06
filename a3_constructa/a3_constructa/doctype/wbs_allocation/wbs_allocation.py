@@ -36,6 +36,8 @@ class WBSAllocation(Document):
 			line = lines.get(row.boq_item)
 			if not line or (self.boq and line.parent != self.boq):
 				frappe.throw(_("Row {0}: the BOQ line it points to is not part of BOQ {1}. Fetch the lines again.").format(row.idx, self.boq))
+			if line.is_contingency:
+				frappe.throw(_("Row {0}: the contingency stays unallocated; it is not placed on a WBS node.").format(row.idx))
 			row.is_allowance = line.is_allowance
 			row.description = line.description if line.is_allowance else line.item_name
 			row.item_code = None if line.is_allowance else (row.item_code or line.item_code)
@@ -100,7 +102,7 @@ def get_boq_lines(names):
 		"BOQ Item",
 		filters={"name": ["in", names], "parenttype": "BOQ"},
 		fields=["name", "parent", "idx", "item_code", "item_name", "description", "uom", "cost_code",
-		        "is_allowance", "approved_qty", "approved_rate", "budget_amount"],
+		        "is_allowance", "is_contingency", "approved_qty", "approved_rate", "budget_amount"],
 	)
 	return {r.name: r for r in rows}
 
@@ -141,7 +143,7 @@ def get_lines_to_allocate(boq, allocation=None):
 	frappe.has_permission("BOQ", "read", boq, throw=True)
 	lines = frappe.get_all(
 		"BOQ Item",
-		filters={"parent": boq, "parenttype": "BOQ"},
+		filters={"parent": boq, "parenttype": "BOQ", "is_contingency": 0},
 		fields=["name", "idx", "item_code", "item_name", "description", "uom", "cost_code", "is_allowance",
 		        "approved_qty", "approved_rate", "budget_amount"],
 		order_by="idx",
