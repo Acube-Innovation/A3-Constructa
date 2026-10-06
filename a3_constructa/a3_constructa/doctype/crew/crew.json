@@ -59,7 +59,6 @@
    "fieldname": "foreman",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
-   "in_list_view": 1,
    "label": "Foreman",
    "options": "Employee"
   },
@@ -67,6 +66,7 @@
    "fetch_from": "foreman.employee_name",
    "fieldname": "foreman_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Foreman Name",
    "read_only": 1
   },
@@ -117,6 +117,7 @@
   {
    "fieldname": "headcount",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Active Members",
    "read_only": 1
   },
@@ -125,6 +126,7 @@
    "description": "The active members' daily rates added up: what one crew-day costs.",
    "fieldname": "daily_cost",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Daily Cost",
    "options": "Company:company:default_currency",
    "read_only": 1
@@ -155,7 +157,7 @@
   }
  ],
  "links": [],
- "modified": "2026-10-07 09:00:00.000000",
+ "modified": "2026-10-07 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Crew",
