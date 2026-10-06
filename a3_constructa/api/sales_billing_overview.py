@@ -116,7 +116,7 @@ def _ipc_summary(ipcs):
 	}
 
 
-def _kind(row):
+def _kind(row, opening=()):
 	if row.is_return:
 		return _("Credit note")
 	if row.is_advance_invoice:
@@ -125,7 +125,7 @@ def _kind(row):
 		return _("Retention release")
 	if row.final_account:
 		return _("Final account")
-	if row.client_ipc:
+	if row.client_ipc or row.name in opening:
 		return _("IPC")
 	if row.awarded_quotation:
 		return _("Milestone")
@@ -216,9 +216,12 @@ def _recent(invoices):
 		return {"restricted": True}
 	rows = invoices[:RECENT]
 	titles = _award_titles([r.awarded_quotation for r in rows])
+	# A claim invoiced before certificates were kept, which an opening IPC records.
+	opening = set(frappe.get_all("Client IPC", filters={"docstatus": 1, "opening_invoice": ["in", [r.name for r in rows] or [""]]},
+	                             pluck="opening_invoice"))
 	return {
 		"restricted": False,
-		"list": [{"name": r.name, "customer": r.customer_name or r.customer, "kind": _kind(r), "award": r.awarded_quotation,
+		"list": [{"name": r.name, "customer": r.customer_name or r.customer, "kind": _kind(r, opening), "award": r.awarded_quotation,
 		          "award_title": titles.get(r.awarded_quotation), "amount": flt(r.grand_total), "outstanding": flt(r.outstanding_amount),
 		          "posting_date": r.posting_date} for r in rows],
 	}

@@ -127,7 +127,9 @@ function render_owed(data, currency) {
 			class: "ov-hero-caption",
 			text: ipcs.restricted
 				? __("{0} owed on {1} open invoices, {2} of it overdue", [format_money(receivable.total, currency), receivable.count, format_money(receivable.overdue, currency)])
-				: __("{0} owed on {1} open invoices ({2} overdue) + {3} certified on {4} IPCs not yet invoiced", [
+				: __(ipcs.certified_unbilled_count === 1
+						? "{0} owed on {1} open invoices ({2} overdue) + {3} certified on {4} IPC not yet invoiced"
+						: "{0} owed on {1} open invoices ({2} overdue) + {3} certified on {4} IPCs not yet invoiced", [
 						format_money(receivable.total, currency),
 						receivable.count,
 						format_money(receivable.overdue, currency),
