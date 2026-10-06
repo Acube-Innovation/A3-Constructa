@@ -46,6 +46,8 @@ PEOPLE = {
 	              ["Stock User", "Stock Manager", "Constructa Store Keeper", "Purchase User"]),
 	# Purchase User so finance can read the orders it pays and invoices against.
 	"finance": ("Grace", "Mwamba", "Finance Officer", ["Accounts User", "Accounts Manager", "Purchase User"]),
+	# P-02A: who chases tenders, from enquiry to quotation.
+	"sales": ("Bernadette", "Mbo", "Business Development Manager", ["Sales User", "Sales Manager", "Projects User"]),
 }
 
 

@@ -22,6 +22,7 @@ STAGES = [
 	("ledger", "a3_constructa.demo.masiha.ledger.run"),  # P-01D: WBS and cost code on invoices, journals, claims, GL
 	("approvals", "a3_constructa.demo.masiha.approvals.run"),  # P-09A: approval levels and budget check, every state
 	("wbs_overview", "a3_constructa.demo.masiha.wbs_overview.run"),  # D-01: cases for the overview's checks
+	("crm", "a3_constructa.demo.masiha.crm.run"),  # P-02A: leads and opportunities, tenders due this week
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

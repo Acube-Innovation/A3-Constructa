@@ -205,7 +205,7 @@ def create_employees():
 		if exists("Employee", {"first_name": first, "last_name": last, "company": COMPANY}):
 			continue
 		insert({"doctype": "Employee", "first_name": first, "last_name": last, "company": COMPANY,
-		        "gender": "Female" if first in ("Chantal", "Esther", "Marie", "Grace") else "Male",
+		        "gender": "Female" if first in ("Chantal", "Esther", "Marie", "Grace", "Bernadette") else "Male",
 		        "date_of_birth": "1986-05-14", "date_of_joining": "2021-02-01", "status": "Active",
 		        "user_id": user(key) if key in PEOPLE else None})
 	log("employees for every person in the story, plus a plant operator")
