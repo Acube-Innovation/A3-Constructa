@@ -220,7 +220,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Budget Revisions",
-   "link_count": 1,
+   "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -233,6 +233,27 @@
    "link_to": "Variation Order",
    "link_type": "DocType",
    "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Budget Transfer",
+   "link_count": 0,
+   "link_to": "Budget Transfer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Budget Revision Log",
+   "link_count": 0,
+   "link_to": "Budget Revision Log",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Budget Revision Log",
    "type": "Link"
   },
   {
@@ -330,7 +351,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-06 11:53:55.903228",
+ "modified": "2026-10-06 12:10:42.578127",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "WBS & Cost Structure",

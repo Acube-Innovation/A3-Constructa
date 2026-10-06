@@ -6,11 +6,22 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, fmt_money
 
+from a3_constructa.a3_constructa.doctype.budget_revision_log.budget_revision_log import logged_by_line, revise_budget
+
 
 class BOQ(Document):
 	def validate(self):
+		self.set_revision()
 		self.validate_allowance_lines()
 		self.calculate_amounts()
+
+	def set_revision(self):
+		"""Catalogue 1.6: an amendment is the next revision and must say why."""
+		if not self.amended_from:
+			return
+		self.revision_no = (frappe.db.get_value("BOQ", self.amended_from, "revision_no") or 0) + 1
+		if not (self.revision_reason or "").strip():
+			frappe.throw(_("Say why the BOQ is being revised (Revision Reason)."), title=_("Revision reason needed"))
 
 	def calculate_amounts(self):
 		"""Build sheet head 17 row 5 and head 18: amount and budget_amount are derived.
@@ -101,9 +112,56 @@ class BOQ(Document):
 		# The workflow drives `status`; this only covers a submit made without one.
 		if self.status not in ("Approved", "Rejected"):
 			self.db_set("status", "Approved")
+		self.log_budget()
 
 	def on_cancel(self):
 		self.db_set("status", "Rejected")
+		self.log_budget(cancel=True)
+
+	def budget_by_line(self):
+		"""Approved budget per (wbs, cost code). Allowance lines carry what is left
+		of the allowance, so the sum is the BOQ's approved budget, counted once."""
+		out = {}
+		for row in self.items:
+			key = (row.wbs, row.cost_code)
+			out[key] = out.get(key, 0) + flt(row.budget_amount)
+		return out
+
+	def revision_chain(self):
+		"""This BOQ's earlier revisions, newest first."""
+		chain, name = [], self.amended_from
+		while name and name not in chain:
+			chain.append(name)
+			name = frappe.db.get_value("BOQ", name, "amended_from")
+		return chain
+
+	def log_budget(self, cancel=False, posted_on=None, posted_by=None):
+		"""Write this BOQ's budget to the Budget Revision Log.
+
+		A first BOQ writes its lines as Original. A revision writes the change
+		against what its earlier revisions still hold in the log; that is the full
+		difference to the revision it amends, since cancelling that revision took
+		its lines back out. Cancelling a BOQ takes its own lines back out.
+		"""
+		if cancel:
+			held = logged_by_line(self.project, [("BOQ", self.name)])
+			for (wbs, cost_code), amount in held.items():
+				revise_budget(self.project, wbs, cost_code, -amount, "BOQ Revision", self,
+				              _("BOQ {0} cancelled").format(self.name), posted_on, posted_by)
+			return
+
+		if not self.amended_from:
+			for (wbs, cost_code), amount in self.budget_by_line().items():
+				revise_budget(self.project, wbs, cost_code, amount, "Original", self,
+				              _("BOQ {0} approved").format(self.name), posted_on, posted_by)
+			return
+
+		before = logged_by_line(self.project, [("BOQ", n) for n in self.revision_chain()])
+		now = self.budget_by_line()
+		reason = _("Revision {0}: {1}").format(self.revision_no, self.revision_reason)
+		for key in sorted(set(before) | set(now), key=lambda k: (k[0] or "", k[1] or "")):
+			revise_budget(self.project, key[0], key[1], flt(now.get(key)) - flt(before.get(key)), "BOQ Revision",
+			              self, reason, posted_on, posted_by)
 
 
 def drawn_value(row):

@@ -1,60 +1,47 @@
 {
  "actions": [],
- "allow_rename": 1,
  "autoname": "naming_series:",
- "creation": "2026-09-15 11:42:16.347786",
+ "creation": "2026-10-06 12:08:37.396265",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "company",
   "project",
-  "cost_head",
-  "awarded_quotation",
   "cb_1",
-  "boq_date",
-  "revision_no",
-  "revision_reason",
-  "currency",
-  "status",
+  "transfer_date",
+  "reason",
   "sb_1",
   "items",
-  "sb_2",
   "total_amount",
-  "amended_from",
   "amended_from"
  ],
  "fields": [
   {
-   "default": "BOQ-.YYYY.-.####",
+   "default": "BT-.YYYY.-.####",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
-   "options": "BOQ-.YYYY.-.####",
+   "options": "BT-.YYYY.-.####",
    "reqd": 1
+  },
+  {
+   "fetch_from": "project.company",
+   "fetch_if_empty": 1,
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   },
   {
    "fieldname": "project",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Project",
    "options": "Project",
    "reqd": 1
-  },
-  {
-   "fieldname": "cost_head",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Cost Head",
-   "options": "Cost Head"
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "awarded_quotation",
-   "fieldtype": "Link",
-   "in_standard_filter": 1,
-   "label": "Awarded Quotation",
-   "options": "Awarded Quotation"
   },
   {
    "fieldname": "cb_1",
@@ -62,58 +49,28 @@
   },
   {
    "default": "Today",
-   "fieldname": "boq_date",
+   "fieldname": "transfer_date",
    "fieldtype": "Date",
-   "label": "BOQ Date",
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "description": "0 for the first BOQ; each amendment counts up by one.",
-   "fieldname": "revision_no",
-   "fieldtype": "Int",
-   "label": "Revision No",
-   "read_only": 1
-  },
-  {
-   "depends_on": "amended_from",
-   "description": "Why this revision was made. Needed on every amended BOQ.",
-   "fieldname": "revision_reason",
-   "fieldtype": "Small Text",
-   "label": "Revision Reason",
-   "mandatory_depends_on": "amended_from"
-  },
-  {
-   "fieldname": "currency",
-   "fieldtype": "Link",
-   "label": "Currency",
-   "options": "Currency"
-  },
-  {
-   "allow_on_submit": 1,
-   "default": "Draft",
-   "fieldname": "status",
-   "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "Status",
-   "no_copy": 1,
-   "options": "Draft\nPending Approval\nApproved\nRejected"
+   "label": "Transfer Date"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Reason",
+   "reqd": 1
   },
   {
    "fieldname": "sb_1",
    "fieldtype": "Section Break",
-   "label": "Items"
+   "label": "Transfers"
   },
   {
    "fieldname": "items",
    "fieldtype": "Table",
-   "label": "Items",
-   "options": "BOQ Item",
+   "label": "Lines",
+   "options": "Budget Transfer Item",
    "reqd": 1
-  },
-  {
-   "fieldname": "sb_2",
-   "fieldtype": "Section Break"
   },
   {
    "fieldname": "total_amount",
@@ -127,16 +84,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "BOQ",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "BOQ",
+   "options": "Budget Transfer",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -146,10 +94,10 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-06 12:09:13.506300",
+ "modified": "2026-10-06 12:08:37.396265",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
- "name": "BOQ",
+ "name": "Budget Transfer",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [

@@ -70,10 +70,10 @@ def run():
 
 
 # ------------------------------------------------------------------- BOQs
-def _boq(head, lines, when, revision=0, amended_from=None):
+def _boq(head, lines, when, revision=0, amended_from=None, reason=None):
 	return insert({
 		"doctype": "BOQ", "project": project(), "cost_head": head, "boq_date": day(when),
-		"revision_no": revision, "currency": "USD", "amended_from": amended_from,
+		"revision_no": revision, "currency": "USD", "amended_from": amended_from, "revision_reason": reason,
 		"items": [{"item_code": i, "wbs": w, "cost_code": c, "boq_qty": q, "rate": r,
 		           "approved_qty": aq, "approved_rate": ar} for i, w, c, q, r, aq, ar in lines],
 	})
@@ -103,7 +103,7 @@ def create_boqs() -> dict:
 	rev0 = frappe.get_doc("BOQ", rev0.name)
 	rev0.flags.ignore_permissions = True
 	rev0.cancel()
-	rev1 = _approve(_boq("MSS-AR-FL", FLOORING_REV1, -121, revision=1, amended_from=rev0.name), -120,
+	rev1 = _approve(_boq("MSS-AR-FL", FLOORING_REV1, -121, revision=1, amended_from=rev0.name, reason=with_note), -120,
 	                "Revision 1 approved. Flooring budget $29,124 for 1,000 m2 ($29.12/m2).")
 	boqs["MSS-AR-FL"] = rev1.name
 	log(f"BOQs approved: {', '.join(boqs.values())}; flooring revised {rev0.name} -> {rev1.name}")
