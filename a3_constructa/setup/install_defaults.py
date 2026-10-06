@@ -238,6 +238,39 @@ def create_plant_recovery_account():
 		doc.insert()
 
 
+# W-06: the site team works these records from Project Operations. This site carries
+# its own permissions for some of them (Task only for Projects User, Project Template
+# only for System Manager), so the Constructa roles are added on top, idempotently.
+OPERATIONS_PERMISSIONS = {
+	"Task": {"Constructa Project Manager": ("read", "write", "create", "delete", "report", "export"),
+	         "Constructa Site Engineer": ("read", "write", "create", "report")},
+	"Project Template": {"Constructa Project Manager": ("read", "write", "create", "report")},
+	"Task Type": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
+	"Quality Inspection": {"Constructa Project Manager": ("read", "write", "create", "submit", "cancel", "report"),
+	                       "Constructa Site Engineer": ("read", "write", "create", "submit", "report")},
+	"Quality Inspection Template": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
+	"Non Conformance": {"Constructa Project Manager": ("read", "write", "create", "report"),
+	                    "Constructa Site Engineer": ("read", "write", "create", "report")},
+	"Warranty Claim": {"Constructa Project Manager": ("read", "write", "create", "report")},
+}
+
+
+def grant_operations_permissions():
+	from frappe.permissions import add_permission, update_permission_property
+
+	for doctype, roles in OPERATIONS_PERMISSIONS.items():
+		if not frappe.db.exists("DocType", doctype):
+			continue
+		for role, rights in roles.items():
+			if not frappe.db.exists("Role", role):
+				continue
+			if not frappe.db.exists("Custom DocPerm", {"parent": doctype, "role": role, "permlevel": 0}):
+				add_permission(doctype, role, 0)
+			for right in rights:
+				if not frappe.db.get_value("Custom DocPerm", {"parent": doctype, "role": role, "permlevel": 0}, right):
+					update_permission_property(doctype, role, 0, right, 1, validate=False)
+
+
 def create_subcontract_document_rule():
 	"""One blocking rule for Work Certificate, created once; edit it to change the list."""
 	if frappe.db.exists("Mandatory Document Rule", {"reference_doctype": "Work Certificate"}):
@@ -316,6 +349,7 @@ def run():
 	create_back_charge_account()
 	create_subcontract_document_rule()
 	create_plant_recovery_account()
+	grant_operations_permissions()
 	set_standard_working_hours()
 	keep_number_on_amend()
 	init_settings()
