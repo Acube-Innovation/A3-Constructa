@@ -44,7 +44,8 @@ class Crew(Document):
 			if m.employee in seen:
 				frappe.throw(_("Row {0}: {1} is listed twice.").format(m.idx, m.employee_name or m.employee))
 			seen.add(m.employee)
-			company = frappe.db.get_value("Employee", m.employee, "company")
+			name, company = frappe.db.get_value("Employee", m.employee, ["employee_name", "company"]) or (None, None)
+			m.employee_name = m.employee_name or name  # a row added here (the foreman) misses the form's fetch
 			if self.company and company and company != self.company:
 				frappe.throw(_("Row {0}: {1} works for {2}, not {3}.").format(m.idx, m.employee_name or m.employee, company, self.company))
 
