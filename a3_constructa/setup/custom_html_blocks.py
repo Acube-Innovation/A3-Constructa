@@ -28,6 +28,7 @@ CUSTOM_HTML_BLOCKS = {
 	"WBS & Cost Structure Overview": "wbs_cost_structure_overview",
 	"CRM & Estimating Overview": "crm_estimating_overview",
 	"Contracts & Awards Overview": "contracts_awards_overview",
+	"Sales & Billing Overview": "sales_billing_overview",
 	"Master Data Overview": "master_data_overview",
 	"Planning & Budgeting Overview": "planning_overview",
 	"Procurement Overview": "procurement_overview",

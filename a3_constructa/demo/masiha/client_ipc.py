@@ -87,7 +87,8 @@ def certificate(award, lines, start, end, claimed, certify=None, opening=None, s
 		if submit:
 			ipc.submit()
 	when = at(sent if sent is not None else -60, 10)
-	frappe.db.set_value("Client IPC", ipc.name, {"creation": when, "modified": at(certified, 15) if certified is not None else when},
+	frappe.db.set_value("Client IPC", ipc.name, {"creation": when, "submitted_on": when.date(),
+	                                             "modified": at(certified, 15) if certified is not None else when},
 	                    update_modified=False)
 	return ipc.name
 

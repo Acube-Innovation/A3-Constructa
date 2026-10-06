@@ -13,3 +13,4 @@ a3_constructa.patches.set_quotation_workflow_state
 a3_constructa.patches.round_boq_selling_rates
 a3_constructa.patches.log_approved_variations
 a3_constructa.patches.flag_retention_release_invoices
+a3_constructa.patches.set_ipc_submitted_on

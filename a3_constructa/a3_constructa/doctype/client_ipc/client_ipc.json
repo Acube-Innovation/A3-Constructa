@@ -19,6 +19,7 @@
   "period_from",
   "period_to",
   "status",
+  "submitted_on",
   "opening_invoice",
   "sb_lines",
   "items",
@@ -135,6 +136,15 @@
    "in_standard_filter": 1,
    "label": "Status",
    "options": "Draft\nSubmitted to Client\nCertified\nInvoiced"
+  },
+  {
+   "allow_on_submit": 1,
+   "description": "Set when the certificate goes to the client; the overview flags one not certified 21 days later.",
+   "fieldname": "submitted_on",
+   "fieldtype": "Date",
+   "label": "Sent to Client On",
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "description": "Only for work invoiced before certificates were kept here: this certificate records that invoice. No deductions, no new invoice.",
@@ -287,7 +297,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-06 18:14:33.251316",
+ "modified": "2026-10-06 23:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Client IPC",

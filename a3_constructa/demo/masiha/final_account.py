@@ -144,7 +144,8 @@ def certificate(award, lines, start, end, quantities, sent, certified, invoiced)
 				row.certified_qty = certify[row.line_key]
 		ipc.save()
 		ipc.submit()
-	frappe.db.set_value("Client IPC", ipc.name, {"creation": at(sent, 10), "modified": at(certified, 15)}, update_modified=False)
+	frappe.db.set_value("Client IPC", ipc.name, {"creation": at(sent, 10), "submitted_on": day(sent), "modified": at(certified, 15)},
+	                    update_modified=False)
 	with as_user("finance"):
 		from a3_constructa.api.client_billing import invoice_for_ipc
 

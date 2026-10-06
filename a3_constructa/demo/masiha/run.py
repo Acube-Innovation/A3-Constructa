@@ -37,6 +37,7 @@ STAGES = [
 	("client_ipc", "a3_constructa.demo.masiha.client_ipc.run"),  # P-04C: advance, IPCs, retention on the Administrative Centre
 	("final_account", "a3_constructa.demo.masiha.final_account.run"),  # P-04D: a small school job closed out to its final account
 	("subcontract_compliance", "a3_constructa.demo.masiha.subcontract_compliance.run"),  # P-09B: back-charges, the compliance gate
+	("billing_overview", "a3_constructa.demo.masiha.billing_overview.run"),  # D-04: a case for every Sales & Billing check
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

@@ -22,7 +22,7 @@ opening certificate records work invoiced before certificates were kept here.
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import flt
+from frappe.utils import flt, today
 
 
 class ClientIPC(Document):
@@ -41,6 +41,8 @@ class ClientIPC(Document):
 		self.calculate_deductions(award)
 		if self.docstatus == 0 and self.status not in ("Draft", "Submitted to Client"):
 			self.status = "Draft"
+		if self.status != "Draft" and not self.submitted_on:
+			self.submitted_on = today()
 
 	def set_header(self, award):
 		self.customer, self.project, self.company = award.customer, award.project, award.company
