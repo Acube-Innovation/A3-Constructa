@@ -49,6 +49,8 @@ PEOPLE = {
 	"finance": ("Grace", "Mwamba", "Finance Officer", ["Accounts User", "Accounts Manager", "Purchase User"]),
 	# P-02A: who chases tenders, from enquiry to quotation.
 	"sales": ("Bernadette", "Mbo", "Business Development Manager", ["Sales User", "Sales Manager", "Projects User"]),
+	# P-02E: approves a quotation priced below the minimum margin.
+	"md": ("Albert", "Nzuzi", "Managing Director", ["A3 Constructa Admin", "Sales Manager", "Projects Manager"]),
 }
 
 

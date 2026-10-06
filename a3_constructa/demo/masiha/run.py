@@ -26,6 +26,7 @@ STAGES = [
 	("tender", "a3_constructa.demo.masiha.tender.run"),  # P-02B: tender BOQs imported from the clients' bills
 	("estimates", "a3_constructa.demo.masiha.estimates.run"),  # P-02C: rate build-up on the hospital tender
 	("pricing", "a3_constructa.demo.masiha.pricing.run"),  # P-02D: preliminaries, markups, contingency
+	("quotations", "a3_constructa.demo.masiha.quotations.run"),  # P-02E: revisions, margin approval, win / loss
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

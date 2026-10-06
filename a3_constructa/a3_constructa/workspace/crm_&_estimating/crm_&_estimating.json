@@ -194,7 +194,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Quotation",
-   "link_count": 2,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -211,12 +211,34 @@
   },
   {
    "hidden": 0,
+   "is_query_report": 1,
+   "label": "Quotation Revisions",
+   "link_count": 0,
+   "link_to": "Quotation Revisions",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Quotation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
    "is_query_report": 0,
    "label": "Margin approval (Workflow)",
    "link_count": 0,
    "link_to": "Workflow",
    "link_type": "DocType",
    "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Win Loss Analysis",
+   "link_count": 0,
+   "link_to": "Win Loss Analysis",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Quotation",
    "type": "Link"
   },
   {
@@ -262,7 +284,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-06 13:51:23.949841",
+ "modified": "2026-10-06 14:41:47.533836",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "CRM & Estimating",

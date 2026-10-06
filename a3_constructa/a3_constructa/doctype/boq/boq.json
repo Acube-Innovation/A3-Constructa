@@ -304,8 +304,19 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2026-10-06 14:10:00.420400",
+ "links": [
+  {
+   "group": "Tender",
+   "link_doctype": "Quotation",
+   "link_fieldname": "boq"
+  },
+  {
+   "group": "Tender",
+   "link_doctype": "Estimate Sheet",
+   "link_fieldname": "boq"
+  }
+ ],
+ "modified": "2026-10-06 14:37:03.348705",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ",

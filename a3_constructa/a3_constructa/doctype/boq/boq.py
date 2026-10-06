@@ -40,10 +40,11 @@ class BOQ(Document):
 
 		Cost: priced lines at their estimate's cost rate × qty, plus allowance lines
 		at their amount (preliminaries among them); lines that draw from an
-		allowance are inside it, so they are not counted again. Selling: cost ×
-		(1 + overhead + profit + risk), plus the contingency at face value. Margin
-		is the markup's share of the selling price; the contingency is neither cost
-		nor margin.
+		allowance are inside it, so they are not counted again. Selling rate: cost
+		rate × (1 + overhead + profit + risk), rounded to the cent, because it is
+		the price printed and quoted (P-02E); the selling total adds up those
+		printed amounts, plus the contingency at face value. Margin is what the
+		selling total leaves over cost; the contingency is neither cost nor margin.
 		"""
 		for field in ("overhead_percent", "profit_percent", "risk_percent"):
 			if flt(self.get(field)) < 0:
@@ -52,21 +53,25 @@ class BOQ(Document):
 		factor = 1 + markup
 		prelim_heads = preliminaries_heads()
 
-		cost = preliminaries = 0.0
+		cost = preliminaries = selling = contingency = 0.0
 		unpriced = 0
 		for row in self.items:
+			cents = row.precision("selling_rate")
 			if row.is_contingency:
-				row.selling_rate, row.margin_percent = flt(row.amount), 0
+				row.selling_rate, row.margin_percent = flt(row.amount, cents), 0
+				contingency += row.selling_rate
 				continue
 			if row.is_allowance:
 				cost += flt(row.amount)
 				if row.cost_head in prelim_heads:
 					preliminaries += flt(row.amount)
-				row.selling_rate = flt(row.amount) * factor
+				row.selling_rate = flt(flt(row.amount) * factor, cents)
+				selling += row.selling_rate
 			else:
-				row.selling_rate = flt(row.cost_rate) * factor
+				row.selling_rate = flt(flt(row.cost_rate) * factor, cents)
 				if not row.draws_from_allowance:
 					cost += flt(row.cost_rate) * flt(row.boq_qty)
+					selling += flt(row.selling_rate * flt(row.boq_qty), cents)
 					if not flt(row.cost_rate):
 						unpriced += 1
 			row.margin_percent = markup / factor * 100 if flt(row.selling_rate) else 0
@@ -77,9 +82,8 @@ class BOQ(Document):
 		self.overhead_amount = cost * flt(self.overhead_percent) / 100
 		self.profit_amount = cost * flt(self.profit_percent) / 100
 		self.risk_amount = cost * flt(self.risk_percent) / 100
-		self.selling_total = cost * factor + flt(self.contingency_amount)
-		markup_amount = self.overhead_amount + self.profit_amount + self.risk_amount
-		self.margin_percent = markup_amount / self.selling_total * 100 if self.selling_total else 0
+		self.selling_total = selling + contingency
+		self.margin_percent = (selling - cost) / self.selling_total * 100 if self.selling_total else 0
 
 	def validate_stage(self):
 		"""Catalogue 2.4: a Tender BOQ is the client's bill priced for a bid, before

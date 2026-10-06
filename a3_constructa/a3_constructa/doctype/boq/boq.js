@@ -216,3 +216,27 @@ frappe.ui.form.on("BOQ Item", {
 			.then((name) => frappe.set_route("Form", "Estimate Sheet", name));
 	},
 });
+
+// Catalogue 2.7: a priced tender goes to the client as a Quotation.
+frappe.ui.form.on("BOQ", {
+	refresh(frm) {
+		if (frm.is_new() || frm.doc.boq_stage !== "Tender" || frm.doc.docstatus !== 0) return;
+		frm.add_custom_button(__("Quotation"), () => {
+			if (frm.is_dirty()) {
+				frappe.msgprint(__("Save the BOQ first, so the quotation takes its latest prices."));
+				return;
+			}
+			frappe
+				.xcall("a3_constructa.overrides.quotation.make_from_boq", { boq: frm.doc.name })
+				.then((r) => {
+					if (r.existing) {
+						frappe.show_alert({
+							message: __("{0} already quotes this BOQ. To re-price, cancel and amend it.", [r.name]),
+							indicator: "blue",
+						});
+					}
+					frappe.set_route("Form", "Quotation", r.name);
+				});
+		}, __("Create"));
+	},
+});

@@ -85,9 +85,13 @@ fixtures = [
 	]]]},
 	# Only the records this app introduces. "Approved", "Rejected", "Approve"
 	# and "Reject" ship with Frappe and must not be re-exported as ours.
-	{"dt": "Workflow", "filters": [["name", "in", ["BOQ Approval"]]]},
-	{"dt": "Workflow State", "filters": [["name", "in", ["Draft", "Pending Approval"]]]},
-	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Submit for Approval"]]]},
+	# States and actions first: fixtures import in this order, and a workflow's
+	# rows link to its states and actions.
+	{"dt": "Workflow State", "filters": [["name", "in", [
+		"Draft", "Pending Approval", "Pending Management Approval", "Submitted", "Cancelled",
+	]]]},
+	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Submit for Approval", "Submit"]]]},
+	{"dt": "Workflow", "filters": [["name", "in", ["BOQ Approval", "Quotation Margin Approval"]]]},
 ]
 
 # Naming series are not a doctype of their own: `bench setup naming-series` and
@@ -106,6 +110,7 @@ doctype_js = {
 	"Material Request": ["public/js/material_request.js", "public/js/approvals.js"],
 	"Purchase Order": "public/js/approvals.js",
 	"Opportunity": "public/js/opportunity.js",
+	"Quotation": "public/js/quotation.js",
 }
 
 # ---------------------------------------------------------------- events
@@ -161,6 +166,12 @@ doc_events = {
 	"Request for Quotation": {"validate": ACTIVE_COST_CODE},
 	"Supplier Quotation": {"validate": ACTIVE_COST_CODE},
 	"Sales Order": {"validate": ACTIVE_COST_CODE},
+	# Catalogue 2.7: a tender quotation's margin, revisions and margin approval.
+	"Quotation": {
+		"validate": "a3_constructa.overrides.quotation.validate",
+		"before_submit": "a3_constructa.overrides.quotation.check_margin_approval",
+		"on_cancel": "a3_constructa.overrides.quotation.set_cancelled_state",
+	},
 	"Sales Invoice": {"validate": ACTIVE_COST_CODE},
 	"BOQ": {"validate": ACTIVE_COST_CODE},
 	"Budget Transfer": {"validate": ACTIVE_COST_CODE},

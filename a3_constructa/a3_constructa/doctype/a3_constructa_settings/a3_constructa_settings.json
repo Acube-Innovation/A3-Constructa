@@ -7,7 +7,9 @@
  "field_order": [
   "sb_budget",
   "budget_check_action",
-  "budget_tolerance_percent"
+  "budget_tolerance_percent",
+  "sb_quotation",
+  "min_margin_percent"
  ],
  "fields": [
   {
@@ -30,13 +32,25 @@
    "fieldname": "budget_tolerance_percent",
    "fieldtype": "Percent",
    "label": "Tolerance (%)"
+  },
+  {
+   "fieldname": "sb_quotation",
+   "fieldtype": "Section Break",
+   "label": "Quotations"
+  },
+  {
+   "default": "10",
+   "description": "A tender quotation whose margin is below this goes to Pending Management Approval before it can be submitted.",
+   "fieldname": "min_margin_percent",
+   "fieldtype": "Percent",
+   "label": "Minimum Quotation Margin %"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-06 12:41:54.786832",
+ "modified": "2026-10-06 14:34:56.295797",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "A3 Constructa Settings",
