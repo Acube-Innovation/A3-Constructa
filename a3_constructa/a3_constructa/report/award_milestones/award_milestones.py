@@ -22,16 +22,16 @@ def execute(filters=None):
 
 def get_columns():
 	return [
-		{"fieldname": "award", "label": _("Award"), "fieldtype": "Link", "options": "Awarded Quotation", "width": 130},
-		{"fieldname": "award_title", "label": _("Award Title"), "fieldtype": "Data", "width": 220},
-		{"fieldname": "milestone", "label": _("Milestone"), "fieldtype": "Data", "width": 260},
-		{"fieldname": "planned_start", "label": _("Planned Start"), "fieldtype": "Date", "width": 110},
-		{"fieldname": "planned_end", "label": _("Planned End"), "fieldtype": "Date", "width": 110},
-		{"fieldname": "actual_end", "label": _("Actual End"), "fieldtype": "Date", "width": 110},
-		{"fieldname": "weightage", "label": _("Weightage %"), "fieldtype": "Percent", "width": 105},
-		{"fieldname": "billing_percent", "label": _("Billing %"), "fieldtype": "Percent", "width": 90},
-		{"fieldname": "variance_days", "label": _("Variance Days"), "fieldtype": "Int", "width": 115},
-		{"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 110},
+		{"fieldname": "award", "label": _("Award"), "fieldtype": "Link", "options": "Awarded Quotation", "width": 120},
+		{"fieldname": "award_title", "label": _("Award Title"), "fieldtype": "Data", "width": 170},
+		{"fieldname": "milestone", "label": _("Milestone"), "fieldtype": "Data", "width": 210},
+		{"fieldname": "planned_start", "label": _("Planned Start"), "fieldtype": "Date", "width": 105},
+		{"fieldname": "planned_end", "label": _("Planned End"), "fieldtype": "Date", "width": 100},
+		{"fieldname": "actual_end", "label": _("Actual End"), "fieldtype": "Date", "width": 100},
+		{"fieldname": "weightage", "label": _("Weightage %"), "fieldtype": "Percent", "width": 100},
+		{"fieldname": "billing_percent", "label": _("Billing %"), "fieldtype": "Percent", "width": 85},
+		{"fieldname": "variance_days", "label": _("Variance Days"), "fieldtype": "Int", "width": 110},
+		{"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 105},
 	]
 
 
