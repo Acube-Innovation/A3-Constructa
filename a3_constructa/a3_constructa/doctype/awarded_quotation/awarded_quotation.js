@@ -180,6 +180,10 @@ frappe.ui.form.on("Awarded Quotation", {
 		if (frm.doc.advance_percent) {
 			frm.add_custom_button(__("Advance Invoice"), () => advance_invoice(frm), __("Create"));
 		}
+		frm.add_custom_button(__("Final Account"), () =>
+			frappe.db.get_value("Final Account", { awarded_quotation: frm.doc.name, docstatus: ["<", 2] }, "name").then(({ message }) =>
+				message?.name ? frappe.set_route("Form", "Final Account", message.name) : frappe.new_doc("Final Account", { awarded_quotation: frm.doc.name }))
+		, __("Create"));
 		[1, 2].forEach((half) => {
 			const ready = half === 1 ? frm.doc.practical_completion_date && !frm.doc.retention_release_1
 				: frm.doc.retention_release_1 && !frm.doc.retention_release_2;

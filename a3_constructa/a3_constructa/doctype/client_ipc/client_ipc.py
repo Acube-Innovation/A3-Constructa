@@ -30,6 +30,11 @@ class ClientIPC(Document):
 		award = frappe.get_doc("Awarded Quotation", self.awarded_quotation)
 		if award.status == "Cancelled":
 			frappe.throw(_("{0} is cancelled.").format(award.name))
+		if self.docstatus == 0:
+			agreed = frappe.db.get_value("Final Account", {"awarded_quotation": award.name, "docstatus": 1}, "name")
+			if agreed:
+				frappe.throw(_("Final account {0} of {1} is agreed: the balance is billed on its final invoice, not on a new certificate.").format(
+					agreed, award.name), title=_("Final account agreed"))
 		self.set_header(award)
 		self.set_ipc_no()
 		self.calculate_lines(award)

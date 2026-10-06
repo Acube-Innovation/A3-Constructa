@@ -54,7 +54,8 @@ def receivable(filters):
 			where awarded_quotation = %s and docstatus = 1 and retention_this_period > 0""", a.name)[0]
 		if not flt(held[0]):
 			continue
-		released = sum(flt(frappe.db.get_value("Sales Invoice", n, "net_total")) for n in (a.retention_release_1, a.retention_release_2)
+		# A final account's release settles both halves with one invoice.
+		released = sum(flt(frappe.db.get_value("Sales Invoice", n, "net_total")) for n in {a.retention_release_1, a.retention_release_2}
 		               if n and frappe.db.get_value("Sales Invoice", n, "docstatus") == 1)
 		if not a.practical_completion_date:
 			note = _("Half at practical completion")

@@ -1,0 +1,418 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-06 20:30:00.000000",
+ "default_print_format": "Final Account Statement",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "awarded_quotation",
+  "customer",
+  "project",
+  "company",
+  "currency",
+  "cb_1",
+  "account_date",
+  "status",
+  "award_status",
+  "sb_value",
+  "contract_value",
+  "approved_variations",
+  "revised_contract_value",
+  "cb_2",
+  "remeasured_value",
+  "measure_basis",
+  "adjustments_total",
+  "final_contract_sum",
+  "sb_adjustments",
+  "adjustments",
+  "sb_settlement",
+  "certified_to_date",
+  "balance_due",
+  "advance_balance",
+  "cb_3",
+  "retention_held",
+  "retention_released",
+  "paid_to_date",
+  "outstanding_amount",
+  "sb_documents",
+  "final_invoice",
+  "cb_4",
+  "retention_release_invoice",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "FAC-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "FAC-.YYYY.-.####",
+   "reqd": 1
+  },
+  {
+   "description": "One final account per award.",
+   "fieldname": "awarded_quotation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Awarded Quotation",
+   "options": "Awarded Quotation",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.project",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "account_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Draft",
+   "description": "Draft while it is negotiated; Agreed once submitted; Closed when it is billed, the retention is released and the client has paid.",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Draft\nAgreed\nClosed",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.status",
+   "fieldname": "award_status",
+   "fieldtype": "Data",
+   "label": "Award Status",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_value",
+   "fieldtype": "Section Break",
+   "label": "Final Contract Sum"
+  },
+  {
+   "description": "As awarded.",
+   "fieldname": "contract_value",
+   "fieldtype": "Currency",
+   "label": "Contract Value",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "description": "The award's approved variation orders.",
+   "fieldname": "approved_variations",
+   "fieldtype": "Currency",
+   "label": "Approved Variations",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "revised_contract_value",
+   "fieldtype": "Currency",
+   "label": "Contract plus Variations",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "The work certified on the IPCs: the cumulative amount of every contract line.",
+   "fieldname": "remeasured_value",
+   "fieldtype": "Currency",
+   "label": "Remeasured Value",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "description": "Remeasured on a job billed by IPCs; contract plus variations on one billed by milestones.",
+   "fieldname": "measure_basis",
+   "fieldtype": "Data",
+   "label": "Basis",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "adjustments_total",
+   "fieldtype": "Currency",
+   "label": "Agreed Adjustments",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "final_contract_sum",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Final Contract Sum",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_adjustments",
+   "fieldtype": "Section Break",
+   "label": "Adjustments"
+  },
+  {
+   "description": "Claims, contra-charges and settlements. Only the agreed ones count in the final contract sum.",
+   "fieldname": "adjustments",
+   "fieldtype": "Table",
+   "label": "Adjustments",
+   "options": "Final Account Adjustment"
+  },
+  {
+   "fieldname": "sb_settlement",
+   "fieldtype": "Section Break",
+   "label": "Settlement"
+  },
+  {
+   "allow_on_submit": 1,
+   "description": "Gross work certified or billed, before retention, advance recovery and VAT.",
+   "fieldname": "certified_to_date",
+   "fieldtype": "Currency",
+   "label": "Certified to Date",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "bold": 1,
+   "description": "Final contract sum less certified to date: what the final invoice bills.",
+   "fieldname": "balance_due",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Balance Due",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "description": "Recovered on the final invoice.",
+   "fieldname": "advance_balance",
+   "fieldtype": "Currency",
+   "label": "Advance Still to Recover",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "retention_held",
+   "fieldtype": "Currency",
+   "label": "Retention Held",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "retention_released",
+   "fieldtype": "Currency",
+   "label": "Retention Released",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "description": "Received on the award's invoices, VAT included.",
+   "fieldname": "paid_to_date",
+   "fieldtype": "Currency",
+   "label": "Paid to Date",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "description": "Still unpaid on the award's invoices, VAT included.",
+   "fieldname": "outstanding_amount",
+   "fieldtype": "Currency",
+   "label": "Outstanding",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_documents",
+   "fieldtype": "Section Break",
+   "label": "Documents"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "final_invoice",
+   "fieldtype": "Link",
+   "label": "Final Invoice",
+   "no_copy": 1,
+   "options": "Sales Invoice",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "retention_release_invoice",
+   "fieldtype": "Link",
+   "label": "Retention Release Invoice",
+   "no_copy": 1,
+   "options": "Sales Invoice",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Final Account",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-10-06 20:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Final Account",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "awarded_quotation,customer,status",
+ "show_title_field_in_link": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "awarded_quotation",
+ "track_changes": 1
+}

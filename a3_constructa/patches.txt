@@ -12,3 +12,4 @@ a3_constructa.patches.backfill_wbs_cost_code_on_ledger
 a3_constructa.patches.set_quotation_workflow_state
 a3_constructa.patches.round_boq_selling_rates
 a3_constructa.patches.log_approved_variations
+a3_constructa.patches.flag_retention_release_invoices

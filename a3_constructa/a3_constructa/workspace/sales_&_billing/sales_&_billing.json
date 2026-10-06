@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"sb_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Sales &amp; Billing</b></span>\", \"col\": 12}}, {\"id\": \"card_contract_terms\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Terms\", \"col\": 4}}, {\"id\": \"card_milestone_billing\", \"type\": \"card\", \"data\": {\"card_name\": \"Milestone Billing\", \"col\": 4}}, {\"id\": \"card_advances\", \"type\": \"card\", \"data\": {\"card_name\": \"Advances\", \"col\": 4}}, {\"id\": \"card_interim_payment_certificates\", \"type\": \"card\", \"data\": {\"card_name\": \"Interim Payment Certificates\", \"col\": 4}}, {\"id\": \"card_retention\", \"type\": \"card\", \"data\": {\"card_name\": \"Retention\", \"col\": 4}}, {\"id\": \"card_invoicing_collections\", \"type\": \"card\", \"data\": {\"card_name\": \"Invoicing & Collections\", \"col\": 4}}]",
+ "content": "[{\"id\": \"sb_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Sales &amp; Billing</b></span>\", \"col\": 12}}, {\"id\": \"card_contract_terms\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Terms\", \"col\": 4}}, {\"id\": \"card_milestone_billing\", \"type\": \"card\", \"data\": {\"card_name\": \"Milestone Billing\", \"col\": 4}}, {\"id\": \"card_advances\", \"type\": \"card\", \"data\": {\"card_name\": \"Advances\", \"col\": 4}}, {\"id\": \"card_interim_payment_certificates\", \"type\": \"card\", \"data\": {\"card_name\": \"Interim Payment Certificates\", \"col\": 4}}, {\"id\": \"card_retention\", \"type\": \"card\", \"data\": {\"card_name\": \"Retention\", \"col\": 4}}, {\"id\": \"card_invoicing_collections\", \"type\": \"card\", \"data\": {\"card_name\": \"Invoicing & Collections\", \"col\": 4}}, {\"id\": \"card_final_account\", \"type\": \"card\", \"data\": {\"card_name\": \"Final Account\", \"col\": 4}}]",
  "creation": "2026-10-06 17:32:26.653589",
  "custom_blocks": [],
  "docstatus": 0,
@@ -252,9 +252,30 @@
    "onboard": 0,
    "report_ref_doctype": "Sales Invoice",
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Final Account",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "description": null,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Final Account",
+   "link_count": 0,
+   "link_to": "Final Account",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-10-06 18:18:46.610804",
+ "modified": "2026-10-06 20:30:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Sales & Billing",

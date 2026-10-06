@@ -11,6 +11,9 @@
 - Retention release: the first half at practical completion, the second at the
   end of the defects liability period, each an invoice against Retention
   Receivable.
+- From the agreed final account (catalogue 4.7): the final invoice for the balance
+  due, recovering what is left of the advance, and the release of whatever
+  retention is still held once the defects liability period is over.
 """
 
 import frappe
@@ -86,6 +89,8 @@ def invoice_for_ipc(ipc_name):
 		si.append("items", {"item_code": contract_item(head), "qty": 1, "project": a.project, "wbs": wbs, "cost_code": cost_code,
 		                    "description": _("IPC {0}: work certified on {1} ({2})").format(ipc.ipc_no, wbs or _("the project"), ", ".join(g["refs"]))})
 		rates.append(flt(g["amount"], 2))
+	if not groups and not flt(ipc.materials_on_site):
+		frappe.throw(_("{0} certifies nothing this period, so there is nothing to invoice.").format(ipc.name))
 	if flt(ipc.materials_on_site):
 		root = wbs_for(a.project, a.name, frappe._dict(wbs=None, boq_ref=None, cost_head=None)) if a.project else None
 		si.append("items", {"item_code": contract_item(None), "qty": 1, "project": a.project, "wbs": root,
@@ -171,7 +176,7 @@ def release_retention(award: str, half: int) -> str:
 	if amount <= 0:
 		frappe.throw(_("No retention is held on {0}.").format(a.name))
 	label = _("first half, at practical completion") if half == 1 else _("second half, at the end of the defects liability period")
-	si = _new_invoice(a, _("Retention release, {0}: {1}.").format(label, a.name))
+	si = _new_invoice(a, _("Retention release, {0}: {1}.").format(label, a.name), is_retention_release=1)
 	si.append("items", {"item_code": contract_item(None), "qty": 1, "income_account": _account(a.company, RETENTION_RECEIVABLE),
 	                    "description": _("Release of retention, {0}").format(label)})
 	si = _finish(si, [amount], vat=False)
@@ -182,10 +187,79 @@ def release_retention(award: str, half: int) -> str:
 	return si.name
 
 
+# ---------------------------------------------------------------- final account
+
+def _agreed_account(name):
+	fa = frappe.get_doc("Final Account", name)
+	fa.check_permission("read")
+	frappe.has_permission("Sales Invoice", "create", throw=True)
+	if fa.docstatus != 1:
+		frappe.throw(_("Agree (submit) final account {0} first.").format(fa.name))
+	fa.calculate()
+	return fa, frappe.get_doc("Awarded Quotation", fa.awarded_quotation)
+
+
+def final_invoice(name):
+	"""The balance due on the agreed final account, plus VAT, less the advance still to recover."""
+	fa, a = _agreed_account(name)
+	if fa.final_invoice and frappe.db.get_value("Sales Invoice", fa.final_invoice, "docstatus") < 2:
+		frappe.throw(_("Final invoice {0} already exists.").format(fa.final_invoice))
+	balance = flt(fa.balance_due, 2)
+	if balance <= 0:
+		frappe.throw(_("Nothing is left to bill: certified to date {0} already reaches the final contract sum of {1}. A credit note settles an over-payment.").format(
+			frappe.format(fa.certified_to_date, {"fieldtype": "Currency", "options": "currency"}, doc=fa),
+			frappe.format(fa.final_contract_sum, {"fieldtype": "Currency", "options": "currency"}, doc=fa)), title=_("Final invoice"))
+	root = wbs_for(a.project, a.name, frappe._dict(wbs=None, boq_ref=None, cost_head=None)) if a.project else None
+	si = _new_invoice(a, _("Final account {0} for {1}: balance of the final contract sum.").format(fa.name, a.name), final_account=fa.name)
+	si.append("items", {"item_code": contract_item(None), "qty": 1, "project": a.project, "wbs": root,
+	                    "description": _("Final account {0}: final contract sum {1} less {2} certified to date").format(
+	                        fa.name, frappe.format(fa.final_contract_sum, {"fieldtype": "Currency", "options": "currency"}, doc=fa),
+	                        frappe.format(fa.certified_to_date, {"fieldtype": "Currency", "options": "currency"}, doc=fa))})
+	recovery = min(max(flt(fa.advance_balance), 0), balance)
+	if recovery:
+		row = si.append("taxes", {"charge_type": "Actual", "account_head": _account(a.company, CUSTOMER_ADVANCES),
+		                          "description": _("Advance still to recover"), "tax_amount": -recovery,
+		                          "cost_center": frappe.get_cached_value("Company", a.company, "cost_center")})
+		row.a3_deduction = 1
+	si = _finish(si, [balance])
+	fa.db_set("final_invoice", si.name)
+	fa.add_comment("Info", _("Final invoice: {0}").format(si.name))
+	return si.name
+
+
+def release_remaining_retention(name):
+	"""Whatever retention is still held, released once the defects liability period is over."""
+	fa, a = _agreed_account(name)
+	if not a.practical_completion_date:
+		frappe.throw(_("Enter the practical completion date on {0} first.").format(a.name), title=_("Retention release"))
+	end = add_months(a.practical_completion_date, int(a.defects_liability_months or 0))
+	if getdate(end) > getdate(today()):
+		frappe.throw(_("The defects liability period ends on {0}; the remaining retention is released then.").format(
+			frappe.format(end, {"fieldtype": "Date"})), title=_("Retention release"))
+	amount = flt(flt(fa.retention_held) - flt(fa.retention_released), 2)
+	if amount <= 0:
+		frappe.throw(_("No retention is left to release on {0}.").format(a.name), title=_("Retention release"))
+	si = _new_invoice(a, _("Release of the remaining retention on {0}, final account {1}.").format(a.name, fa.name),
+	                  is_retention_release=1, final_account=fa.name)
+	si.append("items", {"item_code": contract_item(None), "qty": 1, "income_account": _account(a.company, RETENTION_RECEIVABLE),
+	                    "description": _("Release of the remaining retention, final account {0}").format(fa.name)})
+	si = _finish(si, [amount], vat=False)
+	for row in si.items:
+		row.income_account = _account(a.company, RETENTION_RECEIVABLE)
+	si.save()
+	fa.db_set("retention_release_invoice", si.name)
+	# The award's two halves are both settled by this release.
+	for half in (1, 2):
+		if not a.get(f"retention_release_{half}"):
+			frappe.db.set_value("Awarded Quotation", a.name, f"retention_release_{half}", si.name, update_modified=False)
+	fa.add_comment("Info", _("Remaining retention released: {0}").format(si.name))
+	return si.name
+
+
 # ---------------------------------------------------------------- invoice cancelled
 
 def release_links(doc, method=None):
-	"""A cancelled or deleted invoice frees its IPC, milestone or retention release."""
+	"""A cancelled or deleted invoice frees its IPC, milestone, retention release or final account."""
 	from a3_constructa.api.milestone_billing import release_milestone
 
 	release_milestone(doc, method)
@@ -194,3 +268,6 @@ def release_links(doc, method=None):
 	for half in (1, 2):
 		for name in frappe.get_all("Awarded Quotation", filters={f"retention_release_{half}": doc.name}, pluck="name"):
 			frappe.db.set_value("Awarded Quotation", name, f"retention_release_{half}", None, update_modified=False)
+	for field in ("final_invoice", "retention_release_invoice"):
+		for name in frappe.get_all("Final Account", filters={field: doc.name}, pluck="name"):
+			frappe.db.set_value("Final Account", name, field, None, update_modified=False)

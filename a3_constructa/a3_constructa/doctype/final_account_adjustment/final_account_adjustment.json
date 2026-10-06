@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "creation": "2026-10-06 20:30:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "description",
+  "amount",
+  "agreed",
+  "currency"
+ ],
+ "fields": [
+  {
+   "columns": 5,
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "description": "Positive adds to the sum; negative is a contra-charge or saving.",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "options": "currency"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "agreed",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Agreed"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-06 20:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Final Account Adjustment",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
