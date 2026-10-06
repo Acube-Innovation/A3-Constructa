@@ -1,0 +1,257 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"crm_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>CRM &amp; Estimating</b></span>\", \"col\": 12}}, {\"id\": \"card_pipeline\", \"type\": \"card\", \"data\": {\"card_name\": \"Pipeline\", \"col\": 4}}, {\"id\": \"card_tender_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Tender Register\", \"col\": 4}}, {\"id\": \"card_quantity_take_off\", \"type\": \"card\", \"data\": {\"card_name\": \"Quantity Take-off\", \"col\": 4}}, {\"id\": \"card_rate_build_up\", \"type\": \"card\", \"data\": {\"card_name\": \"Rate Build-up\", \"col\": 4}}, {\"id\": \"card_quotation\", \"type\": \"card\", \"data\": {\"card_name\": \"Quotation\", \"col\": 4}}, {\"id\": \"card_crm_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"CRM Reports\", \"col\": 4}}]",
+ "creation": "2026-10-06 13:22:31.505579",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "crm",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "CRM & Estimating",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pipeline",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Lead",
+   "link_count": 0,
+   "link_to": "Lead",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Opportunity",
+   "link_count": 0,
+   "link_to": "Opportunity",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Prospect",
+   "link_count": 0,
+   "link_to": "Prospect",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Customer",
+   "link_count": 0,
+   "link_to": "Customer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Sales Pipeline Analytics",
+   "link_count": 0,
+   "link_to": "Sales Pipeline Analytics",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Opportunity",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tender Register",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Document Type",
+   "link_count": 0,
+   "link_to": "Document Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quantity Take-off",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "BOQ",
+   "link_count": 0,
+   "link_to": "BOQ",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost Head",
+   "link_count": 0,
+   "link_to": "Cost Head",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "BOQ import (Data Import)",
+   "link_count": 0,
+   "link_to": "Data Import",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rate Build-up",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Supplier Quotation",
+   "link_count": 0,
+   "link_to": "Supplier Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Item Price",
+   "link_count": 0,
+   "link_to": "Item Price",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Freight Rate Contract",
+   "link_count": 0,
+   "link_to": "Freight Rate Contract",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quotation",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quotation",
+   "link_count": 0,
+   "link_to": "Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Margin approval (Workflow)",
+   "link_count": 0,
+   "link_to": "Workflow",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CRM Reports",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Lead Details",
+   "link_count": 0,
+   "link_to": "Lead Details",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Lead",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Lost Opportunity",
+   "link_count": 0,
+   "link_to": "Lost Opportunity",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Opportunity",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Quotation Trends",
+   "link_count": 0,
+   "link_to": "Quotation Trends",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Quotation",
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-10-06 13:22:31.505579",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "CRM & Estimating",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "A3 Constructa",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 2.0,
+ "shortcuts": [],
+ "title": "CRM & Estimating"
+}
