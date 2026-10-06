@@ -183,7 +183,7 @@ def create_allocations(boq):
 			"doctype": "WBS Allocation", "project": project(), "boq": boq, "wbs": wbs, "cost_head": "MSS-AR-FL",
 			"items": [{"boq_item": lines[item].name, "item_code": item, "cost_code": lines[item].cost_code,
 			           "allocated_qty": qty, "rate": lines[item].approved_rate} for item, qty in quantities.items()],
-		})
+		}, submit=True)
 	log("WBS allocations: porcelain 600 m2 to WBS A, 400 m2 to WBS B (same item, cost code and rate)")
 
 

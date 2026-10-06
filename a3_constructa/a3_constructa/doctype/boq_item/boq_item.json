@@ -6,6 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "is_allowance",
   "item_code",
   "item_name",
   "description",
@@ -22,20 +23,34 @@
   "approved_qty",
   "approved_rate",
   "cb_2",
-  "budget_amount"
+  "budget_amount",
+  "sb_allowance",
+  "draws_from_allowance",
+  "cb_allowance",
+  "allowance_used",
+  "allowance_remaining"
  ],
  "fields": [
+  {
+   "columns": 1,
+   "default": "0",
+   "description": "A provisional sum or allowance: no item, the amount is entered directly.",
+   "fieldname": "is_allowance",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Allowance"
+  },
   {
    "columns": 2,
    "fieldname": "item_code",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Item / Service",
-   "options": "Item",
-   "reqd": 1
+   "mandatory_depends_on": "eval:!doc.is_allowance",
+   "options": "Item"
   },
   {
-   "columns": 2,
+   "columns": 1,
    "fetch_from": "item_code.item_name",
    "fetch_if_empty": 1,
    "fieldname": "item_name",
@@ -48,7 +63,8 @@
    "fetch_if_empty": 1,
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Description"
+   "label": "Description",
+   "mandatory_depends_on": "eval:doc.is_allowance"
   },
   {
    "fieldname": "sb_1",
@@ -101,11 +117,12 @@
   },
   {
    "columns": 2,
+   "description": "Qty x rate. On an allowance line, enter the allowance amount here.",
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount",
-   "read_only": 1
+   "read_only_depends_on": "eval:!doc.is_allowance"
   },
   {
    "fieldname": "sb_3",
@@ -127,9 +144,43 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "Approved qty x approved rate. On an allowance line, the part of the allowance no line draws from yet.",
    "fieldname": "budget_amount",
    "fieldtype": "Currency",
    "label": "Budget Amount",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.is_allowance || doc.draws_from_allowance",
+   "fieldname": "sb_allowance",
+   "fieldtype": "Section Break",
+   "label": "Allowance"
+  },
+  {
+   "depends_on": "eval:!doc.is_allowance",
+   "description": "The allowance line in this BOQ that pays for this line. Click to pick one; save the BOQ first if the allowance line is new.",
+   "fieldname": "draws_from_allowance",
+   "fieldtype": "Data",
+   "label": "Draws From Allowance"
+  },
+  {
+   "fieldname": "cb_allowance",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "is_allowance",
+   "fieldname": "allowance_used",
+   "fieldtype": "Currency",
+   "label": "Allowance Used",
+   "no_copy": 0,
+   "read_only": 1
+  },
+  {
+   "depends_on": "is_allowance",
+   "fieldname": "allowance_remaining",
+   "fieldtype": "Currency",
+   "label": "Allowance Remaining",
    "read_only": 1
   }
  ],
@@ -137,7 +188,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-15 11:42:11.618294",
+ "modified": "2026-10-06 11:50:27.912540",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ Item",

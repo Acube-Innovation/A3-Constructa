@@ -53,7 +53,8 @@ def split_by_allocation(lines: list[dict]) -> list[dict]:
 	by_line = {}
 	for row in frappe.get_list(
 		"WBS Allocation",
-		filters=[["WBS Allocation Item", "boq_item", "in", [line["boq_item"] for line in lines] or [""]]],
+		filters=[["WBS Allocation Item", "boq_item", "in", [line["boq_item"] for line in lines] or [""]],
+		         ["WBS Allocation", "docstatus", "<", 2]],
 		fields=[
 			"wbs",
 			"`tabWBS Allocation Item`.boq_item as boq_item",
@@ -142,7 +143,8 @@ def boq_lines(boqs: list[str]) -> list[dict]:
 	child = "`tabBOQ Item`"
 	rows = frappe.get_list(
 		"BOQ",
-		filters=[["BOQ", "name", "in", boqs], ["BOQ Item", "name", "is", "set"]],
+		# An allowance line has no item to buy; the item lines drawing from it do.
+		filters=[["BOQ", "name", "in", boqs], ["BOQ Item", "name", "is", "set"], ["BOQ Item", "is_allowance", "=", 0]],
 		fields=[
 			"name as boq",
 			"project",

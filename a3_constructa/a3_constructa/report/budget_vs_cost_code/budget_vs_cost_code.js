@@ -10,4 +10,9 @@ frappe.query_reports["Budget vs Cost Code"] = {
 		{ fieldname: "from_date", label: __("From Date"), fieldtype: "Date" },
 		{ fieldname: "to_date", label: __("To Date"), fieldtype: "Date" },
 	],
+	formatter(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+		// The approved BOQ budget not yet allocated to a WBS node.
+		return data && data.is_unallocated ? `<span class="text-muted"><i>${value}</i></span>` : value;
+	},
 };

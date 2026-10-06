@@ -5,12 +5,16 @@
 The same comparison as Budget vs WBS, grouped one level down: cost_code sits on
 the WBS Allocation Item row rather than on the parent, so the budget side groups
 by the child field. Actuals come from GL Entry via the `cost_code` custom field
-this app adds, and read zero until the spending workspaces stamp it.
+this app adds, and read zero until the spending workspaces stamp it. Budget
+counts submitted allocations; the approved BOQ budget not yet allocated shows
+as one "Unallocated" row per cost head.
 """
 
 import frappe
 from frappe import _
 from frappe.utils import flt
+
+from a3_constructa.api.budget_allocation import unallocated_by_cost_head, unallocated_row_label
 
 
 def execute(filters=None):
@@ -34,6 +38,18 @@ def execute(filters=None):
 			"percent_utilised": (spent / budgeted * 100) if budgeted else (100 if spent else 0),
 		})
 
+	if not filters.get("cost_code"):
+		for entry in unallocated_by_cost_head(filters.get("project"), filters.get("company")):
+			data.append({
+				"cost_code": None,
+				"description": unallocated_row_label(entry),
+				"budget_amount": entry["amount"],
+				"actual_amount": 0,
+				"variance": entry["amount"],
+				"percent_utilised": 0,
+				"is_unallocated": 1,
+			})
+
 	return get_columns(), data
 
 
@@ -41,7 +57,7 @@ def get_columns():
 	return [
 		{"fieldname": "cost_code", "label": _("Cost Code"), "fieldtype": "Link",
 		 "options": "Cost Code", "width": 160},
-		{"fieldname": "description", "label": _("Description"), "fieldtype": "Data", "width": 240},
+		{"fieldname": "description", "label": _("Description"), "fieldtype": "Data", "width": 320},
 		{"fieldname": "budget_amount", "label": _("Budget Amount"),
 		 "fieldtype": "Currency", "width": 140},
 		{"fieldname": "actual_amount", "label": _("Actual Amount"),
@@ -53,7 +69,7 @@ def get_columns():
 
 
 def get_budget(filters):
-	conditions = ["alloc.docstatus < 2", "item.cost_code is not null", "item.cost_code != ''"]
+	conditions = ["alloc.docstatus = 1", "item.cost_code is not null", "item.cost_code != ''"]
 	values = {}
 	if filters.get("project"):
 		conditions.append("alloc.project = %(project)s")

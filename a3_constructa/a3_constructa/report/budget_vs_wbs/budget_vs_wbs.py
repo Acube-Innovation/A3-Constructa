@@ -2,7 +2,9 @@
 # For license information, please see license.txt
 """Budget vs WBS - build sheet head 20, row 13.
 
-Budget comes from WBS Allocation (the allocated amount per WBS node); actuals
+Budget comes from submitted WBS Allocations (the allocated amount per WBS
+node), plus one "Unallocated" row per cost head for the approved BOQ budget not
+yet allocated, so the budget column adds up to the approved BOQ. Actuals
 come from GL Entry via the `wbs` custom field this app adds. GL Entry ships with
 no WBS of its own, so a voucher only appears here once the workspace that
 creates it stamps that field - until then the actual column reads zero and the
@@ -12,6 +14,8 @@ variance equals the budget.
 import frappe
 from frappe import _
 from frappe.utils import flt
+
+from a3_constructa.api.budget_allocation import unallocated_by_cost_head, unallocated_row_label
 
 
 def execute(filters=None):
@@ -37,6 +41,18 @@ def execute(filters=None):
 			"percent_utilised": (spent / budgeted * 100) if budgeted else (100 if spent else 0),
 		})
 
+	if not filters.get("wbs"):
+		for entry in unallocated_by_cost_head(filters.get("project"), filters.get("company")):
+			data.append({
+				"wbs": None,
+				"wbs_name": unallocated_row_label(entry),
+				"budget_amount": entry["amount"],
+				"actual_amount": 0,
+				"variance": entry["amount"],
+				"percent_utilised": 0,
+				"is_unallocated": 1,
+			})
+
 	return get_columns(), data
 
 
@@ -44,7 +60,7 @@ def get_columns():
 	return [
 		{"fieldname": "wbs", "label": _("WBS"), "fieldtype": "Link",
 		 "options": "WBS", "width": 160},
-		{"fieldname": "wbs_name", "label": _("WBS Name"), "fieldtype": "Data", "width": 220},
+		{"fieldname": "wbs_name", "label": _("WBS Name"), "fieldtype": "Data", "width": 320},
 		{"fieldname": "budget_amount", "label": _("Budget Amount"),
 		 "fieldtype": "Currency", "width": 140},
 		{"fieldname": "actual_amount", "label": _("Actual Amount"),
@@ -56,7 +72,7 @@ def get_columns():
 
 
 def get_budget(filters):
-	conditions = ["alloc.docstatus < 2", "alloc.wbs is not null"]
+	conditions = ["alloc.docstatus = 1", "alloc.wbs is not null"]
 	values = {}
 	if filters.get("project"):
 		conditions.append("alloc.project = %(project)s")

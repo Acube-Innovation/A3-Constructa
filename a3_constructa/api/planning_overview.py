@@ -245,7 +245,8 @@ def _budget(readable: set) -> dict:
 		split = {}
 		for row in _get_list(
 			"WBS Allocation",
-			filters=[["WBS Allocation", "boq", "in", approved_boqs], _joined("WBS Allocation Item")],
+			filters=[["WBS Allocation", "boq", "in", approved_boqs], ["WBS Allocation", "docstatus", "<", 2],
+			         _joined("WBS Allocation Item")],
 			fields=["`tabWBS Allocation Item`.boq_item as boq_item", "`tabWBS Allocation Item`.allocated_amount as amount"],
 			limit_page_length=0,
 		):

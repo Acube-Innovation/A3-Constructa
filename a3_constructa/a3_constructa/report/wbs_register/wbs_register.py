@@ -4,7 +4,7 @@
 
 One row per WBS node, laid out as the tree: what the node is, where it is on
 site, the BOQ line it delivers, who answers for it, its status, and the budget
-allocated to it through WBS Allocation. A group's allocated budget includes
+allocated to it through submitted WBS Allocations. A group's allocated budget includes
 everything below it. When a filter hides a node's parents, the parents are
 still shown so each row keeps its place in the tree.
 """
@@ -133,7 +133,7 @@ def get_allocated(nodes):
 		select alloc.wbs as wbs, sum(item.allocated_amount) as amount
 		from `tabWBS Allocation Item` item
 		inner join `tabWBS Allocation` alloc on alloc.name = item.parent
-		where alloc.docstatus < 2 and alloc.wbs in %(wbs)s
+		where alloc.docstatus = 1 and alloc.wbs in %(wbs)s
 		group by alloc.wbs
 		""",
 		{"wbs": [n.name for n in nodes]},

@@ -6,3 +6,4 @@
 # Patches added in this section will be executed after doctypes are migrated
 a3_constructa.patches.remove_procurement_classification_workspace
 a3_constructa.patches.set_wbs_node_type_and_status
+a3_constructa.patches.submit_valid_wbs_allocations
