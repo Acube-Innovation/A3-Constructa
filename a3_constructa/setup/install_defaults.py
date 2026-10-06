@@ -186,8 +186,35 @@ def set_standard_working_hours():
 	)
 
 
+# Catalogue 9.3: an amended request or order keeps its number, with -1, -2.
+AMEND_COUNTER_DOCTYPES = ("Material Request", "Purchase Order")
+
+
+def keep_number_on_amend():
+	"""Pin "Amend Counter" for requests and orders, so a change to the site-wide
+	default naming does not give their amendments new numbers."""
+	settings = frappe.get_single("Document Naming Settings")
+	pinned = {row.document_type for row in settings.amend_naming_override}
+	missing = [dt for dt in AMEND_COUNTER_DOCTYPES if dt not in pinned]
+	if not missing:
+		return
+	for doctype in missing:
+		settings.append("amend_naming_override", {"document_type": doctype, "action": "Amend Counter"})
+	settings.flags.ignore_permissions = True
+	settings.save()
+
+
+def init_settings():
+	"""A3 Constructa Settings start at their defaults: warn when over budget, no tolerance."""
+	if frappe.db.get_single_value("A3 Constructa Settings", "budget_check_action"):
+		return
+	frappe.db.set_single_value("A3 Constructa Settings", {"budget_check_action": "Warn", "budget_tolerance_percent": 0})
+
+
 def run():
 	"""Seed every baseline record. Idempotent."""
 	create_asset_categories()
 	create_retention_account()
 	set_standard_working_hours()
+	keep_number_on_amend()
+	init_settings()

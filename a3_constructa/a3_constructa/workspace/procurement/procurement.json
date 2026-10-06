@@ -131,7 +131,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "PR Approval Workflow",
-   "link_count": 3,
+   "link_count": 5,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -162,6 +162,27 @@
    "label": "Audit Trail",
    "link_count": 0,
    "link_to": "Version",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Approvals Pending",
+   "link_count": 0,
+   "link_to": "Approvals Pending",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Material Request",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "A3 Constructa Settings",
+   "link_count": 0,
+   "link_to": "A3 Constructa Settings",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -540,7 +561,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-06 11:10:52.370070",
+ "modified": "2026-10-06 12:44:09.522022",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Procurement",

@@ -103,13 +103,20 @@ fixtures = [
 
 # Material Request gains Get Items From > BOQ.
 doctype_js = {
-	"Material Request": "public/js/material_request.js",
+	"Material Request": ["public/js/material_request.js", "public/js/approvals.js"],
+	"Purchase Order": "public/js/approvals.js",
 }
 
 # ---------------------------------------------------------------- events
 ACTIVE_WBS = "a3_constructa.overrides.wbs_posting.validate_active_wbs"
 ACTIVE_COST_CODE = "a3_constructa.overrides.cost_code_accounting.validate_active_cost_codes"
 COST_CODE_ACCOUNTING = "a3_constructa.overrides.cost_code_accounting.apply_cost_code_accounting"
+# Catalogue 9.3, 14.2: approval levels from the Approval Matrix, then the budget check.
+APPROVAL_LEVEL = "a3_constructa.overrides.approvals.set_required_level"
+APPROVAL_GATE = [
+	"a3_constructa.overrides.approvals.check_levels_before_submit",
+	"a3_constructa.overrides.approvals.check_budget",
+]
 
 # Build sheet head 48 row 19: a material issue must post to the project GL head
 # its Cost Code names, not the item or company default.
@@ -139,11 +146,13 @@ doc_events = {
 			"a3_constructa.overrides.material_request.validate_boq_lines",
 			ACTIVE_WBS,
 			ACTIVE_COST_CODE,
+			APPROVAL_LEVEL,
 		],
+		"before_submit": APPROVAL_GATE,
 	},
 	# Catalogue 1.2: only an Active WBS node accepts postings. Catalogue 1.3:
 	# only an Active cost code can be used.
-	"Purchase Order": {"validate": [ACTIVE_WBS, ACTIVE_COST_CODE]},
+	"Purchase Order": {"validate": [ACTIVE_WBS, ACTIVE_COST_CODE, APPROVAL_LEVEL], "before_submit": APPROVAL_GATE},
 	"Timesheet": {"validate": [ACTIVE_WBS, ACTIVE_COST_CODE]},
 	"WBS Allocation": {"validate": [ACTIVE_WBS, ACTIVE_COST_CODE]},
 	"Variation Order": {"validate": ACTIVE_WBS},

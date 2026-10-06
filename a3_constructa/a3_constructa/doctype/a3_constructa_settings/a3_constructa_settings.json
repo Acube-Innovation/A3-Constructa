@@ -1,0 +1,80 @@
+{
+ "actions": [],
+ "creation": "2026-10-06 12:41:54.786832",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sb_budget",
+  "budget_check_action",
+  "budget_tolerance_percent"
+ ],
+ "fields": [
+  {
+   "description": "When a Material Request or Purchase Order is submitted, each WBS and cost code on it is checked: this document plus open orders plus actual cost against the WBS budget.",
+   "fieldname": "sb_budget",
+   "fieldtype": "Section Break",
+   "label": "Budget check on requests and orders"
+  },
+  {
+   "default": "Warn",
+   "description": "Warn: submit and show the overrun. Stop: refuse the submit. Off: no check.",
+   "fieldname": "budget_check_action",
+   "fieldtype": "Select",
+   "label": "When Over Budget",
+   "options": "Warn\nStop\nOff"
+  },
+  {
+   "default": "0",
+   "description": "How far over the budget a document may go before the check acts, e.g. 5 allows 5% over.",
+   "fieldname": "budget_tolerance_percent",
+   "fieldtype": "Percent",
+   "label": "Tolerance (%)"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-06 12:41:54.786832",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "A3 Constructa Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Purchase Manager"
+  },
+  {
+   "read": 1,
+   "role": "Constructa Project Manager"
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
