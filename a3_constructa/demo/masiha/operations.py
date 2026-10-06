@@ -25,7 +25,7 @@ ADMIN = [
 	("Finishes and handover", 45, 120, "Open", 0, "Roof structure and covering", "MSS-W-AR"),
 ]
 HOSPITAL = [
-	("Mobilisation and site set-up", 27, 60, "Open", 0, None, "HGR-W-PRE"),
+	("Mobilisation and site set-up", 27, 59, "Open", 0, None, "HGR-W-PRE"),
 	("Substructure", 60, 180, "Open", 0, "Mobilisation and site set-up", "HGR-W-ES"),
 	("Frame and envelope", 150, 330, "Open", 0, "Substructure", "HGR-W-ES"),
 ]

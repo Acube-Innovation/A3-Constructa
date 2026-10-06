@@ -109,6 +109,7 @@ fixtures = [
 
 # Material Request gains Get Items From > BOQ.
 doctype_js = {
+	"Task": "public/js/task.js",
 	"Material Request": ["public/js/material_request.js", "public/js/approvals.js"],
 	"Purchase Order": "public/js/approvals.js",
 	"Opportunity": "public/js/opportunity.js",
@@ -137,7 +138,7 @@ override_doctype_class = {
 
 doc_events = {
 	"Task": {
-		"validate": "a3_constructa.overrides.task.validate",
+		"validate": ["a3_constructa.overrides.task.validate", "a3_constructa.overrides.task_resources.validate"],
 		"on_update": "a3_constructa.overrides.task.on_update",
 		"after_delete": "a3_constructa.overrides.task.after_delete",
 	},
