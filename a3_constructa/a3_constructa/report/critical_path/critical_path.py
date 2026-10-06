@@ -12,7 +12,7 @@ from frappe.utils import cint, getdate
 def execute(filters=None):
 	filters = frappe._dict(filters or {})
 	if not filters.get("project"):
-		return get_columns(), []
+		return get_columns(), [], _("Choose a project to see its critical path.")
 	data = get_data(filters)
 	return get_columns(), data, None, None, get_summary(data, filters)
 
