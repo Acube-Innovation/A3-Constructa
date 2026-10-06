@@ -39,6 +39,7 @@ STAGES = [
 	("subcontract_compliance", "a3_constructa.demo.masiha.subcontract_compliance.run"),  # P-09B: back-charges, the compliance gate
 	("billing_overview", "a3_constructa.demo.masiha.billing_overview.run"),  # D-04: a case for every Sales & Billing check
 	("crews", "a3_constructa.demo.masiha.crews.run"),  # P-07A: site workers, wages and crews in every state
+	("equipment", "a3_constructa.demo.masiha.equipment.run"),  # P-08A: plant logs, owned at an internal rate and hired
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

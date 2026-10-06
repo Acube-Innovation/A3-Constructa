@@ -1,0 +1,340 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-07 11:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "asset",
+  "asset_name",
+  "log_date",
+  "operator",
+  "operator_name",
+  "cb_1",
+  "company",
+  "project",
+  "site",
+  "wbs",
+  "cost_code",
+  "is_hired",
+  "sb_meter",
+  "meter_type",
+  "meter_start",
+  "meter_end",
+  "cb_2",
+  "worked_hours",
+  "idle_hours",
+  "breakdown_hours",
+  "sb_cost",
+  "internal_rate",
+  "amount",
+  "cb_3",
+  "journal_entry",
+  "daily_site_report",
+  "remarks",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "EQL-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "EQL-.YYYY.-.####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "asset",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Asset",
+   "options": "Asset",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "asset.asset_name",
+   "fieldname": "asset_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Machine",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "log_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "operator",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Operator",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "operator.employee_name",
+   "fieldname": "operator_name",
+   "fieldtype": "Data",
+   "label": "Operator Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "asset.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "site",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Site",
+   "options": "Location"
+  },
+  {
+   "fieldname": "wbs",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "WBS",
+   "options": "WBS"
+  },
+  {
+   "description": "An Equipment cost code; its account takes the charge.",
+   "fieldname": "cost_code",
+   "fieldtype": "Link",
+   "label": "Cost Code",
+   "options": "Cost Code"
+  },
+  {
+   "fetch_from": "asset.is_hired",
+   "fieldname": "is_hired",
+   "fieldtype": "Check",
+   "label": "Hired Plant",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_meter",
+   "fieldtype": "Section Break",
+   "label": "Meter and Hours"
+  },
+  {
+   "fetch_from": "asset.meter_type",
+   "fieldname": "meter_type",
+   "fieldtype": "Data",
+   "label": "Meter",
+   "read_only": 1
+  },
+  {
+   "description": "Defaults to the machine's current meter.",
+   "fieldname": "meter_start",
+   "fieldtype": "Float",
+   "label": "Meter Start"
+  },
+  {
+   "fieldname": "meter_end",
+   "fieldtype": "Float",
+   "label": "Meter End"
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "worked_hours",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Worked Hours",
+   "non_negative": 1
+  },
+  {
+   "description": "On site and available, but not working (waiting for work, weather).",
+   "fieldname": "idle_hours",
+   "fieldtype": "Float",
+   "label": "Idle Hours",
+   "non_negative": 1
+  },
+  {
+   "description": "Not available: broken down or under repair.",
+   "fieldname": "breakdown_hours",
+   "fieldtype": "Float",
+   "label": "Breakdown Hours",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "sb_cost",
+   "fieldtype": "Section Break",
+   "label": "Charge to the Job"
+  },
+  {
+   "fetch_from": "asset.internal_hourly_rate",
+   "fieldname": "internal_rate",
+   "fieldtype": "Currency",
+   "label": "Internal Rate",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "description": "Worked hours × internal rate; 0 for hired plant.",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "no_copy": 1,
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "description": "Set by the Daily Site Report that recorded this log (P-06F).",
+   "fieldname": "daily_site_report",
+   "fieldtype": "Data",
+   "label": "Daily Site Report",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Equipment Log",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-10-07 11:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Equipment Log",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  }
+ ],
+ "search_fields": "asset,asset_name,log_date,project",
+ "sort_field": "log_date",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "asset_name",
+ "track_changes": 1
+}

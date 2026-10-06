@@ -37,7 +37,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Category",
-   "options": "\nMaterial\nService\nSubcontract\nSpare\nRental"
+   "options": "\nMaterial\nService\nSubcontract\nSpare\nRental\nEquipment"
   },
   {
    "fieldname": "cb_1",
@@ -88,7 +88,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-10-06 12:32:53.056484",
+ "modified": "2026-10-07 11:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Cost Code",

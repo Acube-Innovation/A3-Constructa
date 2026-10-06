@@ -219,6 +219,25 @@ def create_back_charge_account():
 		doc.insert()
 
 
+# Catalogue 8.1 (P-08A): owned plant is charged to the job at an internal hourly rate;
+# the other side of that charge is income to the plant department.
+PLANT_RECOVERY = "Internal Plant Recovery"
+
+
+def create_plant_recovery_account():
+	for company in frappe.get_all("Company", fields=["name", "abbr"]):
+		if frappe.db.exists("Account", f"{PLANT_RECOVERY} - {company.abbr}"):
+			continue
+		parent = _group(company.name, "Income", ("Indirect Income", "Income"))
+		if not parent:
+			continue
+		doc = frappe.new_doc("Account")
+		doc.update({"account_name": PLANT_RECOVERY, "parent_account": parent, "company": company.name, "root_type": "Income",
+		            "account_type": "Income Account", "is_group": 0})
+		doc.flags.ignore_permissions = True
+		doc.insert()
+
+
 def create_subcontract_document_rule():
 	"""One blocking rule for Work Certificate, created once; edit it to change the list."""
 	if frappe.db.exists("Mandatory Document Rule", {"reference_doctype": "Work Certificate"}):
@@ -296,6 +315,7 @@ def run():
 	create_contract_accounts()
 	create_back_charge_account()
 	create_subcontract_document_rule()
+	create_plant_recovery_account()
 	set_standard_working_hours()
 	keep_number_on_amend()
 	init_settings()
