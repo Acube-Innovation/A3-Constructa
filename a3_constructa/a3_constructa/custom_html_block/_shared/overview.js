@@ -629,13 +629,15 @@ function nice_scale(max) {
 
 // Links keep a real href so ctrl/cmd-click opens a new tab; a plain click
 // routes inside the desk with the filters applied.
+// The list view is named, so a doctype whose default view is the tree (WBS,
+// Cost Head) still opens filtered.
 function list_link(doctype, filters, content, attrs = {}) {
-	const link = el("a", { ...attrs, href: `/app/${frappe.router.slug(doctype)}` }, content);
+	const link = el("a", { ...attrs, href: `/app/${frappe.router.slug(doctype)}/view/list` }, content);
 	link.addEventListener("click", (event) => {
 		if (!is_plain_click(event)) return;
 		event.preventDefault();
 		frappe.route_options = { ...filters };
-		frappe.set_route("List", doctype);
+		frappe.set_route("List", doctype, "List");
 	});
 	return link;
 }

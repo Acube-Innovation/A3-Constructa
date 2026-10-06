@@ -25,6 +25,7 @@ import frappe
 
 # Record name -> folder under a3_constructa/a3_constructa/custom_html_block/
 CUSTOM_HTML_BLOCKS = {
+	"WBS & Cost Structure Overview": "wbs_cost_structure_overview",
 	"Master Data Overview": "master_data_overview",
 	"Planning & Budgeting Overview": "planning_overview",
 	"Procurement Overview": "procurement_overview",
