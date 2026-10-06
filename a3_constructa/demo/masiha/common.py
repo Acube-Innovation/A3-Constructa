@@ -38,8 +38,9 @@ PEOPLE = {
 	           ["Stock User", "Stock Manager", "Constructa Store Keeper", "Purchase User"]),
 	"pm": ("Didier", "Kasongo", "Project Manager",
 	       ["Constructa Project Manager", "Projects Manager", "A3 Constructa Admin", "Stock User", "Purchase User"]),
+	# Sales User from P-02B: the QS prices the tenders, so she reads the opportunities.
 	"qs": ("Esther", "Ngalula", "Quantity Surveyor",
-	       ["Constructa Quantity Surveyor", "Projects User"]),
+	       ["Constructa Quantity Surveyor", "Projects User", "Sales User"]),
 	"buyer": ("Olivier", "Tshibanda", "Buyer", ["Purchase User", "Stock User"]),
 	"procurement": ("Marie", "Kalala", "Procurement Manager", ["Purchase Manager", "Purchase User", "Stock User"]),
 	"logistics": ("Samuel", "Ilunga", "Logistics & C&F Officer",

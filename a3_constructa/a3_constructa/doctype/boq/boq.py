@@ -11,9 +11,31 @@ from a3_constructa.a3_constructa.doctype.budget_revision_log.budget_revision_log
 
 class BOQ(Document):
 	def validate(self):
+		self.validate_stage()
 		self.set_revision()
 		self.validate_allowance_lines()
 		self.calculate_amounts()
+
+	def validate_stage(self):
+		"""Catalogue 2.4: a Tender BOQ is the client's bill priced for a bid, before
+		there is a project; a Contract or Budget BOQ belongs to a project."""
+		self.boq_stage = self.boq_stage or "Budget"
+		if self.boq_stage != "Tender" and not self.project:
+			frappe.throw(_("A {0} BOQ needs a project.").format(_(self.boq_stage)))
+		if self.opportunity and not self.customer:
+			opp = frappe.db.get_value("Opportunity", self.opportunity, ["opportunity_from", "party_name"], as_dict=True)
+			if opp and opp.opportunity_from == "Customer":
+				self.customer = opp.party_name
+
+	def before_submit(self):
+		# A tender is priced and sent through its quotation (P-02E). Approving it
+		# here would write it to the budget, which only Contract and Budget BOQs carry.
+		if self.boq_stage == "Tender":
+			frappe.throw(
+				_("A Tender BOQ is not approved as a budget. Price it and send it through a Quotation; "
+				  "once the work is won it becomes the Contract BOQ."),
+				title=_("Tender BOQ"),
+			)
 
 	def set_revision(self):
 		"""Catalogue 1.6: an amendment is the next revision and must say why."""
@@ -86,8 +108,13 @@ class BOQ(Document):
 				row.item_code = None
 				row.item_name = (row.description or "")[:140]
 				row.boq_qty = row.rate = row.approved_qty = row.approved_rate = 0
-			elif not row.item_code:
+			elif not row.item_code and self.boq_stage != "Tender":
 				frappe.throw(_("Row {0}: pick the item, or tick Allowance for a provisional sum.").format(row.idx))
+			elif not row.item_code and not (row.description or "").strip():
+				frappe.throw(_("Row {0}: a tender line without an item needs its description from the bill.").format(row.idx))
+			elif not row.item_code:
+				# The bill's wording stands in for the item name, so the lines grid shows it.
+				row.item_name = (row.description or "")[:140]
 			elif row.draws_from_allowance and row.draws_from_allowance not in allowances:
 				frappe.throw(
 					_("Row {0}: {1} is not an allowance line of this BOQ. Pick the allowance again; if it is new, save the BOQ first.").format(

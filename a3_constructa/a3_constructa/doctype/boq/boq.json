@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "boq_stage",
   "project",
   "cost_head",
   "awarded_quotation",
@@ -16,12 +17,17 @@
   "revision_no",
   "revision_reason",
   "currency",
+  "measurement_method",
   "status",
+  "sb_tender",
+  "opportunity",
+  "client_name",
+  "cb_tender",
+  "customer",
   "sb_1",
   "items",
   "sb_2",
   "total_amount",
-  "amended_from",
   "amended_from"
  ],
  "fields": [
@@ -34,12 +40,25 @@
    "reqd": 1
   },
   {
+   "bold": 1,
+   "default": "Budget",
+   "description": "Tender: the client's bill priced for a bid. Contract: the bill the client signed. Budget: our internal cost budget.",
+   "fieldname": "boq_stage",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "BOQ Stage",
+   "options": "Tender\nContract\nBudget",
+   "reqd": 1
+  },
+  {
+   "description": "Needed on a Contract or Budget BOQ. A Tender BOQ has no project yet.",
    "fieldname": "project",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Project",
-   "options": "Project",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.boq_stage != 'Tender'",
+   "options": "Project"
   },
   {
    "fieldname": "cost_head",
@@ -90,6 +109,12 @@
    "options": "Currency"
   },
   {
+   "fieldname": "measurement_method",
+   "fieldtype": "Select",
+   "label": "Measurement Method",
+   "options": "\nNRM2\nPOMI\nCESMM4\nSMM7\nOther"
+  },
+  {
    "allow_on_submit": 1,
    "default": "Draft",
    "fieldname": "status",
@@ -98,6 +123,37 @@
    "label": "Status",
    "no_copy": 1,
    "options": "Draft\nPending Approval\nApproved\nRejected"
+  },
+  {
+   "depends_on": "eval:doc.boq_stage == 'Tender' || doc.opportunity",
+   "fieldname": "sb_tender",
+   "fieldtype": "Section Break",
+   "label": "Tender"
+  },
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Opportunity",
+   "options": "Opportunity"
+  },
+  {
+   "fetch_from": "opportunity.customer_name",
+   "fieldname": "client_name",
+   "fieldtype": "Data",
+   "label": "Client",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_tender",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Set when the client is already a customer.",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
   },
   {
    "fieldname": "sb_1",
@@ -129,15 +185,6 @@
    "no_copy": 1,
    "options": "BOQ",
    "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "BOQ",
-   "print_hide": 1,
    "read_only": 1,
    "search_index": 1
   }
@@ -146,7 +193,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-06 12:09:13.506300",
+ "modified": "2026-10-06 13:35:55.807128",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ",

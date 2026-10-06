@@ -105,6 +105,7 @@ fixtures = [
 doctype_js = {
 	"Material Request": ["public/js/material_request.js", "public/js/approvals.js"],
 	"Purchase Order": "public/js/approvals.js",
+	"Opportunity": "public/js/opportunity.js",
 }
 
 # ---------------------------------------------------------------- events

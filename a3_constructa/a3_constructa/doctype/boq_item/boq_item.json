@@ -7,13 +7,16 @@
  "engine": "InnoDB",
  "field_order": [
   "is_allowance",
+  "boq_ref",
   "item_code",
   "item_name",
   "description",
   "sb_1",
+  "cost_head",
   "wbs",
   "cost_code",
   "cb_1",
+  "measurement_notes",
   "uom",
   "sb_2",
   "boq_qty",
@@ -41,12 +44,20 @@
    "label": "Allowance"
   },
   {
+   "columns": 1,
+   "description": "The client's item reference, e.g. B/03/12.",
+   "fieldname": "boq_ref",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Ref"
+  },
+  {
    "columns": 2,
    "fieldname": "item_code",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Item / Service",
-   "mandatory_depends_on": "eval:!doc.is_allowance",
+   "mandatory_depends_on": "eval:!doc.is_allowance && parent.boq_stage != 'Tender'",
    "options": "Item"
   },
   {
@@ -55,7 +66,6 @@
    "fetch_if_empty": 1,
    "fieldname": "item_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Item Name"
   },
   {
@@ -64,11 +74,17 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description",
-   "mandatory_depends_on": "eval:doc.is_allowance"
+   "mandatory_depends_on": "eval:doc.is_allowance || !doc.item_code"
   },
   {
    "fieldname": "sb_1",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cost_head",
+   "fieldtype": "Link",
+   "label": "Cost Head",
+   "options": "Cost Head"
   },
   {
    "fieldname": "wbs",
@@ -86,6 +102,12 @@
   {
    "fieldname": "cb_1",
    "fieldtype": "Column Break"
+  },
+  {
+   "description": "How the quantity was measured, as the bill states it.",
+   "fieldname": "measurement_notes",
+   "fieldtype": "Small Text",
+   "label": "Measurement Notes"
   },
   {
    "columns": 1,
@@ -189,7 +211,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-10-06 12:22:09.250822",
+ "modified": "2026-10-06 13:37:37.982893",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ Item",
