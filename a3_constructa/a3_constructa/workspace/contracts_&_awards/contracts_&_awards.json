@@ -1,8 +1,13 @@
 {
  "charts": [],
- "content": "[{\"id\": \"ca_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Contracts &amp; Awards</b></span>\", \"col\": 12}}, {\"id\": \"card_contract_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Register\", \"col\": 4}}, {\"id\": \"card_components_boqs\", \"type\": \"card\", \"data\": {\"card_name\": \"Components & BOQs\", \"col\": 4}}, {\"id\": \"card_programme_milestones\", \"type\": \"card\", \"data\": {\"card_name\": \"Programme Milestones\", \"col\": 4}}, {\"id\": \"card_change_variations\", \"type\": \"card\", \"data\": {\"card_name\": \"Change & Variations\", \"col\": 4}}, {\"id\": \"card_deliverables_submittals\", \"type\": \"card\", \"data\": {\"card_name\": \"Deliverables & Submittals\", \"col\": 4}}, {\"id\": \"card_handover_to_project\", \"type\": \"card\", \"data\": {\"card_name\": \"Handover to Project\", \"col\": 4}}]",
+ "content": "[{\"id\": \"ca_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Contracts & Awards Overview\", \"col\": 12}}, {\"id\": \"ca_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Contracts &amp; Awards</b></span>\", \"col\": 12}}, {\"id\": \"card_contract_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Register\", \"col\": 4}}, {\"id\": \"card_components_boqs\", \"type\": \"card\", \"data\": {\"card_name\": \"Components & BOQs\", \"col\": 4}}, {\"id\": \"card_programme_milestones\", \"type\": \"card\", \"data\": {\"card_name\": \"Programme Milestones\", \"col\": 4}}, {\"id\": \"card_change_variations\", \"type\": \"card\", \"data\": {\"card_name\": \"Change & Variations\", \"col\": 4}}, {\"id\": \"card_deliverables_submittals\", \"type\": \"card\", \"data\": {\"card_name\": \"Deliverables & Submittals\", \"col\": 4}}, {\"id\": \"card_handover_to_project\", \"type\": \"card\", \"data\": {\"card_name\": \"Handover to Project\", \"col\": 4}}]",
  "creation": "2026-10-06 15:39:14.521418",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "Contracts & Awards Overview",
+   "label": "Contracts & Awards Overview"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "hide_custom": 0,
@@ -244,7 +249,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-06 16:21:41.392201",
+ "modified": "2026-10-06 17:02:01.145018",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Contracts & Awards",

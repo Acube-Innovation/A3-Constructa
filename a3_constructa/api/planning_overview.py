@@ -34,7 +34,7 @@ DOCTYPES = (
 
 AWARD_STATUSES = ("Draft", "Awarded", "In Progress", "On Hold", "Completed", "Cancelled")
 BOQ_STATUSES = ("Draft", "Pending Approval", "Approved", "Rejected")
-VO_STATUSES = ("Draft", "Submitted to Client", "Approved", "Rejected")
+VO_STATUSES = ("Draft", "Submitted to Client", "Approved", "Rejected", "Cancelled")
 VO_PENDING = ("Draft", "Submitted to Client")
 DELIVERABLE_STATUSES = ("Not Started", "In Progress", "Submitted", "Revise and Resubmit", "Approved", "Rejected")
 # Deliverable statuses where the next move is ours. A Submitted one is with the client.
