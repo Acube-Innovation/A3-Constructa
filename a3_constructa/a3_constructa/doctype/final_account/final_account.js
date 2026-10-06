@@ -9,6 +9,7 @@ frappe.ui.form.on("Final Account", {
 	},
 
 	refresh(frm) {
+		frm.set_intro();
 		if (frm.doc.awarded_quotation && frm.doc.award_status && frm.doc.award_status !== "Completed" && frm.doc.docstatus < 2) {
 			frm.set_intro(__("{0} is {1}, not yet Completed. The final account normally follows completion.", [frm.doc.awarded_quotation, __(frm.doc.award_status)]), "orange");
 		} else if (frm.is_new()) {
