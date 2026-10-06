@@ -129,7 +129,18 @@ APPROVAL_GATE = [
 
 # Build sheet head 48 row 19: a material issue must post to the project GL head
 # its Cost Code names, not the item or company default.
+# Catalogue 6.1-6.2: linked tasks reschedule by type and lag (ERPNext's own knows
+# finish-to-start only, and would push a start-to-start successor wrongly).
+override_doctype_class = {
+	"Task": "a3_constructa.overrides.task.ConstructaTask",
+}
+
 doc_events = {
+	"Task": {
+		"validate": "a3_constructa.overrides.task.validate",
+		"on_update": "a3_constructa.overrides.task.on_update",
+		"after_delete": "a3_constructa.overrides.task.after_delete",
+	},
 	"Stock Entry": {
 		# before_naming runs inside set_new_name, before the series is consumed.
 		"before_naming": "a3_constructa.overrides.stock_entry.set_naming_series",

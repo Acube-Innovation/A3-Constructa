@@ -180,6 +180,14 @@ frappe.ui.form.on("Awarded Quotation", {
 		if (frm.doc.advance_percent) {
 			frm.add_custom_button(__("Advance Invoice"), () => advance_invoice(frm), __("Create"));
 		}
+		if (frm.doc.project && (frm.doc.milestones || []).length) {
+			frm.add_custom_button(__("Create schedule milestones"), () =>
+				frappe.xcall("a3_constructa.overrides.task.create_schedule_milestones", { award: frm.doc.name }).then((names) => {
+					frappe.show_alert({ message: __("{0} milestone tasks on {1}", [names.length, frm.doc.project]), indicator: "green" });
+					frappe.set_route("List", "Task", "Gantt", { project: frm.doc.project });
+				})
+			, __("Create"));
+		}
 		frm.add_custom_button(__("Final Account"), () =>
 			frappe.db.get_value("Final Account", { awarded_quotation: frm.doc.name, docstatus: ["<", 2] }, "name").then(({ message }) =>
 				message?.name ? frappe.set_route("Form", "Final Account", message.name) : frappe.new_doc("Final Account", { awarded_quotation: frm.doc.name }))

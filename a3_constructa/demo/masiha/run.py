@@ -41,6 +41,7 @@ STAGES = [
 	("crews", "a3_constructa.demo.masiha.crews.run"),  # P-07A: site workers, wages and crews in every state
 	("equipment", "a3_constructa.demo.masiha.equipment.run"),  # P-08A: plant logs, owned at an internal rate and hired
 	("operations", "a3_constructa.demo.masiha.operations.run"),  # W-06: the jobs' programmes as tasks
+	("schedule", "a3_constructa.demo.masiha.schedule.run"),  # P-06A: tasks on the WBS, typed links, milestones, critical path
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13
