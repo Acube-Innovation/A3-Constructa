@@ -1,0 +1,148 @@
+{
+ "actions": [],
+ "creation": "2026-10-06 13:50:33.154510",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "resource_type",
+  "item_code",
+  "description",
+  "uom",
+  "cb_1",
+  "qty_per_unit",
+  "wastage_percent",
+  "output_per_day",
+  "rate",
+  "cost_per_unit",
+  "sb_source",
+  "rate_source",
+  "cb_2",
+  "source_doctype",
+  "source_reference"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "default": "Material",
+   "fieldname": "resource_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "Material\nLabour\nEquipment\nSubcontract\nOther",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "columns": 2,
+   "description": "What the resource is, e.g. 'Tiler' or 'Freight, 40FT container Valencia-Matadi'.",
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:!['Labour','Equipment'].includes(doc.resource_type)",
+   "description": "How much of this resource one unit of the BOQ line takes.",
+   "fieldname": "qty_per_unit",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty per BOQ Unit"
+  },
+  {
+   "depends_on": "eval:doc.resource_type == 'Material'",
+   "fieldname": "wastage_percent",
+   "fieldtype": "Percent",
+   "label": "Wastage %"
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:['Labour','Equipment'].includes(doc.resource_type)",
+   "description": "BOQ units this resource completes in a day.",
+   "fieldname": "output_per_day",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Output per Day"
+  },
+  {
+   "columns": 1,
+   "description": "Per UOM; per day for labour and equipment.",
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Rate"
+  },
+  {
+   "columns": 2,
+   "fieldname": "cost_per_unit",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Cost per BOQ Unit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_source",
+   "fieldtype": "Section Break",
+   "label": "Price Source"
+  },
+  {
+   "default": "Manual",
+   "fieldname": "rate_source",
+   "fieldtype": "Select",
+   "label": "Rate Source",
+   "options": "Manual\nPrice List\nSupplier Quotation\nFreight Rate Contract"
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_doctype",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Source Type",
+   "options": "DocType"
+  },
+  {
+   "description": "The price list, quotation or freight contract the rate came from.",
+   "fieldname": "source_reference",
+   "fieldtype": "Dynamic Link",
+   "label": "Source Reference",
+   "options": "source_doctype"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-06 13:50:33.154510",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Estimate Resource",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

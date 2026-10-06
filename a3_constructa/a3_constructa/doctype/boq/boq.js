@@ -171,3 +171,48 @@ function import_lines(frm) {
 	}
 	dialog.show();
 }
+
+// Catalogue 2.5: each line's rate is built up on its Estimate Sheet.
+frappe.ui.form.on("BOQ", {
+	refresh(frm) {
+		if (frm.is_new()) return;
+		frm.add_custom_button(__("Estimate Sheets"), () =>
+			frappe.set_route("List", "Estimate Sheet", { boq: frm.doc.name })
+		, __("View"));
+		if (frm.doc.docstatus === 0) {
+			frm.add_custom_button(__("Re-price sheets"), () =>
+				frappe.xcall("a3_constructa.a3_constructa.doctype.estimate_sheet.estimate_sheet.reprice_sheets", { boq: frm.doc.name })
+					.then((changes) => {
+						frm.reload_doc();
+						if (!changes.length) {
+							frappe.msgprint(__("Every sheet already uses the current prices."));
+							return;
+						}
+						frappe.msgprint({
+							title: __("{0} sheets re-priced", [changes.length]),
+							message: `<table class="table table-sm"><thead><tr><th>${__("Line")}</th><th class="text-right">${__("Unit cost before")}</th><th class="text-right">${__("After")}</th></tr></thead><tbody>${changes
+								.map((c) => `<tr><td>${frappe.utils.escape_html(c.boq_ref || c.sheet)}</td><td class="text-right">${format_currency(c.before, frm.doc.currency)}</td><td class="text-right">${format_currency(c.after, frm.doc.currency)}</td></tr>`)
+								.join("")}</tbody></table>`,
+						});
+					})
+			);
+		}
+	},
+});
+
+frappe.ui.form.on("BOQ Item", {
+	open_estimate(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		if (frm.is_dirty() || row.__islocal) {
+			frappe.msgprint(__("Save the BOQ first, so the line can be priced."));
+			return;
+		}
+		if (row.is_allowance) {
+			frappe.msgprint(__("An allowance is a sum, not built up from resources."));
+			return;
+		}
+		frappe
+			.xcall("a3_constructa.a3_constructa.doctype.estimate_sheet.estimate_sheet.open_for_line", { boq: frm.doc.name, boq_item: row.name })
+			.then((name) => frappe.set_route("Form", "Estimate Sheet", name));
+	},
+});

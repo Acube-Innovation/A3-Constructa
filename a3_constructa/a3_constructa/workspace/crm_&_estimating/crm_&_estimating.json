@@ -145,10 +145,20 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Rate Build-up",
-   "link_count": 3,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Estimate Sheet",
+   "link_count": 0,
+   "link_to": "Estimate Sheet",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -252,7 +262,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-06 13:29:01.082053",
+ "modified": "2026-10-06 13:51:23.949841",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "CRM & Estimating",

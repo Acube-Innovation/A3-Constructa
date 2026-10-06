@@ -24,6 +24,7 @@ STAGES = [
 	("wbs_overview", "a3_constructa.demo.masiha.wbs_overview.run"),  # D-01: cases for the overview's checks
 	("crm", "a3_constructa.demo.masiha.crm.run"),  # P-02A: leads and opportunities, tenders due this week
 	("tender", "a3_constructa.demo.masiha.tender.run"),  # P-02B: tender BOQs imported from the clients' bills
+	("estimates", "a3_constructa.demo.masiha.estimates.run"),  # P-02C: rate build-up on the hospital tender
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13
