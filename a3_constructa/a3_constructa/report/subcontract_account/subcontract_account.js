@@ -10,6 +10,7 @@ frappe.query_reports["Subcontract Account"] = {
 	formatter(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 		if (data && column.fieldname === "balance" && data.balance > 0.005) return `<b>${value}</b>`;
+		if (data && column.fieldname === "note" && data.note) return `<span class="text-danger">${value}</span>`;
 		return value;
 	},
 };
