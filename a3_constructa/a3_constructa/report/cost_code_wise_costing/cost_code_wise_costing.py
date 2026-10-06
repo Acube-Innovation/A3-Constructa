@@ -14,11 +14,17 @@ tells you that before the invoices arrive.
 Do not rename the `percent_consumed`, `budget`, `committed` or `actual`
 fieldnames: the Legend warns that report-backed number cards fail silently when
 a column they name disappears, and row 59's card names this one.
+
+Since P-03B `budget` is the revised budget: the allocated original plus the
+approved variations and budget transfers in the Budget Revision Log. The
+original and the changes sit beside it.
 """
 
 import frappe
 from frappe import _
 from frappe.utils import flt
+
+from a3_constructa.api.budget_allocation import budget_changes
 
 GROUP_FIELDS = {
 	"Cost Code": "cost_code",
@@ -36,17 +42,22 @@ def execute(filters=None):
 	field = GROUP_FIELDS.get(group_by, "cost_code")
 
 	budget = get_budget(filters, field)
+	changes = budget_changes(field, filters.get("project"), filters.get("company"))
 	committed = get_committed(filters, field)
 	actual = get_actual(filters, field)
 
 	data = []
-	for key in sorted(set(budget) | set(committed) | set(actual)):
-		b = flt(budget.get(key))
+	for key in sorted((set(budget) | set(changes) | set(committed) | set(actual)) - {None}):
+		original = flt(budget.get(key))
+		change = flt(changes.get(key))
+		b = original + change
 		c = flt(committed.get(key))
 		a = flt(actual.get(key))
 		consumed = a + c
 		data.append({
 			"grouping": key,
+			"original_budget": original,
+			"budget_changes": change,
 			"budget": b,
 			"committed": c,
 			"actual": a,
@@ -67,7 +78,9 @@ def get_columns(label, field):
 	return [
 		{"fieldname": "grouping", "label": _(label), "fieldtype": "Link",
 		 "options": LINK_OPTIONS.get(field), "width": 180},
-		{"fieldname": "budget", "label": _("Budget"), "fieldtype": "Currency", "width": 140},
+		{"fieldname": "original_budget", "label": _("Original Budget"), "fieldtype": "Currency", "width": 140},
+		{"fieldname": "budget_changes", "label": _("Variations & Transfers"), "fieldtype": "Currency", "width": 160},
+		{"fieldname": "budget", "label": _("Revised Budget"), "fieldtype": "Currency", "width": 140},
 		{"fieldname": "committed", "label": _("Committed"), "fieldtype": "Currency",
 		 "width": 140},
 		{"fieldname": "actual", "label": _("Actual"), "fieldtype": "Currency", "width": 140},

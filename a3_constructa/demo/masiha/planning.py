@@ -226,7 +226,8 @@ def create_variations(award):
 		return
 	insert({"doctype": "Variation Order", "subject": "Entrance ramp and canopy, additional porcelain tiling",
 	        "awarded_quotation": award, "vo_date": day(-60), "client_reference": "GPE/VO/004",
-	        "variation_type": "Addition", "status": "Approved", "approved_date": day(-52), "time_extension_days": 10,
+	        # Approved by the variations stage (P-03B), once the lines are on the WBS.
+	        "variation_type": "Addition", "status": "Submitted to Client", "time_extension_days": 10,
 	        "items": [{"description": "Porcelain tiling, entrance ramp", "cost_head": "MSS-AR-FL", "qty": 85,
 	                   "uom": "Square Meter", "rate": 46.00},
 	                  {"description": "Steel canopy, supply and fix", "cost_head": "MSS-ES", "qty": 1,
@@ -236,4 +237,4 @@ def create_variations(award):
 	        "status": "Submitted to Client",
 	        "items": [{"description": "Upgrade wet-area floors to R11 anti-slip", "cost_head": "MSS-AR-FL",
 	                   "qty": 120, "uom": "Square Meter", "rate": 6.50}]})
-	log("variation orders: 1 approved (+$12,110, 10 days), 1 with the client")
+	log("variation orders: 2 with the client (the first is approved in the variations stage)")

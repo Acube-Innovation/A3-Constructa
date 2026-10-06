@@ -61,6 +61,7 @@ def make_variation_order(change_event: str) -> str:
 	vo.update({
 		"subject": ce.title,
 		"awarded_quotation": ce.awarded_quotation,
+		"change_event": ce.name,
 		"customer": ce.customer,
 		"project": ce.project,
 		"currency": ce.currency,

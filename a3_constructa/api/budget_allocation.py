@@ -139,3 +139,46 @@ def wbs_committed_and_actual(project, wbs, cost_code=None):
 		values,
 	)[0][0]
 	return flt(committed), flt(gl) + flt(issued)
+
+
+# Budget changes made outside the BOQ: an approved BOQ revision replaces the BOQ,
+# so it is already in the allocated / unallocated budget; variations and
+# transfers only exist in the Budget Revision Log.
+CHANGES_OUTSIDE_BOQ = ("Variation", "Transfer In", "Transfer Out")
+CHANGE_GROUPS = {
+	"wbs": "log.wbs",
+	"cost_code": "log.cost_code",
+	"cost_head": "coalesce(wbs.cost_head, ccwbs.cost_head)",
+	"project": "log.project",
+}
+
+
+def budget_changes(field, project=None, company=None, key=None):
+	"""Net variations and transfers per `field` (wbs, cost_code, cost_head or project).
+	Rows with no value for the field come back under the key None."""
+	conditions = ["log.change_type in %(types)s"]
+	values = {"types": CHANGES_OUTSIDE_BOQ}
+	if project:
+		conditions.append("log.project = %(project)s")
+		values["project"] = project
+	if company:
+		conditions.append("log.project in (select name from `tabProject` where company = %(company)s)")
+		values["company"] = company
+	source = CHANGE_GROUPS[field]
+	if key:
+		conditions.append(f"{source} = %(key)s")
+		values["key"] = key
+	rows = frappe.db.sql(
+		f"""
+		select {source} as grouping, sum(log.amount) as amount
+		from `tabBudget Revision Log` log
+		left join `tabWBS` wbs on wbs.name = log.wbs
+		left join `tabCost Code` cc on cc.name = log.cost_code
+		left join `tabWBS` ccwbs on ccwbs.name = cc.wbs
+		where {" and ".join(conditions)}
+		group by grouping
+		""",
+		values,
+		as_dict=True,
+	)
+	return {r.grouping or None: flt(r.amount) for r in rows if abs(flt(r.amount)) >= 0.005}
