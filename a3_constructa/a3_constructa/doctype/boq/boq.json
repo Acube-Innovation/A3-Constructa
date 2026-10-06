@@ -282,6 +282,8 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.boq_stage != 'Tender'",
+   "description": "Qty × estimate rate, allowances in full. A tender is valued by its Selling Total instead.",
    "fieldname": "total_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -303,7 +305,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-06 14:04:53.858072",
+ "modified": "2026-10-06 14:10:00.420400",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ",
