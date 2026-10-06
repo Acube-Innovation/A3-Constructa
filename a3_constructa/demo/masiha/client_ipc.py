@@ -131,6 +131,12 @@ def subcontract_certificate(project):
 		                     "period_from": day(-60), "period_to": day(-5),
 		                     "items": [{"item_code": "SVC-TILE-INST", "cost_code": po.cost_code, "contracted_qty": po.qty, "previous_qty": 0,
 		                                "this_period_qty": 180, "rate": po.rate, "retention_percent": 10}]})
+		# P-09B: the documents the tiler lodged; checked as of the day it was certified.
+		from a3_constructa.demo.masiha.subcontract_compliance import tiler_documents
+
+		for row in tiler_documents():
+			wc.append("compliance", row)
+		wc.flags.compliance_as_of = day(-3)
 		wc.flags.ignore_permissions = True
 		wc.insert(); wc.submit()
 	return f"{wc.name}: 180 m² tiling certified to {supplier}, ${wc.total_retention:,.2f} retention held"

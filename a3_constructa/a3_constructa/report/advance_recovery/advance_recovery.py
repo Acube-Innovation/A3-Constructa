@@ -48,6 +48,11 @@ def get_data(filters):
 			continue
 		recovered = flt(frappe.db.sql("""select sum(advance_recovered_this_period) from `tabClient IPC`
 			where awarded_quotation = %s and docstatus = 1""", a.name)[0][0])
+		# ... and on the final invoice of the final account (P-04D).
+		recovered -= flt(frappe.db.sql("""select sum(t.tax_amount) from `tabSales Taxes and Charges` t
+			join `tabSales Invoice` si on si.name = t.parent and t.parenttype = 'Sales Invoice'
+			where si.awarded_quotation = %s and si.docstatus = 1 and si.final_account is not null and si.final_account != ''
+			and t.a3_deduction = 1 and t.account_head like 'Advances from Customers%%'""", a.name)[0][0])
 		bg = invoices[-1].bank_guarantee if invoices else None
 		expiry = frappe.db.get_value("Bank Guarantee", bg, "end_date") if bg else None
 		data.append({"award": a.name, "title": a.title, "advance_percent": a.advance_percent, "recovery_percent": a.advance_recovery_percent,

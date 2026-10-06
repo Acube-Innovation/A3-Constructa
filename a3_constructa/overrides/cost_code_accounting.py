@@ -113,6 +113,8 @@ def check_three_way_match(doc, method=None):
 			row.three_way_match = None
 			continue
 		expected_qty = flt(pr_lines[row.pr_detail].qty) if row.pr_detail in pr_lines else flt(po.qty)
+		if doc.get("work_certificate") and row.pr_detail not in pr_lines:
+			expected_qty = flt(row.qty)  # a subcontract is received by certificate: the certified quantity is what was received
 		qty_off = abs(flt(row.qty) - expected_qty) > 0.0001
 		rate_off = abs(flt(row.rate) - flt(po.rate)) > 0.005
 		row.three_way_match = (

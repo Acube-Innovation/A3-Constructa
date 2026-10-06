@@ -421,7 +421,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Contract / Subcontract PO",
-   "link_count": 3,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -455,6 +455,19 @@
    "link_to": "Work Certificate",
    "link_type": "DocType",
    "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "description": null,
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Subcontract Account",
+   "link_count": 0,
+   "link_to": "Subcontract Account",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Work Certificate",
    "type": "Link"
   },
   {
@@ -561,7 +574,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-06 12:44:09.522022",
+ "modified": "2026-10-06 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Procurement",

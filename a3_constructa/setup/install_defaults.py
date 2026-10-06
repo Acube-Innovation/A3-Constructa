@@ -197,6 +197,41 @@ def create_contract_accounts():
 			doc.insert()
 
 
+# Catalogue 9.6 (P-09B): what is taken off a subcontractor's certificate - back-charges,
+# damage, materials we supplied, penalties - recovers cost the job already bore, so it is
+# credited to an expense account of its own, on the WBS and cost code it recovers.
+BACK_CHARGES = "Subcontract Back-charges"
+# The documents a subcontractor must hold before a Work Certificate is submitted.
+SUBCONTRACT_DOCUMENTS = ("Insurance Certificate", "Labour Compliance Certificate", "Tax Clearance Certificate")
+
+
+def create_back_charge_account():
+	for company in frappe.get_all("Company", fields=["name", "abbr"]):
+		if frappe.db.exists("Account", f"{BACK_CHARGES} - {company.abbr}"):
+			continue
+		parent = _group(company.name, "Expense", ("Direct Expenses", "Expenses"))
+		if not parent:
+			continue
+		doc = frappe.new_doc("Account")
+		doc.update({"account_name": BACK_CHARGES, "parent_account": parent, "company": company.name, "root_type": "Expense",
+		            "account_type": "Expense Account", "is_group": 0})
+		doc.flags.ignore_permissions = True
+		doc.insert()
+
+
+def create_subcontract_document_rule():
+	"""One blocking rule for Work Certificate, created once; edit it to change the list."""
+	if frappe.db.exists("Mandatory Document Rule", {"reference_doctype": "Work Certificate"}):
+		return
+	present = [t for t in SUBCONTRACT_DOCUMENTS if frappe.db.exists("Document Type", t)]
+	if not present:
+		return
+	doc = frappe.get_doc({"doctype": "Mandatory Document Rule", "reference_doctype": "Work Certificate", "is_blocking": 1,
+	                      "document_type": [{"document_type": t} for t in present]})
+	doc.flags.ignore_permissions = True
+	doc.insert()
+
+
 def contract_account(company: str, account_name: str) -> str | None:
 	abbr = frappe.get_cached_value("Company", company, "abbr")
 	name = f"{account_name} - {abbr}"
@@ -259,6 +294,8 @@ def run():
 	create_asset_categories()
 	create_retention_account()
 	create_contract_accounts()
+	create_back_charge_account()
+	create_subcontract_document_rule()
 	set_standard_working_hours()
 	keep_number_on_amend()
 	init_settings()

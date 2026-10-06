@@ -82,6 +82,8 @@ fixtures = [
 	{"dt": "Document Type", "filters": [["name", "in", [
 		"Certificate of Origin", "CNF Invoice",
 		"Duty Payment Receipt", "Delivery Order",
+		# Catalogue 9.6: what a subcontractor must hold before a Work Certificate is submitted.
+		"Insurance Certificate", "Labour Compliance Certificate", "Tax Clearance Certificate",
 	]]]},
 	# Only the records this app introduces. "Approved", "Rejected", "Approve"
 	# and "Reject" ship with Frappe and must not be re-exported as ours.
@@ -193,6 +195,11 @@ doc_events = {
 			COST_CODE_ACCOUNTING,
 			"a3_constructa.overrides.cost_code_accounting.check_three_way_match",
 		],
+		# Catalogue 9.6: the invoice of a Work Certificate moves its retention to Retention Payable.
+		"on_submit": "a3_constructa.api.subcontract_billing.on_submit",
+		"before_cancel": "a3_constructa.api.subcontract_billing.before_cancel",
+		"on_cancel": "a3_constructa.api.subcontract_billing.release_links",
+		"on_trash": "a3_constructa.api.subcontract_billing.release_links",
 	},
 	"Journal Entry": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},
 	"Expense Claim": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},

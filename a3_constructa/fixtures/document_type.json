@@ -46,5 +46,41 @@
   "name": "Delivery Order",
   "retention_days": 0,
   "tags": null
+ },
+ {
+  "applicable_for": "Work Certificate",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "HSE",
+  "document_type_name": "Insurance Certificate",
+  "is_mandatory": 1,
+  "modified": "2026-10-06 22:00:00.000000",
+  "name": "Insurance Certificate",
+  "retention_days": 0,
+  "tags": "Contractor's all-risks and third-party liability cover"
+ },
+ {
+  "applicable_for": "Work Certificate",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Statutory",
+  "document_type_name": "Labour Compliance Certificate",
+  "is_mandatory": 1,
+  "modified": "2026-10-06 22:00:00.000000",
+  "name": "Labour Compliance Certificate",
+  "retention_days": 0,
+  "tags": "Social security (CNSS) and labour inspectorate attestation"
+ },
+ {
+  "applicable_for": "Work Certificate",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Financial",
+  "document_type_name": "Tax Clearance Certificate",
+  "is_mandatory": 1,
+  "modified": "2026-10-06 22:00:00.000000",
+  "name": "Tax Clearance Certificate",
+  "retention_days": 0,
+  "tags": "Attestation de situation fiscale from the tax authority"
  }
 ]
