@@ -81,6 +81,11 @@ def apply_cost_code_accounting(doc, method=None):
 		if code.cost_center:
 			row.set(cc_field, code.cost_center)
 
+	# ERPNext titles a new journal after its first account before the swap above,
+	# so a title still naming the old account is set again.
+	if doc.doctype == "Journal Entry" and doc.is_new() and hasattr(doc, "get_title"):
+		doc.title = doc.get_title()
+
 
 def is_stock_line(row):
 	if row.get("is_fixed_asset"):
