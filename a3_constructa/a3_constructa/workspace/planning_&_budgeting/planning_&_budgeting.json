@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"pb_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Planning & Budgeting Overview\", \"col\": 12}}, {\"id\": \"pb_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Planning &amp; Budgeting</b></span>\", \"col\": 12}}, {\"id\": \"card_boq_creation_/_import\", \"type\": \"card\", \"data\": {\"card_name\": \"BOQ Creation / Import\", \"col\": 4}}, {\"id\": \"card_boq_/_budget_approval\", \"type\": \"card\", \"data\": {\"card_name\": \"BOQ / Budget Approval\", \"col\": 4}}, {\"id\": \"card_wbs_allocation\", \"type\": \"card\", \"data\": {\"card_name\": \"WBS Allocation\", \"col\": 4}}, {\"id\": \"card_budget_overview\", \"type\": \"card\", \"data\": {\"card_name\": \"Budget Overview\", \"col\": 4}}, {\"id\": \"card_procurement_planning\", \"type\": \"card\", \"data\": {\"card_name\": \"Procurement Planning\", \"col\": 4}}, {\"id\": \"card_project_tasks\", \"type\": \"card\", \"data\": {\"card_name\": \"Project Tasks\", \"col\": 4}}]",
+ "content": "[{\"id\": \"pb_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Planning & Budgeting Overview\", \"col\": 12}}, {\"id\": \"pb_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Planning &amp; Budgeting</b></span>\", \"col\": 12}}, {\"id\": \"card_boq_creation_/_import\", \"type\": \"card\", \"data\": {\"card_name\": \"BOQ Creation / Import\", \"col\": 4}}, {\"id\": \"card_boq_/_budget_approval\", \"type\": \"card\", \"data\": {\"card_name\": \"BOQ / Budget Approval\", \"col\": 4}}, {\"id\": \"card_wbs_allocation\", \"type\": \"card\", \"data\": {\"card_name\": \"WBS Allocation\", \"col\": 4}}, {\"id\": \"card_budget_overview\", \"type\": \"card\", \"data\": {\"card_name\": \"Budget Overview\", \"col\": 4}}, {\"id\": \"card_procurement_planning\", \"type\": \"card\", \"data\": {\"card_name\": \"Procurement Planning\", \"col\": 4}}]",
  "creation": "2026-09-15 12:43:55.091464",
  "custom_blocks": [
   {
@@ -195,28 +195,9 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Project Tasks",
-   "link_count": 1,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Project tasks",
-   "link_count": 0,
-   "link_to": "Task",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2026-10-06 17:32:26.653589",
+ "modified": "2026-10-06 21:58:51.743801",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Planning & Budgeting",
