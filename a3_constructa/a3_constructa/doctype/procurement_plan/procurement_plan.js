@@ -20,7 +20,8 @@ frappe.ui.form.on("Procurement Plan", {
 		const overdue = (frm.doc.items || []).filter((r) => r.pr_overdue).length;
 		if (overdue) {
 			frm.dashboard.set_headline_alert(
-				`<span class="indicator red">${__("{0} lines past their PR date with nothing requested", [overdue])}</span>`);
+				`<span class="indicator red">${overdue === 1 ? __("1 line past its PR date with nothing requested")
+				: __("{0} lines past their PR date with nothing requested", [overdue])}</span>`);
 		}
 		frm.add_custom_button(__("Material Request"), () => {
 			const picked = frm.fields_dict.items.grid.get_selected_children().map((r) => r.name);
