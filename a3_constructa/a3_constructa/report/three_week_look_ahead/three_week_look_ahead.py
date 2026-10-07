@@ -118,7 +118,9 @@ def look_ahead(filters) -> list[dict]:
 			"predecessors": preds.get(t.name),
 		}
 		blockers = [k for k, v in checks.items() if is_blocked(v)]
-		row = {"task": t.name, "subject": t.subject, "project": t.project, "wbs": t.wbs, "crew": t.crew or next(iter(labour.get(t.name, [])), None),
+		crew_id = t.crew or next(iter(labour.get(t.name, [])), None)
+		row = {"task": t.name, "subject": t.subject, "project": t.project, "wbs": t.wbs, "crew": crew_id,
+		       "crew_name": frappe.db.get_value("Crew", crew_id, "crew_name") if crew_id else None,
 		       "start": start, "finish": end, "progress": flt(t.progress),
 		       "state": _("Running") if start <= as_of else _("Starting"),
 		       "ready": _("Ready") if not blockers else _("Not ready"), "blockers": len(blockers),
@@ -236,8 +238,7 @@ def crew_check(tasks, labour, as_of, until) -> dict:
 		for c in sorted(crews):
 			for os_, oe, o in booked[c]:
 				if o.name != t.name and os_ <= e and oe >= s:
-					clashes.append(_("{0} also on {1} ({2} – {3})").format(
-						frappe.db.get_value("Crew", c, "crew_name"), o.subject, formatdate(max(s, os_), "d MMM"), formatdate(min(e, oe), "d MMM")))
+					clashes.append(_("also on {0} ({1} – {2})").format(o.subject, formatdate(max(s, os_), "d MMM"), formatdate(min(e, oe), "d MMM")))
 		out[t.name] = {"text": _("Double-booked: {0}").format("; ".join(clashes)), "blocked": True} if clashes else None
 	return out
 
@@ -360,25 +361,26 @@ def commit_week(filters=None) -> dict:
 
 def columns(filters):
 	cols = [
-		{"fieldname": "task", "label": _("Task"), "fieldtype": "Link", "options": "Task", "width": 130},
-		{"fieldname": "subject", "label": _("Subject"), "fieldtype": "Data", "width": 200},
+		{"fieldname": "task", "label": _("Task"), "fieldtype": "Link", "options": "Task", "width": 120},
+		{"fieldname": "subject", "label": _("Subject"), "fieldtype": "Data", "width": 230},
 	]
 	if not filters.get("project"):
 		cols.append({"fieldname": "project", "label": _("Project"), "fieldtype": "Link", "options": "Project", "width": 100})
 	cols += [
-		{"fieldname": "wbs", "label": _("WBS"), "fieldtype": "Link", "options": "WBS", "width": 110},
-		{"fieldname": "start", "label": _("Start"), "fieldtype": "Date", "width": 95},
-		{"fieldname": "finish", "label": _("Finish"), "fieldtype": "Date", "width": 95},
-		{"fieldname": "state", "label": _("State"), "fieldtype": "Data", "width": 80},
-		{"fieldname": "ready", "label": _("Ready?"), "fieldtype": "Data", "width": 90},
-		{"fieldname": "material", "label": _("Material"), "fieldtype": "Data", "width": 190},
-		{"fieldname": "crew", "label": _("Crew"), "fieldtype": "Link", "options": "Crew", "width": 95},
-		{"fieldname": "crew_check", "label": _("Crew Free"), "fieldtype": "Data", "width": 190},
-		{"fieldname": "equipment", "label": _("Equipment"), "fieldtype": "Data", "width": 170},
+		{"fieldname": "start", "label": _("Start"), "fieldtype": "Date", "width": 100},
+		{"fieldname": "finish", "label": _("Finish"), "fieldtype": "Date", "width": 100},
+		{"fieldname": "ready", "label": _("Ready?"), "fieldtype": "Data", "width": 100},
+		{"fieldname": "material", "label": _("Material"), "fieldtype": "Data", "width": 290},
+		{"fieldname": "crew_name", "label": _("Crew"), "fieldtype": "Data", "width": 130},
+		{"fieldname": "crew_check", "label": _("Crew Free"), "fieldtype": "Data", "width": 290},
+		{"fieldname": "equipment", "label": _("Equipment"), "fieldtype": "Data", "width": 290},
 		{"fieldname": "permit", "label": _("Permits"), "fieldtype": "Data", "width": 85},
 		{"fieldname": "drawings", "label": _("Drawings"), "fieldtype": "Data", "width": 85},
-		{"fieldname": "predecessors", "label": _("Predecessors"), "fieldtype": "Data", "width": 180},
-		{"fieldname": "committed_week", "label": _("Committed Week"), "fieldtype": "Date", "width": 115},
+		{"fieldname": "predecessors", "label": _("Predecessors"), "fieldtype": "Data", "width": 280},
+		{"fieldname": "state", "label": _("State"), "fieldtype": "Data", "width": 80},
+		{"fieldname": "wbs", "label": _("WBS"), "fieldtype": "Link", "options": "WBS", "width": 110},
+		{"fieldname": "crew", "label": _("Crew ID"), "fieldtype": "Link", "options": "Crew", "width": 95},
+		{"fieldname": "committed_week", "label": _("Committed Week"), "fieldtype": "Date", "width": 120},
 	]
 	return cols
 
