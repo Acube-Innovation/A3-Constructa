@@ -51,6 +51,7 @@ STAGES = [
 	("snagging", "a3_constructa.demo.masiha.snagging.run"),  # P-06H: snag lists, practical completion, defects in the DLP, surplus to return
 	("procurement_schedule", "a3_constructa.demo.masiha.procurement_schedule.run"),  # P-05A: plans refreshed from the programme; late PRs flagged
 	("equipment_fuel", "a3_constructa.demo.masiha.equipment_fuel.run"),  # P-08B: diesel issued per machine; the programme's machines and a double booking
+	("certificates", "a3_constructa.demo.masiha.certificates.run"),  # P-07B: certificates and their expiry reminders, skills, a new hire's onboarding
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 0,
- "creation": "2026-10-08 09:20:00.000000",
+ "creation": "2026-10-08 20:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -11,6 +11,7 @@
   "task",
   "wbs",
   "cost_code",
+  "operator",
   "cb_1",
   "meter_start",
   "meter_end",
@@ -60,6 +61,14 @@
    "options": "Cost Code"
   },
   {
+   "description": "Checked against the certificate the machine's category requires.",
+   "fieldname": "operator",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Operator",
+   "options": "Employee"
+  },
+  {
    "fieldname": "cb_1",
    "fieldtype": "Column Break"
   },
@@ -106,7 +115,7 @@
  "index_web_pages_for_search": 0,
  "istable": 1,
  "links": [],
- "modified": "2026-10-08 09:20:00.000000",
+ "modified": "2026-10-08 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "DSR Equipment",

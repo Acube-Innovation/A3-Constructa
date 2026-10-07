@@ -40,6 +40,9 @@ class EquipmentLog(Document):
 		from a3_constructa.overrides.fuel import fuel_for
 
 		self.fuel_litres = fuel_for(self.asset, self.log_date)
+		from a3_constructa.overrides.certificates import equipment_log_validate
+
+		equipment_log_validate(self)
 
 	def set_defaults(self, asset):
 		self.company = asset.company

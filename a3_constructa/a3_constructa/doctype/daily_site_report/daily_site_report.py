@@ -45,6 +45,9 @@ class DailySiteReport(Document):
 				frappe.format(self.report_date, {"fieldtype": "Date"})))
 		self.check_labour()
 		self.check_equipment()
+		from a3_constructa.overrides.certificates import site_report_validate
+
+		site_report_validate(self)
 		self.check_progress()
 		self.check_materials()
 		self.totals()
@@ -204,6 +207,7 @@ class DailySiteReport(Document):
 	def book_equipment(self):
 		for row in self.equipment:
 			log = frappe.get_doc({"doctype": "Equipment Log", "asset": row.asset, "log_date": self.report_date, "project": self.project,
+			                      "operator": row.get("operator"),
 			                      "site": self.site, "wbs": row.wbs, "cost_code": row.cost_code, "meter_start": row.meter_start,
 			                      "meter_end": row.meter_end, "worked_hours": row.worked_hours, "idle_hours": row.idle_hours,
 			                      "breakdown_hours": row.breakdown_hours, "daily_site_report": self.name,

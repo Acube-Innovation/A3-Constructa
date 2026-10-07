@@ -236,9 +236,14 @@ doc_events = {
 	"Warranty Claim": {"before_validate": "a3_constructa.overrides.handover.warranty_claim_defaults",
 	                   "validate": "a3_constructa.overrides.handover.warranty_claim_validate"},
 	"Expense Claim": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},
+	"Employee": {"validate": "a3_constructa.overrides.certificates.employee_validate"},
 }
 
 scheduler_events = {
 	# Catalogue 5.4: plan lines pass their PR date overnight.
-	"daily": ["a3_constructa.a3_constructa.doctype.procurement_plan.procurement_plan.daily"],
+	"daily": [
+		"a3_constructa.a3_constructa.doctype.procurement_plan.procurement_plan.daily",
+		# Catalogue 7.7: certificates expiring in 30 and 7 days.
+		"a3_constructa.overrides.certificates.daily",
+	],
 }

@@ -264,6 +264,26 @@ OPERATIONS_PERMISSIONS = {
 }
 
 
+# Catalogue 7.7: what a new site worker goes through before starting.
+SITE_WORKER_ONBOARDING = [
+	("Copy of national ID (carte d'électeur) on file", "HR User", 0, 1),
+	("Bank or mobile-money account details for wages", "HR User", 0, 1),
+	("Site safety induction", "Constructa Site Engineer", 0, 1),
+	("PPE issued: helmet, boots, high-visibility vest, gloves", "Constructa Site Engineer", 0, 1),
+	("Trade test, recorded on the employee's certificates", "Constructa Site Engineer", 1, 3),
+]
+
+
+def create_onboarding_template():
+	if not frappe.db.exists("DocType", "Employee Onboarding Template") or frappe.db.exists("Employee Onboarding Template", {"title": "Site worker"}):
+		return
+	doc = frappe.get_doc({"doctype": "Employee Onboarding Template", "title": "Site worker",
+	                      "activities": [{"activity_name": name, "role": role if frappe.db.exists("Role", role) else None,
+	                                      "begin_on": begin, "duration": days} for name, role, begin, days in SITE_WORKER_ONBOARDING]})
+	doc.flags.ignore_permissions = True
+	doc.insert()
+
+
 def set_settings_defaults():
 	"""A Single's new field has no stored value (it reads as 0): store its default once."""
 	for field, value in (("site_buffer_days", 7),):
@@ -367,6 +387,7 @@ def run():
 	create_plant_recovery_account()
 	grant_operations_permissions()
 	set_settings_defaults()
+	create_onboarding_template()
 	set_standard_working_hours()
 	keep_number_on_amend()
 	init_settings()
