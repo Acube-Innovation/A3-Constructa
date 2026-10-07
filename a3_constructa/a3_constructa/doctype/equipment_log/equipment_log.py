@@ -7,6 +7,8 @@ not working) and breakdown (not available). The three never pass 24 on a day,
 and the meter never runs backwards: the end reading is at least the start and at
 least the last submitted log's end.
 
+The day's fuel (fuel_litres) is what material issues gave the machine that day (P-08B).
+
 Owned plant is charged to the job at its internal hourly rate: on submit a
 journal debits the cost code's account on the project, WBS and cost code, and
 credits Internal Plant Recovery on the machine's cost centre; cancelling the log
@@ -35,6 +37,9 @@ class EquipmentLog(Document):
 		self.check_meter()
 		self.check_charge_to()
 		self.amount = 0 if self.is_hired else flt(flt(self.worked_hours) * flt(self.internal_rate), 2)
+		from a3_constructa.overrides.fuel import fuel_for
+
+		self.fuel_litres = fuel_for(self.asset, self.log_date)
 
 	def set_defaults(self, asset):
 		self.company = asset.company

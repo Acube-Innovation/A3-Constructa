@@ -152,7 +152,11 @@ doc_events = {
 			"a3_constructa.overrides.stock_entry.set_cost_code_accounting",
 			ACTIVE_WBS,
 			ACTIVE_COST_CODE,
+			"a3_constructa.overrides.fuel.validate",
 		],
+		# Catalogue 8.4: fuel issued to a machine shows on its Equipment Log.
+		"on_submit": "a3_constructa.overrides.fuel.update_logs",
+		"on_cancel": "a3_constructa.overrides.fuel.update_logs",
 	},
 	"Asset": {
 		# Head 51 row 2: number an asset from its category, not one shared series.
