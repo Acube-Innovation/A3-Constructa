@@ -254,6 +254,8 @@ OPERATIONS_PERMISSIONS = {
 	"Non Conformance": {"Constructa Project Manager": ("read", "write", "create", "report"),
 	                    "Constructa Site Engineer": ("read", "write", "create", "report"),
 	                    "Constructa Quantity Surveyor": ("read", "report")},
+	# Catalogue 8.2: the equipment plan and task resources are by asset category.
+	"Asset Category": {"Constructa Project Manager": ("read",), "Constructa Site Engineer": ("read",)},
 	# Catalogue 5.4: procurement raises requests from the plan; the procurement manager keeps it.
 	"Procurement Plan": {"Purchase Manager": ("read", "write", "report"), "Purchase User": ("read", "report")},
 	"Warranty Claim": {"Constructa Project Manager": ("read", "write", "create", "report"),
