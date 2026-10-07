@@ -46,6 +46,7 @@ STAGES = [
 	("baselines", "a3_constructa.demo.masiha.baselines.run"),  # P-06C: the programme at award, the slips since, a draft recovery revision
 	("progress", "a3_constructa.demo.masiha.progress.run"),  # P-06D: measured quantities, forecasts, WBS roll-up
 	("lookahead", "a3_constructa.demo.masiha.lookahead.run"),  # P-06E: constraints on the next three weeks; weekly commitments and PPC
+	("site_reports", "a3_constructa.demo.masiha.site_reports.run"),  # P-06F: three days filed by the site engineer; timesheets, plant logs, progress and issues booked
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13

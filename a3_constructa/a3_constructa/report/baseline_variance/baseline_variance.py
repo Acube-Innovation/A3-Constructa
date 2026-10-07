@@ -77,7 +77,7 @@ def task_rows(filters):
 			b_start, b_end, rev = t.baseline_start, t.baseline_end, t.baseline_revision if t.baseline_end else None
 		start, end = current_dates(t)
 		data.append({"task": t.name, "subject": t.subject, "wbs": t.wbs, "baseline_start": b_start, "baseline_end": b_end,
-		             "current_start": t.exp_start_date, "current_end": t.exp_end_date, "actual_end": t.act_end_date or t.completed_on,
+		             "current_start": t.exp_start_date, "current_end": t.exp_end_date, "actual_end": (t.act_end_date or t.completed_on) if t.status == "Completed" else None,
 		             "start_variance": (getdate(start) - getdate(b_start)).days if b_start and start else None,
 		             "finish_variance": (getdate(end) - getdate(b_end)).days if b_end and end else None,
 		             "revision": rev, "reason": why.get(rev) if rev is not None else _("Not baselined"), "status": _(t.status)})

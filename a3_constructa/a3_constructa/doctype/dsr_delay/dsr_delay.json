@@ -1,0 +1,50 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-10-08 09:10:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "cause",
+  "hours_lost",
+  "description"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "cause",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Cause",
+   "options": "Weather\nMaterial\nLabour\nEquipment\nDrawings\nClient\nOther",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "hours_lost",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Hours Lost"
+  },
+  {
+   "columns": 5,
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-08 09:10:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "DSR Delay",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -216,9 +216,10 @@
   {
    "description": "Set by the Daily Site Report that recorded this log (P-06F).",
    "fieldname": "daily_site_report",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Daily Site Report",
    "no_copy": 1,
+   "options": "Daily Site Report",
    "read_only": 1
   },
   {
@@ -238,7 +239,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-07 12:00:00.000000",
+ "modified": "2026-10-08 09:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Equipment Log",

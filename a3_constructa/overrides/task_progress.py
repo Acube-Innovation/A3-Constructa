@@ -64,10 +64,15 @@ def subtask_progress(name) -> float:
 
 
 def started_on(doc):
-	"""The actual start, else the planned start (the first measurement comes after work began)."""
+	"""The actual start (ERPNext's first timesheet, when it isn't later than the first
+	measurement), else the planned start or the first measurement, whichever is earlier
+	(the first measurement comes after work began)."""
+	from a3_constructa.overrides.task_baseline import actual_start
+
 	dates = [getdate(r.date) for r in doc.get("progress_log") or [] if flt(r.qty_done)]
-	if doc.get("act_start_date"):
-		return getdate(doc.act_start_date)
+	act = actual_start(doc)
+	if act:
+		return act
 	if not dates:
 		return None
 	return min(getdate(doc.exp_start_date), min(dates)) if doc.exp_start_date else min(dates)
@@ -84,7 +89,7 @@ def forecast(doc):
 	as_of = max(logs) if logs else getdate(today())
 	if progress >= 100 or doc.status in DONE:
 		doc.remaining_duration = 0
-		doc.forecast_end = doc.get("act_end_date") or doc.get("completed_on") or (max(logs) if logs else doc.exp_end_date)
+		doc.forecast_end = doc.get("completed_on") or doc.get("act_end_date") or (max(logs) if logs else doc.exp_end_date)
 		return
 	start = started_on(doc) or (getdate(doc.exp_start_date) if progress else None)
 	if not progress or not start:
@@ -118,15 +123,34 @@ def on_update(doc, method=None):
 def record_progress(task: str, date: str, qty_done: float, reference: str | None = None, remarks: str | None = None,
                     source: str = "Manual") -> float:
 	"""Add a measurement to a task's progress log; returns the task's new progress."""
+	add_progress(task, date, qty_done, reference, remarks, source)
+	return frappe.db.get_value("Task", task, "progress")
+
+
+def add_progress(task, date, qty_done, reference=None, remarks=None, source="Manual", ignore_permissions=False) -> str:
+	"""Append a dated measurement to the task's log and save it; returns the log row's name.
+	A task still measured by hand switches to measuring by quantity."""
 	t = frappe.get_doc("Task", task)
-	t.check_permission("write")
+	if not ignore_permissions:
+		t.check_permission("write")
 	if flt(qty_done) <= 0:
 		frappe.throw(_("Enter the quantity done."))
-	t.append("progress_log", {"date": date, "qty_done": flt(qty_done), "source": source, "reference": reference, "remarks": remarks})
+	row = t.append("progress_log", {"date": date, "qty_done": flt(qty_done), "source": source, "reference": reference, "remarks": remarks})
 	t.progress_method = t.progress_method if t.progress_method != "Manual" else "Quantity"
 	t.flags.ignore_permissions = True
 	t.save()
-	return t.progress
+	return row.name
+
+
+def remove_progress(task, reference):
+	"""Take a cancelled report's rows out of the task's progress log."""
+	t = frappe.get_doc("Task", task)
+	keep = [r for r in t.progress_log if r.reference != reference]
+	if len(keep) == len(t.progress_log):
+		return
+	t.set("progress_log", keep)
+	t.flags.ignore_permissions = True
+	t.save()
 
 
 # ---------------------------------------------------------------- WBS
