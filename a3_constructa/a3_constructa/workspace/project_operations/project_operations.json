@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"po_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Project Operations</b></span>\", \"col\": 12}}, {\"id\": \"po_gantt\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Gantt\", \"col\": 3}}, {\"id\": \"card_master_schedule\", \"type\": \"card\", \"data\": {\"card_name\": \"Master Schedule\", \"col\": 4}}, {\"id\": \"card_tasks_dependencies\", \"type\": \"card\", \"data\": {\"card_name\": \"Tasks & Dependencies\", \"col\": 4}}, {\"id\": \"card_resources\", \"type\": \"card\", \"data\": {\"card_name\": \"Resources\", \"col\": 4}}, {\"id\": \"card_baselines\", \"type\": \"card\", \"data\": {\"card_name\": \"Baselines\", \"col\": 4}}, {\"id\": \"card_progress\", \"type\": \"card\", \"data\": {\"card_name\": \"Progress\", \"col\": 4}}, {\"id\": \"card_daily_site_report\", \"type\": \"card\", \"data\": {\"card_name\": \"Daily Site Report\", \"col\": 4}}, {\"id\": \"card_quality\", \"type\": \"card\", \"data\": {\"card_name\": \"Quality\", \"col\": 4}}, {\"id\": \"card_snagging_handover\", \"type\": \"card\", \"data\": {\"card_name\": \"Snagging & Handover\", \"col\": 4}}]",
+ "content": "[{\"id\": \"po_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Project Operations</b></span>\", \"col\": 12}}, {\"id\": \"po_gantt\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Gantt\", \"col\": 3}}, {\"id\": \"card_master_schedule\", \"type\": \"card\", \"data\": {\"card_name\": \"Master Schedule\", \"col\": 4}}, {\"id\": \"card_tasks_dependencies\", \"type\": \"card\", \"data\": {\"card_name\": \"Tasks & Dependencies\", \"col\": 4}}, {\"id\": \"card_resources\", \"type\": \"card\", \"data\": {\"card_name\": \"Resources\", \"col\": 4}}, {\"id\": \"card_baselines\", \"type\": \"card\", \"data\": {\"card_name\": \"Baselines\", \"col\": 4}}, {\"id\": \"card_look_ahead\", \"type\": \"card\", \"data\": {\"card_name\": \"Look-ahead\", \"col\": 4}}, {\"id\": \"card_progress\", \"type\": \"card\", \"data\": {\"card_name\": \"Progress\", \"col\": 4}}, {\"id\": \"card_daily_site_report\", \"type\": \"card\", \"data\": {\"card_name\": \"Daily Site Report\", \"col\": 4}}, {\"id\": \"card_quality\", \"type\": \"card\", \"data\": {\"card_name\": \"Quality\", \"col\": 4}}, {\"id\": \"card_snagging_handover\", \"type\": \"card\", \"data\": {\"card_name\": \"Snagging & Handover\", \"col\": 4}}]",
  "creation": "2026-10-06 21:58:51.743801",
  "custom_blocks": [],
  "docstatus": 0,
@@ -154,6 +154,26 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Look-ahead",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Three-Week Look-Ahead",
+   "link_count": 0,
+   "link_to": "Three-Week Look-Ahead",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Task",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Progress",
    "link_count": 1,
    "link_type": "DocType",
@@ -270,7 +290,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-07 20:00:00.000000",
+ "modified": "2026-10-07 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Project Operations",
