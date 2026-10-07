@@ -34,7 +34,7 @@ function practical_completion(frm) {
 				[`<a href="/app/sales-invoice/${r.retention_release}">${r.retention_release}</a>`]) : r.note);
 			frappe.msgprint({ title: __("Practical completion"), message: lines.join("<br>"), indicator: "green" });
 			frm.reload_doc();
-		}),
+		}).catch(() => {}), // a refusal (snags outstanding) is already shown by the server's message
 		__("Issue practical completion"), __("Issue"));
 }
 
@@ -60,9 +60,9 @@ function end_dlp(frm) {
 			primary_action(values) {
 				if (!rows) return d.hide();
 				frappe.xcall(`${HO}.return_surplus`, { project: frm.doc.name, to_warehouse: values.to_warehouse })
-					.then((name) => { d.hide(); frappe.set_route("Form", "Stock Entry", name); });
+					.then((name) => { d.hide(); frappe.set_route("Form", "Stock Entry", name); }).catch(() => {});
 			},
 		});
 		d.show();
-	});
+	}).catch(() => {});
 }
