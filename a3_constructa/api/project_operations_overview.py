@@ -125,6 +125,8 @@ def _progress(readable, now):
 		budget = sum(flt(r["budget"]) for r in roots)
 		percent = sum(flt(r["budget"]) * r["percent"] for r in roots) / budget if budget else sum(r["percent"] for r in roots) / len(roots)
 		planned = sum(flt(r["budget"]) * r["planned"] for r in roots) / budget if budget else sum(r["planned"] for r in roots) / len(roots)
+		if not flt(percent) and not flt(planned):
+			continue  # not started and not due to have started: nothing to compare yet
 		rows.append({"project": project, "budget": budget, "percent": flt(percent, 1), "planned": flt(planned, 1)})
 	names = _project_names([r["project"] for r in rows])
 	for r in rows:
