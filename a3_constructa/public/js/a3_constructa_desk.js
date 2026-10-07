@@ -22,9 +22,9 @@ a3_constructa.previous_form = function (doctype) {
 	return null;
 };
 
-const get_new_doc = frappe.model.get_new_doc;
+const a3_get_new_doc = frappe.model.get_new_doc;
 frappe.model.get_new_doc = function (doctype, parent_doc, ...rest) {
-	const doc = get_new_doc.call(this, doctype, parent_doc, ...rest);
+	const doc = a3_get_new_doc.call(this, doctype, parent_doc, ...rest);
 	if (!parent_doc) {
 		try {
 			fill_from_previous(doc);
@@ -47,3 +47,23 @@ function fill_from_previous(doc) {
 	doc[links[0].fieldname] = prev.name;
 	frappe.show_alert({ message: __("{0} set to {1}, the record you came from.", [__(links[0].label), prev.name]), indicator: "blue" });
 }
+
+// The checked rows of an estimates import (BOQ and Estimate Sheet), as a preview.
+a3_constructa.resources_summary = function (r, currency) {
+	if (r.errors.length) {
+		return `<div class="alert alert-danger"><b>${__("Nothing imported. Fix these rows and upload again:")}</b><ul>${r.errors
+			.map((e) => `<li>${frappe.utils.escape_html(e)}</li>`).join("")}</ul></div>`;
+	}
+	const rows = Object.entries(r.lines);
+	const total = rows.reduce((n, [, l]) => n + l.length, 0);
+	return `<p><b>${__("{0} resources for {1} lines ready.", [total, rows.length])}</b>${
+		r.replaces.length ? " " + __("{0} of these lines already have resources; theirs will be replaced.", [r.replaces.length]) : ""}</p>
+		<div class="table-responsive"><table class="table table-bordered table-sm"><thead><tr><th>${__("Line")}</th><th>${__("Type")}</th><th>${__("Item / description")}</th>
+		<th class="text-right">${__("Qty / unit")}</th><th class="text-right">${__("Output / day")}</th><th class="text-right">${__("Rate")}</th></tr></thead><tbody>${rows
+			.map(([line, list]) => list.map((x, i) => `<tr><td>${i ? "" : frappe.utils.escape_html(r.refs[line])}</td><td>${__(x.resource_type)}</td>
+				<td>${frappe.utils.escape_html(x.item_code ? `${x.item_code}: ${x.description}` : x.description)}</td>
+				<td class="text-right">${x.qty_per_unit || ""}${x.wastage_percent ? ` (+${x.wastage_percent}%)` : ""}</td>
+				<td class="text-right">${x.output_per_day || ""}</td>
+				<td class="text-right">${x.rate ? format_currency(x.rate, currency) : `<span class="text-muted">${__("fetched")}</span>`}</td></tr>`).join(""))
+			.join("")}</tbody></table></div>`;
+};

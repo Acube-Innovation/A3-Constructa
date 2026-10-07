@@ -286,3 +286,70 @@ frappe.ui.form.on("BOQ", {
 		}, __("Create"));
 	},
 });
+
+// Catalogue 2.5: estimate sheets for every line at once, or filled from a spreadsheet.
+const BOQ_EST = "a3_constructa.api.estimate_import";
+frappe.ui.form.on("BOQ", {
+	refresh(frm) {
+		if (frm.is_new() || frm.doc.docstatus !== 0) return;
+		const group = __("Estimates");
+		frm.add_custom_button(__("Sheets for every line"), () => {
+			if (frm.is_dirty()) return frappe.msgprint(__("Save the BOQ first, so every line can be priced."));
+			frappe.xcall(`${BOQ_EST}.make_sheets`, { boq: frm.doc.name }).then((r) => {
+				frappe.show_alert({ message: r.made.length
+					? __("{0} estimate sheets created; every line now has one.", [r.made.length])
+					: __("Every line already has its estimate sheet."), indicator: "green" });
+				frappe.set_route("List", "Estimate Sheet", { boq: frm.doc.name });
+			});
+		}, group);
+		frm.add_custom_button(__("Import estimates"), () => {
+			if (frm.is_dirty()) return frappe.msgprint(__("Save the BOQ first, so every line can be priced."));
+			import_estimates(frm);
+		}, group);
+	},
+});
+
+function import_estimates(frm) {
+	let ready = false;
+	const dialog = new frappe.ui.Dialog({
+		title: __("Import estimates"),
+		size: "large",
+		fields: [
+			{ fieldtype: "HTML", fieldname: "help", options: `<p class="text-muted">${__(
+				"One .xlsx or .csv for the whole BOQ: each row is one resource of a line, named by <b>boq_ref</b>. Columns: <b>resource_type</b> (Material, Labour, Equipment, Subcontract, Other), <b>item_code</b> or <b>description</b>, <b>uom</b>, <b>qty_per_unit</b> and <b>wastage_percent</b> (materials), <b>output_per_day</b> (labour and equipment: BOQ units a day), <b>rate</b> (leave it blank on an item to fetch the price). A line with no rows is left alone; a line with rows gets them in place of what its sheet had. If any row fails, nothing is imported."
+			)}</p><p>${__("<b>Download template</b> (below) lists every line of this BOQ, ready to fill.")}</p>` },
+			{ fieldtype: "Attach", fieldname: "file", label: __("Resources (xlsx or csv)"), reqd: 1,
+			  options: { restrictions: { allowed_file_types: [".xlsx", ".csv"] } },
+			  onchange: () => check(dialog.get_value("file")) },
+			{ fieldtype: "HTML", fieldname: "result" },
+		],
+		primary_action_label: __("Import"),
+		primary_action() {
+			if (!ready) return frappe.msgprint(__("Upload a file that passes the checks first."));
+			frappe.xcall(`${BOQ_EST}.import_estimates`, { boq: frm.doc.name, file_url: dialog.get_value("file") }).then((r) => {
+				dialog.hide();
+				frm.reload_doc();
+				frappe.msgprint({ title: __("{0} estimate sheets filled", [r.sheets.length]), indicator: "green",
+					message: `<table class="table table-sm"><thead><tr><th>${__("Line")}</th><th>${__("Sheet")}</th><th class="text-right">${__("Resources")}</th><th class="text-right">${__("Unit cost")}</th></tr></thead><tbody>${r.sheets
+						.map((s) => `<tr><td>${frappe.utils.escape_html(s.boq_ref)}</td><td><a href="/app/estimate-sheet/${s.sheet}">${s.sheet}</a></td><td class="text-right">${s.resources}</td><td class="text-right">${format_currency(s.unit_cost, frm.doc.currency)}</td></tr>`)
+						.join("")}</tbody></table>` });
+			});
+		},
+	});
+	dialog.set_secondary_action_label(__("Download template"));
+	dialog.set_secondary_action(() => window.open(`/api/method/${BOQ_EST}.download_template?boq=${encodeURIComponent(frm.doc.name)}`));
+	dialog.get_primary_btn().prop("disabled", true);
+	function check(file_url) {
+		ready = false;
+		dialog.get_primary_btn().prop("disabled", true);
+		const area = dialog.fields_dict.result.$wrapper;
+		if (!file_url) return area.empty();
+		area.html(`<p class="text-muted">${__("Checking...")}</p>`);
+		frappe.xcall(`${BOQ_EST}.read_resources`, { file_url, boq: frm.doc.name }).then((r) => {
+			area.html(a3_constructa.resources_summary(r, frm.doc.currency));
+			ready = !r.errors.length;
+			dialog.get_primary_btn().prop("disabled", !ready);
+		});
+	}
+	dialog.show();
+}
