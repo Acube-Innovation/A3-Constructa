@@ -472,32 +472,19 @@ def _health(readable: set, now, milestones: dict, budget: dict) -> list[dict]:
 		with_client,
 	)
 
-	# A plan line is late only if its PR date has passed and nothing has been
-	# requested for that item on that project yet.
+	# A plan line is late when its PR date has passed with nothing requested or
+	# ordered: the line's pr_overdue flag (P-05A), kept by the plan and a daily job.
 	late_lines = None
-	if "Procurement Plan" in readable and "Material Request" in readable:
-		requested = {
-			(row.project, row.item_code)
-			for row in _get_list(
-				"Material Request",
-				filters=[["Material Request", "docstatus", "<", 2], ["Material Request Item", "name", "is", "set"]],
-				fields=["`tabMaterial Request Item`.project as project", "`tabMaterial Request Item`.item_code as item_code"],
-				limit_page_length=0,
-			)
-		}
-		late_lines = [
-			row
-			for row in _get_list(
-				"Procurement Plan",
-				filters=[
-					["Procurement Plan", "status", "=", "Submitted"],
-					["Procurement Plan Item", "recommended_pr_date", "<", today_str],
-				],
-				fields=["name", "project", "`tabProcurement Plan Item`.item_code as item_code"],
-				limit_page_length=0,
-			)
-			if (row.project, row.item_code) not in requested
-		]
+	if "Procurement Plan" in readable:
+		late_lines = _get_list(
+			"Procurement Plan",
+			filters=[
+				["Procurement Plan", "status", "not in", ["Cancelled", "Completed"]],
+				["Procurement Plan Item", "pr_overdue", "=", 1],
+			],
+			fields=["name", "project", "`tabProcurement Plan Item`.item_code as item_code"],
+			limit_page_length=0,
+		)
 	check(
 		"Plan lines past their PR date with nothing requested",
 		"warning",

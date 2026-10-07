@@ -141,7 +141,8 @@ doc_events = {
 	"Task": {
 		"validate": ["a3_constructa.overrides.task.validate", "a3_constructa.overrides.task_resources.validate",
 		             "a3_constructa.overrides.task_baseline.validate", "a3_constructa.overrides.task_progress.validate"],
-		"on_update": ["a3_constructa.overrides.task.on_update", "a3_constructa.overrides.task_progress.on_update"],
+		"on_update": ["a3_constructa.overrides.task.on_update", "a3_constructa.overrides.task_progress.on_update",
+		              "a3_constructa.a3_constructa.doctype.procurement_plan.procurement_plan.on_task_update"],
 		"after_delete": "a3_constructa.overrides.task.after_delete",
 	},
 	"Stock Entry": {
@@ -172,6 +173,10 @@ doc_events = {
 			APPROVAL_LEVEL,
 		],
 		"before_submit": APPROVAL_GATE,
+		# Catalogue 5.4: the procurement plan's lines follow what has been requested.
+		"on_update": "a3_constructa.a3_constructa.doctype.procurement_plan.procurement_plan.on_request_change",
+		"on_cancel": "a3_constructa.a3_constructa.doctype.procurement_plan.procurement_plan.on_request_change",
+		"on_trash": "a3_constructa.a3_constructa.doctype.procurement_plan.procurement_plan.on_request_change",
 	},
 	# Catalogue 1.2: only an Active WBS node accepts postings. Catalogue 1.3:
 	# only an Active cost code can be used.
@@ -229,4 +234,7 @@ doc_events = {
 	"Expense Claim": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},
 }
 
-# scheduler_events = {}
+scheduler_events = {
+	# Catalogue 5.4: plan lines pass their PR date overnight.
+	"daily": ["a3_constructa.a3_constructa.doctype.procurement_plan.procurement_plan.daily"],
+}

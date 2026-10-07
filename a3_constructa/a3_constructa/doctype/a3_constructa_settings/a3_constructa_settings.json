@@ -13,7 +13,9 @@
   "sb_handover",
   "default_contract_item",
   "contract_payment_terms",
-  "contract_taxes"
+  "contract_taxes",
+  "sb_procurement",
+  "site_buffer_days"
  ],
  "fields": [
   {
@@ -74,13 +76,26 @@
    "fieldtype": "Link",
    "label": "Contract Taxes",
    "options": "Sales Taxes and Charges Template"
+  },
+  {
+   "fieldname": "sb_procurement",
+   "fieldtype": "Section Break",
+   "label": "Procurement Planning"
+  },
+  {
+   "default": "7",
+   "description": "Material is wanted on site this many days before the task that uses it starts.",
+   "fieldname": "site_buffer_days",
+   "fieldtype": "Int",
+   "label": "Site Buffer (days)",
+   "non_negative": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-06 17:54:52.151018",
+ "modified": "2026-10-08 16:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "A3 Constructa Settings",

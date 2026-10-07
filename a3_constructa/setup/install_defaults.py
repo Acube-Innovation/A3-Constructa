@@ -254,10 +254,19 @@ OPERATIONS_PERMISSIONS = {
 	"Non Conformance": {"Constructa Project Manager": ("read", "write", "create", "report"),
 	                    "Constructa Site Engineer": ("read", "write", "create", "report"),
 	                    "Constructa Quantity Surveyor": ("read", "report")},
+	# Catalogue 5.4: procurement raises requests from the plan; the procurement manager keeps it.
+	"Procurement Plan": {"Purchase Manager": ("read", "write", "report"), "Purchase User": ("read", "report")},
 	"Warranty Claim": {"Constructa Project Manager": ("read", "write", "create", "report"),
 	                   "Constructa Site Engineer": ("read", "write", "create", "report"),
 	                   "Constructa Quantity Surveyor": ("read", "report")},
 }
+
+
+def set_settings_defaults():
+	"""A Single's new field has no stored value (it reads as 0): store its default once."""
+	for field, value in (("site_buffer_days", 7),):
+		if not frappe.db.sql("select 1 from tabSingles where doctype = 'A3 Constructa Settings' and field = %s", field):
+			frappe.db.set_single_value("A3 Constructa Settings", field, value)
 
 
 def grant_operations_permissions():
@@ -355,6 +364,7 @@ def run():
 	create_subcontract_document_rule()
 	create_plant_recovery_account()
 	grant_operations_permissions()
+	set_settings_defaults()
 	set_standard_working_hours()
 	keep_number_on_amend()
 	init_settings()
