@@ -90,7 +90,7 @@ if (a3_report) {
 				Promise.resolve(this._a3_running).then(() => setTimeout(() => {
 					if (JSON.stringify(this.get_filter_values()) !== this._a3_ran_with) this.refresh();
 					else if (tries) settle(tries - 1);
-				}, 400));
+				}, 1200)); // after the chart has finished drawing (Frappe animates it)
 			settle(3);
 		});
 	};

@@ -206,7 +206,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Resource Performance",
-   "link_count": 4,
+   "link_count": 6,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -231,6 +231,28 @@
    "link_type": "Report",
    "onboard": 0,
    "report_ref_doctype": "Attendance",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Labour Productivity",
+   "link_count": 0,
+   "link_to": "Labour Productivity",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Timesheet",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Manpower Histogram",
+   "link_count": 0,
+   "link_to": "Manpower Histogram",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Task",
    "type": "Link"
   },
   {
@@ -275,7 +297,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-09 13:00:00",
+ "modified": "2026-10-09 14:00:00",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "WBS Analysis & Reporting",

@@ -160,13 +160,15 @@ def fill_from_estimate(task: str) -> dict:
 
 # ---------------------------------------------------------------- loading
 
-def resource_loading(project=None, from_date=None, to_date=None, company=None, resource_type=None) -> list[dict]:
+def resource_loading(project=None, from_date=None, to_date=None, company=None, resource_type=None, include_done=False) -> list[dict]:
 	"""What the tasks need, day by day: one row per task resource per day it runs,
 	{date, resource_type, group, qty, uom, task, project}. Labour is grouped by trade
 	(people), equipment by asset category (machines), materials by item on their need-by
 	date (the whole quantity). Read by Resource Loading (P-06B), procurement planning
 	(P-05A), the equipment plan (P-08B) and the manpower histogram (P-13E)."""
-	conditions = ["t.status not in ('Cancelled', 'Completed', 'Template')", "t.is_template = 0"]
+	# What is still to do, unless the past is wanted too (the manpower histogram's planned weeks).
+	conditions = ["t.status not in ('Cancelled', 'Template')" if include_done else "t.status not in ('Cancelled', 'Completed', 'Template')",
+	              "t.is_template = 0"]
 	values = {}
 	if project:
 		conditions.append("t.project = %(project)s"); values["project"] = project
