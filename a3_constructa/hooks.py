@@ -105,7 +105,7 @@ fixtures = [
 
 # ---------------------------------------------------------------- assets
 # app_include_css = "/assets/a3_constructa/css/a3_constructa_desk.css"
-# app_include_js = "/assets/a3_constructa/js/a3_constructa_desk.js"
+app_include_js = "/assets/a3_constructa/js/a3_constructa_desk.js"
 
 # Material Request gains Get Items From > BOQ.
 doctype_js = {

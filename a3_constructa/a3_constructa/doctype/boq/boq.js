@@ -74,6 +74,43 @@ function show_allowance_label(frm, row, field) {
 	);
 }
 
+// A new BOQ takes what its project or opportunity already knows: client, currency,
+// award, opportunity and measurement method. Only empty fields are filled.
+frappe.ui.form.on("BOQ", {
+	onload(frm) {
+		if (frm.is_new() && (frm.doc.project || frm.doc.opportunity)) fill_from_sources(frm);
+	},
+	project(frm) {
+		if (frm.doc.project && frm.doc.docstatus === 0) fill_from_sources(frm);
+	},
+	opportunity(frm) {
+		if (frm.doc.opportunity && frm.doc.docstatus === 0) fill_from_sources(frm);
+	},
+});
+
+function fill_from_sources(frm) {
+	if (frm.__filling) return;
+	frm.__filling = true;
+	const source = frm.doc.project || frm.doc.opportunity;
+	frappe
+		.xcall("a3_constructa.api.boq_import.boq_defaults", { project: frm.doc.project, opportunity: frm.doc.opportunity })
+		.then(async (values) => {
+			if (frm.is_new() && !frm.doc.project && values.opportunity) values.boq_stage = "Tender";
+			const filled = {};
+			for (const [field, value] of Object.entries(values)) {
+				if (field === "boq_stage" ? frm.doc.boq_stage !== value : !frm.doc[field]) filled[field] = value;
+			}
+			if (!Object.keys(filled).length) return;
+			await frm.set_value(filled);
+			frappe.show_alert({
+				message: __("Filled from {0}: {1}", [source,
+					Object.keys(filled).map((f) => __(frappe.meta.get_label("BOQ", f))).join(", ")]),
+				indicator: "blue",
+			});
+		})
+		.finally(() => (frm.__filling = false));
+}
+
 // Catalogue 2.4: the client's bill, from a spreadsheet.
 frappe.ui.form.on("BOQ", {
 	refresh(frm) {
@@ -88,6 +125,10 @@ frappe.ui.form.on("BOQ", {
 	},
 });
 
+function download_template() {
+	window.open("/api/method/a3_constructa.api.boq_import.download_template");
+}
+
 function import_lines(frm) {
 	let checked = [];
 	const dialog = new frappe.ui.Dialog({
@@ -99,7 +140,7 @@ function import_lines(frm) {
 				fieldname: "help",
 				options: `<p class="text-muted">${__(
 					"An .xlsx or .csv with the headings <b>boq_ref, cost_head, description, uom, qty</b> and, if known, <b>item_code</b>. Quantities and units are kept as the bill states them. If any row fails, nothing is imported."
-				)} <a href="/api/method/a3_constructa.api.boq_import.download_template">${__("Download the template")}</a></p>`,
+				)}</p><p>${__("Not sure of the layout? <b>Download template</b> (below) gives the headings and four example lines.")}</p>`,
 			},
 			{ fieldtype: "Attach", fieldname: "file", label: __("Bill (xlsx or csv)"), reqd: 1,
 			  onchange: () => preview(dialog.get_value("file")) },
@@ -133,6 +174,8 @@ function import_lines(frm) {
 		},
 	});
 	dialog.get_primary_btn().prop("disabled", true);
+	dialog.set_secondary_action_label(__("Download template"));
+	dialog.set_secondary_action(download_template);
 
 	function preview(file_url) {
 		checked = [];

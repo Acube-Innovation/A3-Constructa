@@ -7,6 +7,8 @@ const HO = "a3_constructa.overrides.handover";
 frappe.ui.form.on("Project", {
 	refresh(frm) {
 		if (frm.is_new()) return;
+		// A new BOQ for this project; its client, currency and award are filled from it.
+		frm.add_custom_button(__("BOQ"), () => frappe.new_doc("BOQ", { project: frm.doc.name, boq_stage: "Budget" }), __("Create"));
 		const group = __("Handover");
 		const can_hand_over = frappe.user.has_role(["Constructa Project Manager", "A3 Constructa Admin", "System Manager"]);
 		frm.add_custom_button(__("Snag Lists"), () => frappe.set_route("List", "Snag List", { project: frm.doc.name }), group);

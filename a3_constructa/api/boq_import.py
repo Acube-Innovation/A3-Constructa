@@ -32,17 +32,50 @@ def make_tender_boq(opportunity: str):
 	ready for the client's bill to be imported."""
 	frappe.has_permission("Opportunity", "read", opportunity, throw=True)
 	frappe.has_permission("BOQ", "create", throw=True)
-	opp = frappe.get_doc("Opportunity", opportunity)
 	boq = frappe.new_doc("BOQ")
-	boq.update({
-		"boq_stage": "Tender",
-		"opportunity": opp.name,
-		"client_name": opp.customer_name,
-		"customer": opp.party_name if opp.opportunity_from == "Customer" else None,
-		"currency": opp.currency or frappe.get_cached_value("Company", opp.company, "default_currency"),
-		"measurement_method": "NRM2",
-	})
+	boq.update({"boq_stage": "Tender", **boq_defaults(opportunity=opportunity)})
 	return boq.as_dict()
+
+
+@frappe.whitelist()
+def boq_defaults(project: str | None = None, opportunity: str | None = None) -> dict:
+	"""What a new BOQ can take from its project or opportunity: client, currency,
+	award, the opportunity it was won from and the tender's measurement method.
+	The form fills only the fields still empty."""
+	out = {}
+	if project:
+		frappe.has_permission("Project", "read", project, throw=True)
+		p = frappe.db.get_value("Project", project, ["customer", "company"], as_dict=True) or {}
+		award = frappe.db.get_value("Awarded Quotation", {"project": project, "docstatus": ["<", 2]},
+		                            ["name", "currency", "customer", "quotation"], as_dict=True, order_by="award_date desc")
+		out.update({
+			"customer": p.get("customer") or (award and award.customer),
+			"currency": (award and award.currency) or (p.get("company") and frappe.get_cached_value("Company", p.company, "default_currency")),
+			"awarded_quotation": award and award.name,
+		})
+		if not opportunity and award and award.quotation:
+			opportunity = frappe.db.get_value("Quotation", award.quotation, "opportunity")
+		if not opportunity:
+			# An earlier BOQ of the project may already name it.
+			opportunity = frappe.db.get_value("BOQ", {"project": project, "opportunity": ["is", "set"]}, "opportunity")
+	if opportunity and frappe.db.exists("Opportunity", opportunity):
+		# The client and method come from the opportunity even when the user may not open it.
+		opp = frappe.db.get_value("Opportunity", opportunity,
+		                          ["name", "opportunity_from", "party_name", "customer_name", "currency", "company"], as_dict=True)
+		out.setdefault("customer", None)
+		out.update({
+			"opportunity": opp.name,
+			"client_name": opp.customer_name,
+			"customer": out["customer"] or (opp.party_name if opp.opportunity_from == "Customer" else None),
+			"currency": out.get("currency") or opp.currency or frappe.get_cached_value("Company", opp.company, "default_currency"),
+			"measurement_method": frappe.db.get_value("BOQ", {"opportunity": opp.name, "measurement_method": ["is", "set"]},
+			                                          "measurement_method") or "NRM2",
+		})
+	if not out.get("currency"):
+		out["currency"] = frappe.db.get_default("currency")
+	# Leave out a link the user may not open: the form could not show it.
+	links = {"customer": "Customer", "awarded_quotation": "Awarded Quotation", "opportunity": "Opportunity", "currency": "Currency"}
+	return {k: v for k, v in out.items() if v and (k not in links or frappe.has_permission(links[k], "read", v))}
 
 
 @frappe.whitelist()
