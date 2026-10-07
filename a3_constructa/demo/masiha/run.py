@@ -63,6 +63,7 @@ STAGES = [
 	("quantity_chain", "a3_constructa.demo.masiha.quantity_chain.run"),  # P-13B: wastage on the budget lines; over-use past it, and material never in the BOQ
 	("earned_value", "a3_constructa.demo.masiha.earned_value.run"),  # P-13C: the frame's monthly concrete and formwork invoices, so its actual cost is on the books
 	("labour_productivity", "a3_constructa.demo.masiha.labour_productivity.run"),  # P-13E: the gangs' September timesheets and attendance behind their progress
+	("alerts", "a3_constructa.demo.masiha.alerts.run"),  # P-13F: an alert rule per condition, run once (nothing re-sent within 7 days)
 	("timeline", "a3_constructa.demo.masiha.timeline.run"),  # dates everything on the story calendar
 ]
 

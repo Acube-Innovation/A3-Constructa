@@ -245,5 +245,7 @@ scheduler_events = {
 		"a3_constructa.a3_constructa.doctype.procurement_plan.procurement_plan.daily",
 		# Catalogue 7.7: certificates expiring in 30 and 7 days.
 		"a3_constructa.overrides.certificates.daily",
+		# Catalogue 13.6: exception alerts.
+		"a3_constructa.api.alerts.daily",
 	],
 }
