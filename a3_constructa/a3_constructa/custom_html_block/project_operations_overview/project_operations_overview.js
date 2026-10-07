@@ -211,13 +211,14 @@ function task_breakdown(tasks) {
 function delay_breakdown(delays) {
 	const rows = delays.restricted ? [] : delays.by_cause;
 	return {
-		title: __("Hours lost by cause, last 30 days"),
+		title: __("Time lost by cause, last 30 days (minutes)"),
 		doctype: "Daily Site Report",
 		field: "name",
 		filters: {},
 		restricted: delays.restricted,
-		rows: rows.map((r) => ({ ...r, count: r.amount })),
-		total: delays.restricted ? 0 : delays.hours,
+		// Minutes, so a delay of 1.5 h isn't rounded to 2.
+		rows: rows.map((r) => ({ ...r, count: Math.round(r.amount * 60) })),
+		total: delays.restricted ? 0 : Math.round(delays.hours * 60),
 	};
 }
 
@@ -265,12 +266,12 @@ function render_labour_section(labour) {
 	const chart = render_labour_chart(weeks);
 	const table = render_table(
 		[__("Week of"), __("Labour hours"), __("Hours lost"), __("Reports")],
-		weeks.map((w) => [w.label, format_count(w.hours), format_count(w.lost), format_count(w.reports)])
+		weeks.map((w) => [w.label, format_hours(w.hours), format_hours(w.lost), format_count(w.reports)])
 	);
 	table.classList.add("ov-trend-table");
 	return section({
 		title,
-		caption: __("Last 12 weeks: {0} labour hours booked from the daily site reports, {1} hours lost to delays.", [format_count(hours), format_count(lost)]),
+		caption: __("Last 12 weeks: {0} labour hours booked from the daily site reports, {1} hours lost to delays.", [format_hours(hours), format_hours(lost)]),
 		body: el("div", { class: "ov-card ov-chart-card" }, chart, table),
 		action: hours ? chart_with_table(chart, table) : null,
 	});
@@ -307,12 +308,17 @@ function render_labour_chart(weeks) {
 			{ class: "ov-col", tabindex: "0", role: "img", "aria-label": __("Week of {0}: {1} labour hours, {2} lost", [w.label, w.hours, w.lost]) },
 			el("div", { class: "ov-col-pair" }, hours_bar, lost_bar)
 		);
-		attach_tooltip(figure, column, hours_bar, __("{0} h · {1} h lost", [format_count(w.hours), format_count(w.lost)]), __("Week of {0}", [w.label]));
+		attach_tooltip(figure, column, hours_bar, __("{0} h · {1} h lost", [format_hours(w.hours), format_hours(w.lost)]), __("Week of {0}", [w.label]));
 		columns.append(column);
 	});
 	plot.append(columns);
 	figure.append(legend, plot, el("div", { class: "ov-xlabels", "aria-hidden": "true" }, weeks.map((w) => el("span", { text: w.label }))));
 	return figure;
+}
+
+// Hours to one decimal: half an hour lost matters on a site day.
+function format_hours(value) {
+	return (Math.round((value || 0) * 10) / 10).toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
 mount_overview({
