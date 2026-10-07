@@ -1,8 +1,13 @@
 {
  "charts": [],
- "content": "[{\"id\": \"wa_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>WBS Analysis &amp; Reporting</b></span>\", \"col\": 12}}, {\"id\": \"card_job_cost\", \"type\": \"card\", \"data\": {\"card_name\": \"Job Cost\", \"col\": 4}}, {\"id\": \"card_quantity_chain\", \"type\": \"card\", \"data\": {\"card_name\": \"Quantity Chain\", \"col\": 4}}, {\"id\": \"card_earned_value\", \"type\": \"card\", \"data\": {\"card_name\": \"Earned Value\", \"col\": 4}}, {\"id\": \"card_revenue_margin\", \"type\": \"card\", \"data\": {\"card_name\": \"Revenue & Margin\", \"col\": 4}}, {\"id\": \"card_resource_performance\", \"type\": \"card\", \"data\": {\"card_name\": \"Resource Performance\", \"col\": 4}}, {\"id\": \"card_alerts\", \"type\": \"card\", \"data\": {\"card_name\": \"Alerts\", \"col\": 4}}]",
+ "content": "[{\"id\": \"wa_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"WBS Analysis & Reporting Overview\", \"col\": 12}}, {\"id\": \"wa_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>WBS Analysis &amp; Reporting</b></span>\", \"col\": 12}}, {\"id\": \"card_job_cost\", \"type\": \"card\", \"data\": {\"card_name\": \"Job Cost\", \"col\": 4}}, {\"id\": \"card_quantity_chain\", \"type\": \"card\", \"data\": {\"card_name\": \"Quantity Chain\", \"col\": 4}}, {\"id\": \"card_earned_value\", \"type\": \"card\", \"data\": {\"card_name\": \"Earned Value\", \"col\": 4}}, {\"id\": \"card_revenue_margin\", \"type\": \"card\", \"data\": {\"card_name\": \"Revenue & Margin\", \"col\": 4}}, {\"id\": \"card_resource_performance\", \"type\": \"card\", \"data\": {\"card_name\": \"Resource Performance\", \"col\": 4}}, {\"id\": \"card_alerts\", \"type\": \"card\", \"data\": {\"card_name\": \"Alerts\", \"col\": 4}}]",
  "creation": "2026-10-09 09:00:00.000000",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "WBS Analysis & Reporting Overview",
+   "label": "WBS Analysis & Reporting Overview"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "hide_custom": 0,
@@ -307,7 +312,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-09 15:30:00",
+ "modified": "2026-10-09 16:00:00",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "WBS Analysis & Reporting",

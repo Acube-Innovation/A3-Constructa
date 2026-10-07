@@ -38,6 +38,7 @@ CUSTOM_HTML_BLOCKS = {
 	"Asset & Equipment Overview": "asset_equipment_overview",
 	"HR & Time Overview": "hr_time_overview",
 	"Finance & Accounting Overview": "finance_accounting_overview",
+	"WBS Analysis & Reporting Overview": "wbs_analysis_overview",
 	# Drawn by the Award Procurement page, not by a workspace.
 	"Award Procurement View": "award_procurement_view",
 }
