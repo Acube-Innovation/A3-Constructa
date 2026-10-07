@@ -16,6 +16,9 @@ frappe.ui.form.on("Task", {
 
 	refresh(frm) {
 		if (frm.is_new() || frm.doc.is_template) return;
+		if (!frm.doc.is_group && frm.doc.docstatus === 0) {
+			frm.add_custom_button(__("Record progress"), () => record_progress(frm));
+		}
 		if (frm.doc.boq) {
 			frm.add_custom_button(__("Pick BOQ line"), () => pick_line(frm), __("Resources"));
 		}
@@ -61,4 +64,26 @@ frappe.ui.form.on("Task Resource", {
 function total(cdt, cdn) {
 	const r = locals[cdt][cdn];
 	frappe.model.set_value(cdt, cdn, "total_qty", flt(r.qty_per_day) * cint(r.days));
+}
+
+function record_progress(frm) {
+	const d = new frappe.ui.Dialog({
+		title: __("Record progress on {0}", [frm.doc.subject]),
+		fields: [
+			{ fieldtype: "Date", fieldname: "date", label: __("Date"), reqd: 1, default: frappe.datetime.get_today() },
+			{ fieldtype: "Float", fieldname: "qty_done", label: __("Quantity done ({0})", [frm.doc.uom || ""]), reqd: 1,
+			  description: __("Done on this date. Planned {0}, done so far {1}.", [frm.doc.planned_qty || 0, frm.doc.qty_done || 0]) },
+			{ fieldtype: "Data", fieldname: "reference", label: __("Reference") },
+			{ fieldtype: "Data", fieldname: "remarks", label: __("Remarks") },
+		],
+		primary_action_label: __("Record"),
+		primary_action(values) {
+			frappe.xcall("a3_constructa.overrides.task_progress.record_progress", { task: frm.doc.name, ...values }).then((p) => {
+				d.hide();
+				frappe.show_alert({ message: __("{0}% complete", [p]), indicator: "green" });
+				frm.reload_doc();
+			});
+		},
+	});
+	d.show();
 }
