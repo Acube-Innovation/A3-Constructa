@@ -185,11 +185,18 @@ def wbs_progress(project, as_of=None) -> dict:
 		agg["w"] += days
 		agg["done"] += days * (100 if t.status in DONE else flt(t.progress))
 		agg["plan"] += days * planned_percent(t, as_of)
+	budget = {n: flt(wbs_budget(project, n)) for n in nodes}
+	return rollup(nodes, own, budget)
+
+
+def rollup(nodes, own, budget) -> dict:
+	"""Roll task progress up the WBS tree, weighted by budget (P-06D; reused by
+	P-13C's earned value for any date). `own` holds, per node, its own tasks'
+	duration-weighted totals {"w", "done", "plan"}; `budget` each node's budget."""
 	children = {}
 	for n in nodes.values():
 		if n.parent_wbs in nodes:
 			children.setdefault(n.parent_wbs, []).append(n.name)
-	budget = {n: flt(wbs_budget(project, n)) for n in nodes}
 	out = {}
 
 	def visit(name):

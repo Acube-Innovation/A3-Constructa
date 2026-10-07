@@ -67,3 +67,31 @@ a3_constructa.resources_summary = function (r, currency) {
 				<td class="text-right">${x.rate ? format_currency(x.rate, currency) : `<span class="text-muted">${__("fetched")}</span>`}</td></tr>`).join(""))
 			.join("")}</tbody></table></div>`;
 };
+
+// A report opened from a link (filters in the URL) ran before Frappe had checked a
+// Link filter's value, so it showed every project under "Mbandaka Administrative
+// Centre". Once the filters have settled, run it again if they differ from what it
+// ran with.
+const a3_report = frappe.views && frappe.views.QueryReport && frappe.views.QueryReport.prototype;
+if (a3_report) {
+	const run = a3_report.refresh;
+	a3_report.refresh = function (...args) {
+		this._a3_ran_with = JSON.stringify(this.get_filter_values());
+		// Frappe resolves this once the run is drawn; a second run must not start before.
+		this._a3_running = Promise.resolve(run.apply(this, args));
+		return this._a3_running;
+	};
+	const open = a3_report.refresh_report;
+	a3_report.refresh_report = function (route_options) {
+		const from_link = route_options && Object.keys(route_options).length;
+		return Promise.resolve(open.apply(this, arguments)).then(() => {
+			if (!from_link) return;
+			const settle = (tries) =>
+				Promise.resolve(this._a3_running).then(() => setTimeout(() => {
+					if (JSON.stringify(this.get_filter_values()) !== this._a3_ran_with) this.refresh();
+					else if (tries) settle(tries - 1);
+				}, 400));
+			settle(3);
+		});
+	};
+}

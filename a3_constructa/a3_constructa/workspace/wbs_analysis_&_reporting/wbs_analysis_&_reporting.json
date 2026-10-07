@@ -122,10 +122,21 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Earned Value",
-   "link_count": 1,
+   "link_count": 2,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Earned Value",
+   "link_count": 0,
+   "link_to": "Earned Value",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "WBS",
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -242,7 +253,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-09 11:00:00",
+ "modified": "2026-10-09 12:00:00",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "WBS Analysis & Reporting",

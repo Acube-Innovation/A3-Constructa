@@ -61,6 +61,7 @@ STAGES = [
 	("finance", "a3_constructa.demo.masiha.finance.run"),  # step 20
 	("closure", "a3_constructa.demo.masiha.closure.run"),  # step 21
 	("quantity_chain", "a3_constructa.demo.masiha.quantity_chain.run"),  # P-13B: wastage on the budget lines; over-use past it, and material never in the BOQ
+	("earned_value", "a3_constructa.demo.masiha.earned_value.run"),  # P-13C: the frame's monthly concrete and formwork invoices, so its actual cost is on the books
 	("timeline", "a3_constructa.demo.masiha.timeline.run"),  # dates everything on the story calendar
 ]
 
