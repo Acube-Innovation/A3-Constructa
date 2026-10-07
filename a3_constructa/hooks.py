@@ -115,6 +115,7 @@ doctype_js = {
 	"Opportunity": "public/js/opportunity.js",
 	"Quotation": "public/js/quotation.js",
 	"Sales Order": "public/js/sales_order.js",
+	"Project": "public/js/project.js",
 }
 
 # ---------------------------------------------------------------- events
@@ -222,6 +223,9 @@ doc_events = {
 		"on_submit": "a3_constructa.overrides.quality.qi_on_submit",
 	},
 	"Non Conformance": {"validate": "a3_constructa.overrides.quality.nc_validate"},
+	# Catalogue 6.11: a defect in the defects liability period, on the project and WBS.
+	"Warranty Claim": {"before_validate": "a3_constructa.overrides.handover.warranty_claim_defaults",
+	                   "validate": "a3_constructa.overrides.handover.warranty_claim_validate"},
 	"Expense Claim": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},
 }
 

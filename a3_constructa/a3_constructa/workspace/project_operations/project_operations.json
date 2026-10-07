@@ -284,10 +284,31 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Snagging & Handover",
-   "link_count": 2,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Snag List",
+   "link_count": 0,
+   "link_to": "Snag List",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Snag Status",
+   "link_count": 0,
+   "link_to": "Snag Status",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Snag List",
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -311,7 +332,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-08 12:00:00.000000",
+ "modified": "2026-10-08 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Project Operations",

@@ -1,0 +1,114 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-10-08 14:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "description",
+  "trade",
+  "location_detail",
+  "photo",
+  "cb_1",
+  "responsible_type",
+  "responsible",
+  "responsible_name",
+  "due_date",
+  "status",
+  "closed_on"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "trade",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Trade",
+   "options": "\nCivil\nConcrete\nMasonry\nCarpentry\nTiling\nPainting\nPlastering\nElectrical\nPlumbing\nGlazing\nRoofing\nMetalwork\nCleaning\nOther"
+  },
+  {
+   "columns": 2,
+   "description": "Where in the room: wall, grid, fitting.",
+   "fieldname": "location_detail",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Location"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Photo"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Crew",
+   "fieldname": "responsible_type",
+   "fieldtype": "Select",
+   "label": "Responsible Type",
+   "options": "\nCrew\nSupplier"
+  },
+  {
+   "columns": 1,
+   "fieldname": "responsible",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Responsible",
+   "options": "responsible_type"
+  },
+  {
+   "fieldname": "responsible_name",
+   "fieldtype": "Data",
+   "label": "Responsible Name",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Due Date"
+  },
+  {
+   "columns": 1,
+   "default": "Open",
+   "description": "Open: to fix. Fixed: the trade says it's done. Verified: checked and closed.",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Open\nFixed\nVerified",
+   "reqd": 1
+  },
+  {
+   "fieldname": "closed_on",
+   "fieldtype": "Date",
+   "label": "Closed On",
+   "no_copy": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-08 14:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Snag Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

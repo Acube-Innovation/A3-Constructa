@@ -254,7 +254,9 @@ OPERATIONS_PERMISSIONS = {
 	"Non Conformance": {"Constructa Project Manager": ("read", "write", "create", "report"),
 	                    "Constructa Site Engineer": ("read", "write", "create", "report"),
 	                    "Constructa Quantity Surveyor": ("read", "report")},
-	"Warranty Claim": {"Constructa Project Manager": ("read", "write", "create", "report")},
+	"Warranty Claim": {"Constructa Project Manager": ("read", "write", "create", "report"),
+	                   "Constructa Site Engineer": ("read", "write", "create", "report"),
+	                   "Constructa Quantity Surveyor": ("read", "report")},
 }
 
 

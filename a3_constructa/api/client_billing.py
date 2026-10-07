@@ -59,7 +59,7 @@ def _finish(si, rates, vat=True):
 	else:
 		si.taxes_and_charges = None
 	si.run_method("calculate_taxes_and_totals")
-	si.insert()
+	si.insert(ignore_permissions=si.flags.ignore_permissions)
 	return si
 
 
@@ -163,10 +163,15 @@ def release_due(a, half):
 
 @frappe.whitelist()
 def release_retention(award: str, half: int) -> str:
-	half = int(half)
 	a = frappe.get_doc("Awarded Quotation", award)
 	a.check_permission("read")
 	frappe.has_permission("Sales Invoice", "create", throw=True)
+	return draft_release(a, int(half))
+
+
+def draft_release(a, half: int, ignore_permissions: bool = False) -> str:
+	"""The draft invoice releasing a half of the retention held (permission checked by the caller:
+	the award's billing, or practical completion / end of DLP on the project, P-06H)."""
 	reason = release_due(a, half)
 	if reason:
 		frappe.throw(reason, title=_("Retention release"))
@@ -177,6 +182,7 @@ def release_retention(award: str, half: int) -> str:
 		frappe.throw(_("No retention is held on {0}.").format(a.name))
 	label = _("first half, at practical completion") if half == 1 else _("second half, at the end of the defects liability period")
 	si = _new_invoice(a, _("Retention release, {0}: {1}.").format(label, a.name), is_retention_release=1)
+	si.flags.ignore_permissions = ignore_permissions
 	si.append("items", {"item_code": contract_item(None), "qty": 1, "income_account": _account(a.company, RETENTION_RECEIVABLE),
 	                    "description": _("Release of retention, {0}").format(label)})
 	si = _finish(si, [amount], vat=False)
