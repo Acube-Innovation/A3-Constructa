@@ -261,6 +261,8 @@ OPERATIONS_PERMISSIONS = {
 	"WBS Allocation": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
 	"Variation Order": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
 	"Timesheet": {"Constructa Project Manager": ("read", "report")},
+	# P-13A: actual cost opens the material issued to the job.
+	"Stock Entry": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
 	# The masters those reports label their rows with; the QS follows the BOQ's procurement.
 	"WBS": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report"), "Constructa Quantity Surveyor": ("read", "report"),
 	        # P-13A: the Job Cost Report is a report on the WBS.

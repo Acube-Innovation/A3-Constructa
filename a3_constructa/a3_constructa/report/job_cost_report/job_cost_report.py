@@ -220,7 +220,8 @@ def build_tree(projects, facts) -> list[dict]:
 		forecast = r["actual"] + r["committed"] + r["cost_to_complete"]
 		consumed = r["actual"] + r["committed"]
 		out.append({**r, "indent": indent, "revised_budget": revised, "forecast": forecast, "variance": revised - forecast,
-		            "percent_consumed": flt(consumed / revised * 100, 1) if revised else (100.0 if consumed else 0.0),
+		            # No budget left (or a negative one): anything spent has consumed it all.
+		            "percent_consumed": flt(consumed / revised * 100, 1) if revised > 0 else (100.0 if consumed > 0 else 0.0),
 		            "is_unallocated": r["level"] == "Unallocated"})
 		for k in sorted(children.get(key, []), key=lambda k: rows[k]["sort"]):
 			walk(k, indent + 1)

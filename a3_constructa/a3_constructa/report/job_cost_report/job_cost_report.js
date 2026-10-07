@@ -6,7 +6,7 @@ const DRILL = {
 	original_budget: { doctype: "WBS Allocation", map: (d) => ({ project: d.project, wbs: d.wbs, "WBS Allocation Item.cost_code": d.cost_code, docstatus: ["<", 2] }) },
 	budget_changes: { doctype: "Budget Revision Log", map: (d) => ({ project: d.project, wbs: d.wbs, cost_code: d.cost_code,
 		change_type: ["in", ["Variation", "Transfer In", "Transfer Out"]] }) },
-	committed: { doctype: "Purchase Order", map: (d) => ({ project: d.project, docstatus: 1, "Purchase Order Item.wbs": d.wbs, "Purchase Order Item.cost_code": d.cost_code }) },
+	committed: { doctype: "Purchase Order", map: (d) => ({ project: d.project, docstatus: 1, per_billed: ["<", 100], "Purchase Order Item.wbs": d.wbs, "Purchase Order Item.cost_code": d.cost_code }) },
 };
 
 frappe.query_reports["Job Cost Report"] = {
