@@ -108,7 +108,7 @@ def plan(filters) -> list[dict]:
 			if len(spare) < short:
 				moves.append(_("Hire {0} more").format(int(short - len(spare))))
 		out.append({"project": project, "category": category, "week": week, "machine_days": flt(w["machine_days"], 1),
-		            "peak": w["peak"], "on_project": len(on_site), "shortfall": short,
+		            "peak": int(round(w["peak"])), "on_project": len(on_site), "shortfall": int(round(short)),
 		            "double_bookings": "; ".join(dict.fromkeys(doubles)), "movement": "; ".join(dict.fromkeys(moves)),
 		            "machines": ", ".join(a.asset_name for a in on_site)})
 	return out
@@ -141,9 +141,9 @@ def columns(filters):
 		{"fieldname": "category", "label": _("Category"), "fieldtype": "Link", "options": "Asset Category", "width": 130},
 		{"fieldname": "week", "label": _("Week of"), "fieldtype": "Date", "width": 100},
 		{"fieldname": "machine_days", "label": _("Machine-days"), "fieldtype": "Float", "precision": 1, "width": 110},
-		{"fieldname": "peak", "label": _("Peak / day"), "fieldtype": "Float", "precision": 0, "width": 90},
+		{"fieldname": "peak", "label": _("Peak / day"), "fieldtype": "Int", "width": 90},
 		{"fieldname": "on_project", "label": _("On Project"), "fieldtype": "Int", "width": 90},
-		{"fieldname": "shortfall", "label": _("Shortfall"), "fieldtype": "Float", "precision": 0, "width": 85},
+		{"fieldname": "shortfall", "label": _("Shortfall"), "fieldtype": "Int", "width": 85},
 		{"fieldname": "double_bookings", "label": _("Double Bookings"), "fieldtype": "Data", "width": 260},
 		{"fieldname": "movement", "label": _("Asset Movement Needed"), "fieldtype": "Data", "width": 300},
 		{"fieldname": "machines", "label": _("Machines on the Project"), "fieldtype": "Data", "width": 220},
