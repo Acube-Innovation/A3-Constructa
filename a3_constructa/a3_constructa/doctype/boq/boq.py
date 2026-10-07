@@ -15,8 +15,35 @@ class BOQ(Document):
 		self.set_revision()
 		self.sync_contingency()
 		self.validate_allowance_lines()
+		self.default_approved_figures()
 		self.calculate_amounts()
 		self.calculate_pricing()
+
+	def default_approved_figures(self):
+		"""Sent for approval, a Budget or Contract BOQ line with no approved figures
+		takes its BOQ qty and its cost rate (the estimate), else its rate. Figures
+		typed by hand are kept; the approver checks them before approving."""
+		if self.boq_stage == "Tender" or self.docstatus != 0 or self.status != "Pending Approval":
+			return
+		if not self.is_new() and frappe.db.get_value("BOQ", self.name, "status") == "Pending Approval":
+			return  # only on the step into Pending Approval
+		filled = []
+		for row in self.items:
+			if row.is_allowance:
+				continue
+			changed = False
+			if not flt(row.approved_qty) and flt(row.boq_qty):
+				row.approved_qty, changed = row.boq_qty, True
+			rate = flt(row.cost_rate) or flt(row.rate)
+			if not flt(row.approved_rate) and rate:
+				row.approved_rate, changed = rate, True
+			if changed:
+				filled.append(row)
+		if filled:
+			frappe.msgprint(
+				_("Approved Qty and Approved Rate filled on {0} lines from the BOQ qty and the cost rate: {1}. Check them before approving.").format(
+					len(filled), ", ".join(row.boq_ref or _("line {0}").format(row.idx) for row in filled)),
+				title=_("Approved figures filled"), indicator="blue")
 
 	def sync_contingency(self):
 		"""Catalogue 2.6: the contingency lives as one allowance line, kept to the
