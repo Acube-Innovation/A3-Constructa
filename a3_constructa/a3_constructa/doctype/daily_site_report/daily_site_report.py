@@ -48,6 +48,7 @@ class DailySiteReport(Document):
 		self.check_progress()
 		self.check_materials()
 		self.totals()
+		self.title = title(self.project, self.report_date)
 
 	# ------------------------------------------------------------ checks
 
@@ -253,6 +254,10 @@ class DailySiteReport(Document):
 
 		for task in {r.task for r in self.progress}:
 			remove_progress(task, self.name)
+
+
+def title(project, on):
+	return f"{frappe.db.get_value('Project', project, 'project_name') or project} · {frappe.format(on, {'fieldtype': 'Date'})}"
 
 
 def cancel(doctype, name):

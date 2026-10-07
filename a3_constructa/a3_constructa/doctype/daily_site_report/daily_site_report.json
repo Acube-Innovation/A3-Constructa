@@ -2,12 +2,13 @@
  "actions": [],
  "allow_rename": 0,
  "autoname": "naming_series:",
- "creation": "2026-10-08 09:10:00.000000",
+ "creation": "2026-10-08 09:20:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "title",
   "project",
   "report_date",
   "site",
@@ -51,6 +52,13 @@
    "reqd": 1
   },
   {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Title",
+   "no_copy": 1
+  },
+  {
    "fieldname": "project",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -90,7 +98,8 @@
   {
    "fieldname": "temperature_c",
    "fieldtype": "Float",
-   "label": "Temperature (°C)"
+   "label": "Temperature (°C)",
+   "precision": "1"
   },
   {
    "fieldname": "prepared_by",
@@ -261,7 +270,7 @@
  "index_web_pages_for_search": 0,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-08 09:10:00.000000",
+ "modified": "2026-10-08 09:20:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Daily Site Report",
@@ -364,6 +373,6 @@
  "sort_field": "report_date",
  "sort_order": "DESC",
  "states": [],
- "title_field": "project",
+ "title_field": "title",
  "track_changes": 1
 }
