@@ -243,7 +243,8 @@ def create_plant_recovery_account():
 # only for System Manager), so the Constructa roles are added on top, idempotently.
 OPERATIONS_PERMISSIONS = {
 	"Task": {"Constructa Project Manager": ("read", "write", "create", "delete", "report", "export"),
-	         "Constructa Site Engineer": ("read", "write", "create", "report")},
+	         "Constructa Site Engineer": ("read", "write", "create", "report"),
+	         "Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
 	"Project Template": {"Constructa Project Manager": ("read", "write", "create", "report")},
 	"Task Type": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
 	"Quality Inspection": {"Constructa Project Manager": ("read", "write", "create", "submit", "cancel", "report"),
@@ -254,6 +255,19 @@ OPERATIONS_PERMISSIONS = {
 	"Non Conformance": {"Constructa Project Manager": ("read", "write", "create", "report"),
 	                    "Constructa Site Engineer": ("read", "write", "create", "report"),
 	                    "Constructa Quantity Surveyor": ("read", "report")},
+	# Catalogue 13 (W-13): finance reads the budget, cost-to-complete and variation reports; the PM
+	# reads the timesheets behind Project Profitability. The ledger and salaries stay restricted.
+	"BOQ": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
+	"WBS Allocation": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
+	"Variation Order": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
+	"Timesheet": {"Constructa Project Manager": ("read", "report")},
+	# The masters those reports label their rows with; the QS follows the BOQ's procurement.
+	"WBS": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",)},
+	"Cost Code": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",)},
+	"Cost Head": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",)},
+	"Material Request": {"Constructa Quantity Surveyor": ("read", "report")},
+	"Purchase Order": {"Constructa Quantity Surveyor": ("read", "report")},
+	"Purchase Receipt": {"Constructa Quantity Surveyor": ("read", "report")},
 	# Catalogue 8.2: the equipment plan and task resources are by asset category.
 	"Asset Category": {"Constructa Project Manager": ("read",), "Constructa Site Engineer": ("read",)},
 	# Catalogue 5.4: procurement raises requests from the plan; the procurement manager keeps it.
