@@ -143,6 +143,9 @@ function import_lines(frm) {
 				)}</p><p>${__("Not sure of the layout? <b>Download template</b> (below) gives the headings and four example lines.")}</p>`,
 			},
 			{ fieldtype: "Attach", fieldname: "file", label: __("Bill (xlsx or csv)"), reqd: 1,
+			  // The file picker then lists only spreadsheets, so the bill is easy to find.
+			  options: { restrictions: { allowed_file_types: [".xlsx", ".csv"] } },
+			  description: __("The template saves as boq_import_template.xlsx in your Downloads folder. You can also drag the file onto the upload box."),
 			  onchange: () => preview(dialog.get_value("file")) },
 			{ fieldtype: "HTML", fieldname: "result" },
 		],
