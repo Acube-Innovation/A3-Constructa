@@ -262,7 +262,9 @@ OPERATIONS_PERMISSIONS = {
 	"Variation Order": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
 	"Timesheet": {"Constructa Project Manager": ("read", "report")},
 	# The masters those reports label their rows with; the QS follows the BOQ's procurement.
-	"WBS": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",)},
+	"WBS": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report"), "Constructa Quantity Surveyor": ("read", "report"),
+	        # P-13A: the Job Cost Report is a report on the WBS.
+	        "Constructa Project Manager": ("read", "report")},
 	"Cost Code": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",)},
 	"Cost Head": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",)},
 	"Material Request": {"Constructa Quantity Surveyor": ("read", "report")},
