@@ -70,7 +70,19 @@ class EstimateSheet(Document):
 
 	def on_update(self):
 		frappe.db.set_value("BOQ Item", self.boq_item, {"cost_rate": self.unit_cost, "estimate_sheet": self.name}, update_modified=False)
+		self.default_wastage()
 		refresh_pricing(self.boq)
+
+	def default_wastage(self):
+		"""P-13B: the line's wastage, used to judge over-use on site, starts from the
+		wastage priced on the material row for the line's own item. Set once: a
+		figure already on the line (typed, or from an earlier save) is kept."""
+		line = frappe.db.get_value("BOQ Item", self.boq_item, ["item_code", "wastage_percent"], as_dict=True)
+		if not line or not line.item_code or flt(line.wastage_percent):
+			return
+		row = next((r for r in self.resources if r.resource_type == "Material" and r.item_code == line.item_code), None)
+		if row and flt(row.wastage_percent):
+			frappe.db.set_value("BOQ Item", self.boq_item, "wastage_percent", row.wastage_percent, update_modified=False)
 
 	def on_trash(self):
 		frappe.db.set_value("BOQ Item", self.boq_item, {"cost_rate": 0, "estimate_sheet": None}, update_modified=False)

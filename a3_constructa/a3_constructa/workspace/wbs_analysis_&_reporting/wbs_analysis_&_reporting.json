@@ -69,7 +69,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Quantity Chain",
-   "link_count": 3,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -91,6 +91,17 @@
    "label": "BOQ vs Consumption",
    "link_count": 0,
    "link_to": "BOQ vs Consumption",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "BOQ",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Quantity Chain",
+   "link_count": 0,
+   "link_to": "Quantity Chain",
    "link_type": "Report",
    "onboard": 0,
    "report_ref_doctype": "BOQ",
@@ -231,7 +242,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-09 10:00:00.000000",
+ "modified": "2026-10-09 11:00:00",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "WBS Analysis & Reporting",

@@ -164,6 +164,7 @@ def boq_lines(boqs: list[str]) -> list[dict]:
 			f"{child}.rate as rate",
 			f"{child}.approved_rate as approved_rate",
 			f"{child}.budget_amount as budget_amount",
+			f"{child}.wastage_percent as wastage_percent",
 		],
 		limit_page_length=0,
 	)
@@ -228,6 +229,7 @@ def boq_lines(boqs: list[str]) -> list[dict]:
 			"rate": flt(row.approved_rate) or flt(row.rate),
 			"approved_qty": approved,
 			"budget_amount": flt(row.budget_amount),
+			"wastage_percent": flt(row.wastage_percent),
 			"requested_qty": flt(done.requested / factor, 3),
 			"draft_qty": flt(done.draft / factor, 3),
 			"ordered_qty": flt(done.ordered / factor, 3),
@@ -344,3 +346,38 @@ def _conversion_factor(item_code: str, uom: str | None, stock_uom: str | None) -
 	from erpnext.stock.get_item_details import get_conversion_factor
 
 	return flt(get_conversion_factor(item_code, uom).get("conversion_factor")) or 1.0
+
+
+def progress_by_wbs(boq_items: list[str]) -> dict:
+	"""P-13B: requested, ordered and received per BOQ line and WBS, in stock units.
+
+	`_progress` totals a line; a line split across the works by WBS Allocation is
+	requested once per part, so each request line carries its own WBS and every
+	order and receipt traced to it lands on that WBS. Keys are (boq_item, wbs).
+	"""
+	progress = {}
+	if not boq_items:
+		return progress
+	by_request_line = {}
+	for row in frappe.get_all(
+		"Material Request Item",
+		filters={"boq_item": ["in", boq_items], "docstatus": ["<", 2]},
+		fields=["name", "boq_item", "wbs", "stock_qty", "docstatus"],
+	):
+		done = progress.setdefault((row.boq_item, row.wbs), _empty_progress())
+		if row.docstatus == 1:
+			done.requested += flt(row.stock_qty)
+			by_request_line[row.name] = done
+		else:
+			done.draft += flt(row.stock_qty)
+	if not by_request_line:
+		return progress
+	for doctype, key in (("Purchase Order Item", "ordered"), ("Purchase Receipt Item", "received")):
+		for row in frappe.get_all(
+			doctype,
+			filters={"material_request_item": ["in", list(by_request_line)], "docstatus": 1},
+			fields=["material_request_item as mri", "stock_qty"],
+		):
+			done = by_request_line[row.mri]
+			done[key] += flt(row.stock_qty)  # a return's negative quantity nets off
+	return progress

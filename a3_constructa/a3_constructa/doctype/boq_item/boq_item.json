@@ -33,6 +33,7 @@
   "sb_3",
   "approved_qty",
   "approved_rate",
+  "wastage_percent",
   "cb_2",
   "budget_amount",
   "sb_allowance",
@@ -230,6 +231,13 @@
    "description": "Left empty, it takes the Cost Rate (the estimate) when the BOQ is sent for approval."
   },
   {
+   "fieldname": "wastage_percent",
+   "fieldtype": "Percent",
+   "label": "Wastage %",
+   "allow_on_submit": 1,
+   "description": "Material that may be issued above the approved qty: allowed = qty × (1 + wastage). Taken from the estimate sheet's material line for this item."
+  },
+  {
    "fieldname": "cb_2",
    "fieldtype": "Column Break"
   },
@@ -278,7 +286,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-10-07 16:48:42.146103",
+ "modified": "2026-10-07 16:59:48.329536",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ Item",

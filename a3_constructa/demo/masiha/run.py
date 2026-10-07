@@ -60,6 +60,7 @@ STAGES = [
 	("assets", "a3_constructa.demo.masiha.assets.run"),  # step 19
 	("finance", "a3_constructa.demo.masiha.finance.run"),  # step 20
 	("closure", "a3_constructa.demo.masiha.closure.run"),  # step 21
+	("quantity_chain", "a3_constructa.demo.masiha.quantity_chain.run"),  # P-13B: wastage on the budget lines; over-use past it, and material never in the BOQ
 	("timeline", "a3_constructa.demo.masiha.timeline.run"),  # dates everything on the story calendar
 ]
 

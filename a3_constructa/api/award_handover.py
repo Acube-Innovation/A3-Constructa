@@ -282,7 +282,7 @@ def ensure_budget_boq(a, tender, done):
 			"amount": flt(row.amount) if row.is_allowance else None,
 			"rate": None if row.is_allowance else rate, "cost_rate": row.cost_rate,
 			"approved_qty": None if row.is_allowance else row.boq_qty, "approved_rate": None if row.is_allowance else rate,
-			"draws_from_allowance": row.draws_from_allowance,
+			"draws_from_allowance": row.draws_from_allowance, "wastage_percent": row.wastage_percent,
 		})
 	for row in b.items:
 		if row.draws_from_allowance:
