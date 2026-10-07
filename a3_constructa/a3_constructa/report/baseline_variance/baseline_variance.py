@@ -22,9 +22,9 @@ def execute(filters=None):
 		return [], [], _("Choose a project to compare its programme with the baseline.")
 	if (filters.get("view") or "Tasks") == "WBS":
 		data = wbs_rows(filters)
-		return wbs_columns(), data, None, None, summary(data, "worst")
+		return wbs_columns(), data, None, None, summary(data, "worst", _("WBS nodes late"))
 	data = task_rows(filters)
-	return task_columns(), data, None, None, summary(data, "finish_variance")
+	return task_columns(), data, None, None, summary(data, "finish_variance", _("Tasks finishing late"))
 
 
 def task_columns():
@@ -107,8 +107,8 @@ def wbs_rows(filters):
 	return rows
 
 
-def summary(data, field):
+def summary(data, field, label):
 	late = [r for r in data if cint(r.get(field)) > 0]
 	worst = max((cint(r.get(field)) for r in data if r.get(field) is not None), default=0)
-	return [{"label": _("Late"), "value": len(late), "datatype": "Int", "indicator": "Red" if late else "Green"},
+	return [{"label": label, "value": len(late), "datatype": "Int", "indicator": "Red" if late else "Green"},
 	        {"label": _("Worst (days)"), "value": worst, "datatype": "Int"}]

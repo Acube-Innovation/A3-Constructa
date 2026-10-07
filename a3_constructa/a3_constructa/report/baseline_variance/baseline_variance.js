@@ -16,8 +16,8 @@ frappe.query_reports["Baseline Variance"] = {
 		value = default_formatter(value, row, column, data);
 		if (data && ["start_variance", "finish_variance", "finish_change", "worst"].includes(column.fieldname)) {
 			const v = data[column.fieldname];
-			if (v > 0) return `<span class="text-danger">+${value}</span>`;
-			if (v < 0) return `<span class="text-success">${value}</span>`;
+			if (v > 0) return `<div class="text-danger" style="text-align: right">+${v}</div>`;
+			if (v < 0) return `<div class="text-success" style="text-align: right">${v}</div>`;
 		}
 		return value;
 	},
