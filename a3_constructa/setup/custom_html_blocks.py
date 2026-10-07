@@ -29,6 +29,7 @@ CUSTOM_HTML_BLOCKS = {
 	"CRM & Estimating Overview": "crm_estimating_overview",
 	"Contracts & Awards Overview": "contracts_awards_overview",
 	"Sales & Billing Overview": "sales_billing_overview",
+	"Project Operations Overview": "project_operations_overview",
 	"Master Data Overview": "master_data_overview",
 	"Planning & Budgeting Overview": "planning_overview",
 	"Procurement Overview": "procurement_overview",
