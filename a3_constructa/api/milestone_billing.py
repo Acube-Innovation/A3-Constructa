@@ -141,7 +141,15 @@ def apply_to_order(so, award):
 def sync_submitted_orders(award: str):
 	"""After the programme changes, rewrite the payment schedule of the award's
 	submitted orders (nothing is paid against an order's schedule)."""
-	a = frappe.get_doc("Awarded Quotation", award) if isinstance(award, str) else award
+	a = frappe.get_doc("Awarded Quotation", award)
+	a.check_permission("write")
+	sync_orders_of(a)
+
+
+def sync_orders_of(a):
+	"""The work of sync_submitted_orders, for an award already in hand (its on_update).
+	Kept apart from the whitelisted call: Frappe checks a web request's arguments
+	against the type hints, and an award document is not a str."""
 	for name in frappe.get_all("Sales Order", filters={"awarded_quotation": a.name, "docstatus": 1}, pluck="name"):
 		so = frappe.get_doc("Sales Order", name)
 		rows = schedule_rows(a, so.payment_terms_template)

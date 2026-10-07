@@ -66,9 +66,9 @@ class AwardedQuotation(Document):
 	def on_update(self):
 		self.link_component_boqs()
 		# The programme sets the payment schedule of the award's submitted orders.
-		from a3_constructa.api.milestone_billing import sync_submitted_orders
+		from a3_constructa.api.milestone_billing import sync_orders_of
 
-		sync_submitted_orders(self)
+		sync_orders_of(self)
 
 	def link_component_boqs(self):
 		"""Point each component's BOQ back at this award.
