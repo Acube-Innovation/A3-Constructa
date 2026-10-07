@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "creation": "2026-10-07 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "task",
+  "subject",
+  "wbs",
+  "start",
+  "end",
+  "duration",
+  "moved_days"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Task",
+   "options": "Task",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Subject",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "wbs",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "in_list_view": 1,
+   "label": "WBS",
+   "options": "WBS",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "start",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Start",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "end",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "End",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "duration",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Days",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "description": "End against the previous baseline: positive is later.",
+   "fieldname": "moved_days",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Moved",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-07 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Schedule Revision Task",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

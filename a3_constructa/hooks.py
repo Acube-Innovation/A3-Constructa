@@ -138,7 +138,8 @@ override_doctype_class = {
 
 doc_events = {
 	"Task": {
-		"validate": ["a3_constructa.overrides.task.validate", "a3_constructa.overrides.task_resources.validate"],
+		"validate": ["a3_constructa.overrides.task.validate", "a3_constructa.overrides.task_resources.validate",
+		             "a3_constructa.overrides.task_baseline.validate"],
 		"on_update": "a3_constructa.overrides.task.on_update",
 		"after_delete": "a3_constructa.overrides.task.after_delete",
 	},
