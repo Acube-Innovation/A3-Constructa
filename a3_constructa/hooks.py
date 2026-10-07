@@ -215,6 +215,13 @@ doc_events = {
 		"on_trash": "a3_constructa.api.subcontract_billing.release_links",
 	},
 	"Journal Entry": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},
+	# Catalogue 6.8: a site inspection on a task; a rejected one raises an NCR.
+	"Quality Inspection": {
+		"validate": "a3_constructa.overrides.quality.qi_validate",
+		"before_submit": "a3_constructa.overrides.quality.qi_before_submit",
+		"on_submit": "a3_constructa.overrides.quality.qi_on_submit",
+	},
+	"Non Conformance": {"validate": "a3_constructa.overrides.quality.nc_validate"},
 	"Expense Claim": {"validate": [ACTIVE_COST_CODE, COST_CODE_ACCOUNTING]},
 }
 

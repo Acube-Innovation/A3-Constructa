@@ -19,6 +19,11 @@ frappe.ui.form.on("Task", {
 		if (!frm.doc.is_group && frm.doc.docstatus === 0) {
 			frm.add_custom_button(__("Record progress"), () => record_progress(frm));
 		}
+		if (!frm.doc.is_group && !frm.doc.is_milestone && frm.doc.status !== "Cancelled") {
+			frm.add_custom_button(__("Request inspection"), () => request_inspection(frm), __("Quality"));
+			frm.add_custom_button(__("Inspections"), () => frappe.set_route("List", "Quality Inspection", { task: frm.doc.name }), __("Quality"));
+			frm.add_custom_button(__("NCRs"), () => frappe.set_route("List", "Non Conformance", { task: frm.doc.name }), __("Quality"));
+		}
 		if (frm.doc.boq) {
 			frm.add_custom_button(__("Pick BOQ line"), () => pick_line(frm), __("Resources"));
 		}
@@ -35,6 +40,27 @@ frappe.ui.form.on("Task", {
 		}
 	},
 });
+
+// Catalogue 6.8: a draft inspection with the task type's checklist.
+function request_inspection(frm) {
+	const d = new frappe.ui.Dialog({
+		title: __("Request inspection of {0}", [frm.doc.subject]),
+		fields: [
+			{ fieldname: "inspection_point", label: __("Inspection Point"), fieldtype: "Select", options: "Hold\nWitness\nSurveillance", default: "Hold", reqd: 1,
+			  description: __("Hold: work stops until accepted. Witness: the client's engineer is invited. Surveillance: checked as the work goes.") },
+			{ fieldname: "report_date", label: __("Inspection Date"), fieldtype: "Date", default: frappe.datetime.get_today(), reqd: 1 },
+			{ fieldname: "inspected_by", label: __("Inspected By"), fieldtype: "Link", options: "User", default: frappe.session.user, reqd: 1 },
+		],
+		primary_action_label: __("Request"),
+		primary_action(values) {
+			frappe.xcall("a3_constructa.overrides.quality.request_inspection", { task: frm.doc.name, ...values }).then((name) => {
+				d.hide();
+				frappe.set_route("Form", "Quality Inspection", name);
+			});
+		},
+	});
+	d.show();
+}
 
 function pick_line(frm) {
 	frappe.xcall(`${TR}.boq_lines`, { boq: frm.doc.boq }).then((lines) => {

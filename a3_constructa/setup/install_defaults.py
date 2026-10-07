@@ -247,10 +247,13 @@ OPERATIONS_PERMISSIONS = {
 	"Project Template": {"Constructa Project Manager": ("read", "write", "create", "report")},
 	"Task Type": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
 	"Quality Inspection": {"Constructa Project Manager": ("read", "write", "create", "submit", "cancel", "report"),
-	                       "Constructa Site Engineer": ("read", "write", "create", "submit", "report")},
+	                       "Constructa Site Engineer": ("read", "write", "create", "submit", "report"),
+	                       "Constructa Quantity Surveyor": ("read", "report")},
+	"Quality Inspection Parameter": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
 	"Quality Inspection Template": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
 	"Non Conformance": {"Constructa Project Manager": ("read", "write", "create", "report"),
-	                    "Constructa Site Engineer": ("read", "write", "create", "report")},
+	                    "Constructa Site Engineer": ("read", "write", "create", "report"),
+	                    "Constructa Quantity Surveyor": ("read", "report")},
 	"Warranty Claim": {"Constructa Project Manager": ("read", "write", "create", "report")},
 }
 
