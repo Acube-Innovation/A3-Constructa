@@ -84,6 +84,8 @@ fixtures = [
 		"Duty Payment Receipt", "Delivery Order",
 		# Catalogue 9.6: what a subcontractor must hold before a Work Certificate is submitted.
 		"Insurance Certificate", "Labour Compliance Certificate", "Tax Clearance Certificate",
+		# Catalogue 2.3: what a client issues with a tender.
+		"Invitation to Tender", "Tender Drawings", "Specification", "Bill of Quantities", "Tender Addendum",
 	]]]},
 	# Only the records this app introduces. "Approved", "Rejected", "Approve"
 	# and "Reject" ship with Frappe and must not be re-exported as ours.
@@ -140,6 +142,9 @@ APPROVAL_GATE = [
 override_doctype_class = {
 	"Task": "a3_constructa.overrides.task.ConstructaTask",
 }
+
+# Catalogue 2.3: an opportunity's Connections list its clarifications and BOQs.
+override_doctype_dashboards = {"Opportunity": "a3_constructa.overrides.opportunity.get_dashboard_data"}
 
 doc_events = {
 	"Task": {

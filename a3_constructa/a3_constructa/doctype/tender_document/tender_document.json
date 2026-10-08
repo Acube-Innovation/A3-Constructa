@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "creation": "2026-10-08 19:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "document_type",
+  "title",
+  "revision",
+  "received_on",
+  "attachment",
+  "superseded"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "document_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Document Type",
+   "options": "Document Type",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "description": "The same title on a later revision supersedes the earlier one.",
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "description": "As the client marks it: 0, A, B, Rev 2.",
+   "fieldname": "revision",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Revision"
+  },
+  {
+   "columns": 1,
+   "fieldname": "received_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Received On",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Attachment"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "description": "A later revision of the same document has been received.",
+   "fieldname": "superseded",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Superseded",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-08 19:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Tender Document",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

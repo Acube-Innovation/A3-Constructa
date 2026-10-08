@@ -14,6 +14,10 @@ Go or No-go (or sends it back). A No-go needs a reason, which the No-bid
 Reasons view of Win Loss Analysis reads, and closes the opportunity: no tender
 BOQ or quotation is made for it. A decided opportunity keeps its scores until
 a manager reopens it.
+
+The tender's documents (catalogue 2.3) are kept on the opportunity too, one row
+per revision: the latest received of each title is current, earlier ones are
+marked superseded.
 """
 
 import frappe
@@ -36,6 +40,7 @@ def threshold() -> float:
 
 
 def validate(doc, method=None):
+	tender_documents(doc)
 	state = doc.get("bid_workflow_state")
 	before = doc.get_doc_before_save()
 	decided_before = before and before.get("bid_workflow_state") in (GO, NO_GO)
@@ -111,3 +116,33 @@ def refuse_if_no_go(opportunity):
 def default_scores() -> list[dict]:
 	"""The six criteria with their starting weights, for "Score the bid"."""
 	return [{"criterion": c, "weight": DEFAULT_WEIGHTS[c]} for c in CRITERIA]
+
+
+# ---------------------------------------------------------------- tender documents (catalogue 2.3)
+
+def tender_documents(doc):
+	"""Each document is one revision of a title; the latest received is current, the
+	earlier ones are marked superseded."""
+	from frappe.utils import getdate
+
+	latest, seen = {}, set()
+	for row in doc.get("tender_documents") or []:
+		title = (row.title or "").strip()
+		key = (row.document_type, title.lower(), (row.revision or "").strip().lower())
+		if key in seen:
+			frappe.throw(_("Row {0}: {1} revision {2} is listed twice.").format(row.idx, title, row.revision or "-"), title=_("Tender documents"))
+		seen.add(key)
+		if row.received_on and getdate(row.received_on) > getdate(today()):
+			frappe.throw(_("Row {0}: Received On can't be in the future.").format(row.idx), title=_("Tender documents"))
+		doc_key = (row.document_type, title.lower())
+		best = latest.get(doc_key)
+		if not best or (getdate(row.received_on), row.idx) > (getdate(best.received_on), best.idx):
+			latest[doc_key] = row
+	for row in doc.get("tender_documents") or []:
+		row.superseded = 0 if latest.get((row.document_type, (row.title or "").strip().lower())) is row else 1
+
+
+def get_dashboard_data(data):
+	"""Connections: the tender's clarifications and BOQs beside ERPNext's quotations."""
+	data["transactions"].append({"label": _("Tender"), "items": ["Tender Clarification", "BOQ"]})
+	return data

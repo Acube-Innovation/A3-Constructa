@@ -8,6 +8,9 @@
 // Bid / No-bid (catalogue 2.2): "Score the bid" fills the six criteria with
 // their starting weights; the score, what it suggests and the decision show at
 // the top of the form. The Bid Decision workflow's buttons do the rest.
+//
+// Tender register (catalogue 2.3): Create > Tender Clarification raises a query
+// to the client on this tender.
 frappe.ui.form.on("Opportunity", {
 	refresh(frm) {
 		show_bid(frm);
@@ -28,6 +31,11 @@ frappe.ui.form.on("Opportunity", {
 							const boq = frappe.model.sync(doc)[0];
 							frappe.set_route("Form", "BOQ", boq.name);
 						}),
+				__("Create")
+			);
+			frm.add_custom_button(
+				__("Tender Clarification"),
+				() => frappe.new_doc("Tender Clarification", { opportunity: frm.doc.name }),
 				__("Create")
 			);
 		}

@@ -112,7 +112,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Tender Register",
-   "link_count": 1,
+   "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -125,6 +125,27 @@
    "link_to": "Document Type",
    "link_type": "DocType",
    "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tender Clarification",
+   "link_count": 0,
+   "link_to": "Tender Clarification",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Tender Register",
+   "link_count": 0,
+   "link_to": "Tender Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Opportunity",
    "type": "Link"
   },
   {
@@ -309,7 +330,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-08 18:00:00.000000",
+ "modified": "2026-10-08 19:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "CRM & Estimating",
