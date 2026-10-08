@@ -51,6 +51,7 @@ STAGES = [
 	("site_reports", "a3_constructa.demo.masiha.site_reports.run"),  # P-06F: three days filed by the site engineer; timesheets, plant logs, progress and issues booked
 	("quality", "a3_constructa.demo.masiha.quality.run"),  # P-06G: checklists on task types, inspections, NCRs open, actioned and closed
 	("snagging", "a3_constructa.demo.masiha.snagging.run"),  # P-06H: snag lists, practical completion, defects in the DLP, surplus to return
+	("hse", "a3_constructa.demo.masiha.hse.run"),  # P-06I: toolbox talks, permits open, expired, closed and cancelled, incidents of every type
 	("procurement_schedule", "a3_constructa.demo.masiha.procurement_schedule.run"),  # P-05A: plans refreshed from the programme; late PRs flagged
 	("equipment_fuel", "a3_constructa.demo.masiha.equipment_fuel.run"),  # P-08B: diesel issued per machine; the programme's machines and a double booking
 	("certificates", "a3_constructa.demo.masiha.certificates.run"),  # P-07B: certificates and their expiry reminders, skills, a new hire's onboarding

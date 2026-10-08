@@ -1,0 +1,80 @@
+{
+ "actions": [],
+ "creation": "2026-10-08 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "person_type",
+  "employee",
+  "supplier",
+  "person_name",
+  "injury",
+  "days_lost"
+ ],
+ "fields": [
+  {
+   "fieldname": "person_type",
+   "fieldtype": "Select",
+   "label": "Person",
+   "options": "Employee\nSubcontractor\nVisitor",
+   "default": "Employee",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "in_list_view": 1,
+   "columns": 2,
+   "depends_on": "eval:doc.person_type==\"Employee\"",
+   "options": "Employee",
+   "ignore_user_permissions": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Subcontractor",
+   "options": "Supplier",
+   "in_list_view": 1,
+   "columns": 2,
+   "depends_on": "eval:doc.person_type==\"Subcontractor\""
+  },
+  {
+   "fieldname": "person_name",
+   "fieldtype": "Data",
+   "label": "Name",
+   "in_list_view": 1,
+   "columns": 2,
+   "description": "Filled from the employee; type it for a subcontractor's worker or a visitor."
+  },
+  {
+   "fieldname": "injury",
+   "fieldtype": "Data",
+   "label": "Injury",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "days_lost",
+   "fieldtype": "Int",
+   "label": "Days Lost",
+   "in_list_view": 1,
+   "columns": 1,
+   "default": "0"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-08 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Incident Person",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1
+}

@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "creation": "2026-10-08 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "attendee_type",
+  "employee",
+  "employee_name",
+  "supplier",
+  "headcount"
+ ],
+ "fields": [
+  {
+   "fieldname": "attendee_type",
+   "fieldtype": "Select",
+   "label": "Attendee",
+   "options": "Employee\nSubcontractor",
+   "default": "Employee",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "in_list_view": 1,
+   "columns": 3,
+   "depends_on": "eval:doc.attendee_type==\"Employee\"",
+   "options": "Employee",
+   "ignore_user_permissions": 1
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Name",
+   "fetch_from": "employee.employee_name",
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Subcontractor",
+   "options": "Supplier",
+   "in_list_view": 1,
+   "columns": 2,
+   "depends_on": "eval:doc.attendee_type==\"Subcontractor\""
+  },
+  {
+   "fieldname": "headcount",
+   "fieldtype": "Int",
+   "label": "Headcount",
+   "default": "1",
+   "in_list_view": 1,
+   "columns": 1,
+   "description": "One for an employee; the number of a subcontractor's workers present."
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-08 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Toolbox Talk Attendee",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1
+}
