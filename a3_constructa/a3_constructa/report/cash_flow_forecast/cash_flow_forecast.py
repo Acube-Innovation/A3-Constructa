@@ -196,9 +196,16 @@ def get_po_commitments(filters, start, end):
 
 
 def get_certified_unbilled(filters, start, end):
-	"""Subcontractor work certified and not yet invoiced - net of retention."""
-	conditions = ["wc.docstatus = 1"]
+	"""Subcontractor work certified and not yet invoiced - net of retention.
+
+	A certificate whose purchase invoice is submitted is already in the supplier
+	invoices due, so it is left out here rather than counted twice. Certificates
+	carry no company, so they are narrowed through their project."""
+	conditions = ["wc.docstatus = 1", "(pi.name is null or pi.docstatus != 1)"]
 	values = {}
+	if filters.get("company"):
+		conditions.append("wc.project in (select p.name from `tabProject` p where p.company = %(company)s)")
+		values["company"] = filters.company
 	if filters.get("project"):
 		conditions.append("wc.project = %(project)s")
 		values["project"] = filters.project
@@ -207,6 +214,7 @@ def get_certified_unbilled(filters, start, end):
 		"""
 		select wc.period_to as `date`, sum(wc.total_net_payable) as amount
 		from `tabWork Certificate` wc
+		left join `tabPurchase Invoice` pi on pi.name = wc.purchase_invoice
 		where {conditions}
 		group by wc.period_to
 		""".format(conditions=" and ".join(conditions)),

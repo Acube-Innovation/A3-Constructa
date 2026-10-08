@@ -16,7 +16,7 @@ function render(data) {
 			{ class: "ov-split" },
 			section({
 				title: __("Needs attention"),
-				caption: __("Approvals, open advances and payroll gaps"),
+				caption: __("Approvals, open advances, payroll gaps, certificates and crews"),
 				body: render_health(data.health),
 			}),
 			section({
@@ -30,6 +30,27 @@ function render(data) {
 			caption: __("Active employees. Open a row to see them."),
 			body: el("div", { class: "ov-breakdowns" }, workforce(data.workforce).map(breakdown_card)),
 		}),
+		section({
+			title: __("Crews"),
+			caption: crews_caption(data.crews, currency),
+			body: el("div", { class: "ov-breakdowns" }, crews(data.crews, currency).map(breakdown_card)),
+		}),
+		el(
+			"div",
+			{ class: "ov-split" },
+			section({
+				title: __("Certificates"),
+				caption: __("Expired, or expiring in the next {0} days, on active employees", [
+					data.certificates.restricted ? 60 : data.certificates.days,
+				]),
+				body: render_certificates(data.certificates),
+			}),
+			section({
+				title: __("Labour productivity"),
+				caption: __("Planned hours for the work done against the hours booked, by trade, last 8 weeks. Below 1 is slower than planned."),
+				body: render_productivity(data.productivity),
+			})
+		),
 		section({
 			title: __("Time and attendance this month"),
 			caption: __("Since {0}. Open a row to see the records.", [format_date(data.month_start)]),
@@ -294,6 +315,162 @@ function workforce(workforce) {
 			empty: __("No active employees yet."),
 		}),
 	];
+}
+
+function crews_caption(crews, currency) {
+	if (crews.restricted) return __("Crews and gangs working together");
+	return __("{0} active crews, {1} people, {2} a day. Open a row to see the crews.", [
+		crews.active,
+		crews.people,
+		format_money(crews.daily_cost, currency),
+	]);
+}
+
+function crews(crews, currency) {
+	const rows = crews.restricted ? [] : crews.by_trade;
+	return [
+		by(crews, {
+			title: __("Active crews by trade"),
+			doctype: "Crew",
+			field: "trade",
+			rows,
+			filters: crews.filters,
+			empty: __("No active crews yet."),
+		}),
+		by(crews, {
+			title: __("Daily crew cost by trade"),
+			doctype: "Crew",
+			field: "trade",
+			rows,
+			filters: crews.filters,
+			empty: __("No active crews yet."),
+			currency,
+			measure: "amount",
+		}),
+	];
+}
+
+function render_certificates(part) {
+	const card = el("div", { class: "ov-card ov-list-card" });
+	if (part.restricted) {
+		card.append(el("p", { class: "ov-empty", text: __("You do not have access to employees.") }));
+		return card;
+	}
+	if (!part.rows.length) {
+		card.append(el("p", { class: "ov-empty", text: __("Nothing expired or expiring in the next {0} days.", [part.days]) }));
+		return card;
+	}
+	card.append(
+		el(
+			"ul",
+			{ class: "ov-rows" },
+			part.rows.map((row) =>
+				el(
+					"li",
+					{},
+					form_link(
+						"Employee",
+						row.employee,
+						[
+							row.days_left < 0
+								? icon("critical", "is-critical")
+								: row.days_left <= part.warn_days
+								? icon("warning", "is-warning")
+								: icon("empty", "is-muted"),
+							row_text(
+								`${row.employee_name} · ${row.certificate_type}`,
+								[row.crew, row.needed_for ? __("needed for {0}", [row.needed_for]) : null, format_date(row.expiry_date)]
+									.filter(Boolean)
+									.join(" · ")
+							),
+							el("span", {
+								class: row.days_left <= part.warn_days ? "ov-row-when is-late" : "ov-row-when",
+								text:
+									row.days_left < -1
+										? __("{0} days ago", [-row.days_left])
+										: row.days_left === -1
+										? __("Yesterday")
+										: row.days_left === 0
+										? __("Today")
+										: __("In {0} days", [row.days_left]),
+							}),
+							icon("chevron", "ov-chevron"),
+						],
+						{ class: "ov-row" }
+					)
+				)
+			)
+		),
+		el(
+			"p",
+			{ class: "ov-list-foot" },
+			report_link(
+				"Certificates Expiring",
+				part.report_filters,
+				__("{0} expired · {1} within {2} days · {3} later, in Certificates Expiring", [
+					part.expired,
+					part.soon,
+					part.warn_days,
+					part.later,
+				])
+			)
+		)
+	);
+	return card;
+}
+
+function render_productivity(part) {
+	const card = el("div", { class: "ov-card ov-list-card" });
+	if (part.restricted) {
+		card.append(el("p", { class: "ov-empty", text: __("You do not have access to timesheets.") }));
+		return card;
+	}
+	if (!part.trades.length) {
+		card.append(el("p", { class: "ov-empty", text: __("No measured work with booked hours in the last 8 weeks.") }));
+		return card;
+	}
+	const period = { from_date: part.from, to_date: frappe.datetime.get_today() };
+	card.append(
+		el(
+			"ul",
+			{ class: "ov-rows" },
+			part.trades.map((trade) => {
+				const low = trade.factor !== null && trade.factor < part.flag_below;
+				return el(
+					"li",
+					{},
+					report_link(
+						"Labour Productivity",
+						{ ...period, trade: trade.value },
+						[
+							low ? icon("warning", "is-warning") : icon("empty", "is-muted"),
+							row_text(
+								trade.label,
+								[
+									__("{0} h planned · {1} h booked", [
+										format_number(trade.planned, null, 1),
+										format_number(trade.hours, null, 1),
+									]),
+									trade.low_weeks
+										? __("{0} of {1} weeks below {2}", [trade.low_weeks, trade.weeks, part.flag_below])
+										: null,
+								]
+									.filter(Boolean)
+									.join(" · ")
+							),
+							el("span", {
+								class: low ? "ov-row-when is-late" : "ov-row-when",
+								text: trade.factor === null ? "—" : format_number(trade.factor, null, 2),
+							}),
+							icon("chevron", "ov-chevron"),
+						],
+						{ class: "ov-row" }
+					)
+				);
+			})
+		)
+	);
+	return card;
 }
 
 function time_and_attendance({ attendance, leave, timesheets, currency }) {

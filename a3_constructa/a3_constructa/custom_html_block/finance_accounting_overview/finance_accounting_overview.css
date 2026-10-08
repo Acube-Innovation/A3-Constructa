@@ -88,14 +88,20 @@ a.ov-account:hover {
 	container-type: inline-size;
 }
 
+/* Five tiles: one row when wide, then as many as fit. Seven-figure sums must
+   fit a fifth of the row, so the figures scale with the tile. */
 .ov-tiles > .ov-kpis {
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
 }
 
-@container (max-width: 860px) {
-	.ov-tiles > .ov-kpis {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
+.ov-tiles .ov-kpi {
+	container-type: inline-size;
+}
+
+.ov-tiles .ov-kpi-value {
+	font-size: clamp(20px, 11cqi, 30px);
+	min-width: 0;
+	overflow-wrap: anywhere;
 }
 
 @container (max-width: 440px) {

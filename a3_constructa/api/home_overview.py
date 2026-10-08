@@ -116,6 +116,13 @@ def _awards(o, label):
 	                                                 _("{0} active awards").format(a.get("active_count")))
 
 
+def _planning(o):
+	b = o.get("budget") or {}
+	if _r(b):
+		return _("Approved BOQ budget"), None, None, None
+	return _("Approved BOQ budget"), flt(b.get("approved_budget")), "money", _("{0} approved BOQs").format(b.get("approved_count"))
+
+
 def _sales(o):
 	r, i = o.get("receivable") or {}, o.get("ipcs") or {}
 	if _r(r):
@@ -177,7 +184,7 @@ def _master(o):
 
 HEADLINES = {
 	"wbs_cost_structure": _wbs_cost, "crm_estimating": _crm, "contracts_awards": lambda o: _awards(o, _("Revised contract value")),
-	"sales_billing": _sales, "planning": lambda o: _awards(o, _("Order book")), "project_operations": _operations, "hr_time": _hr,
+	"sales_billing": _sales, "planning": _planning, "project_operations": _operations, "hr_time": _hr,
 	"asset_equipment": _assets, "procurement": _procurement, "delivery_logistics": _delivery, "inventory_movement": _inventory,
 	"finance_accounting": _finance, "wbs_analysis": _analysis, "master_data": _master,
 }

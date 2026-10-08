@@ -31,9 +31,10 @@ function render(data) {
 			body: el("div", { class: "ov-breakdowns" }, ledgers(data, currency).map(render_breakdown)),
 		}),
 		render_flow(data.flow, currency),
+		render_forecast(data.forecast, currency),
 		section({
 			title: __("Commitments and budget"),
-			caption: __("Orders not yet invoiced either way, retention held back and the budget used"),
+			caption: __("Orders not yet invoiced either way, retention held back on both sides and the budget used"),
 			body: render_commitments(data, currency),
 		}),
 		section({
@@ -347,7 +348,7 @@ function render_projects(projects, currency) {
 // ---------- Commitments ----------
 
 function render_commitments(data, currency) {
-	const { committed, order_book, retention } = data.commitments;
+	const { committed, order_book, retention, retention_receivable } = data.commitments;
 	const { budget } = data;
 	const tiles = el(
 		"div",
@@ -379,7 +380,20 @@ function render_commitments(data, currency) {
 			)
 		),
 		kpi(
-			__("Retention held"),
+			__("Retention clients hold"),
+			retention_receivable.restricted ? "—" : format_money(retention_receivable.amount, currency),
+			note(
+				retention_receivable.restricted
+					? __("You do not have access to IPCs and sales invoices")
+					: !retention_receivable.held
+					? __("No retention deducted on IPCs yet")
+					: retention_receivable.due
+					? __("Held on certified IPCs · {0} awards due for release", [retention_receivable.due])
+					: __("Held on certified IPCs, less releases billed")
+			)
+		),
+		kpi(
+			__("Retention we hold"),
 			retention.restricted ? "—" : format_money(retention.amount, currency),
 			note(
 				retention.restricted
@@ -387,7 +401,7 @@ function render_commitments(data, currency) {
 					: !retention.accounts
 					? __("No Retention Payable account")
 					: retention.amount
-					? __("Balance of the Retention Payable account")
+					? __("Held back from subcontractors: Retention Payable")
 					: __("Nothing held back from subcontractors")
 			)
 		),
@@ -478,11 +492,82 @@ function render_flow(flow, currency) {
 	});
 }
 
-// Paired columns per month: money in (green) beside money out (navy).
-function render_flow_chart(trend, currency) {
+// ---------- Cash forecast ----------
+
+function render_forecast(forecast, currency) {
+	const title = __("Cash forecast");
+	if (forecast.restricted) {
+		return section({
+			title,
+			caption: __("The next 13 weeks, from what is already invoiced, ordered, certified and planned to bill"),
+			body: el(
+				"div",
+				{ class: "ov-card ov-chart-card" },
+				el("p", { class: "ov-empty", text: __("You do not have access to the ledger.") })
+			),
+		});
+	}
+	const trend = forecast.weeks.map((week) => ({
+		label: __("Week of {0}", [format_date(week.start)]),
+		tick: week.label,
+		money_in: week.receipts,
+		money_out: week.payments,
+	}));
+	const chart = render_flow_chart(trend, currency, __("Nothing due in or out in the next 13 weeks."));
+	const table = render_table(
+		[__("Week of"), __("In"), __("of which planned billing"), __("Out"), __("Cash at the end")],
+		forecast.weeks.map((week) => [
+			format_date(week.start),
+			format_money(week.receipts, currency),
+			week.planned ? format_money(week.planned, currency) : "—",
+			format_money(week.payments, currency),
+			format_money(week.closing, currency),
+		])
+	);
+	table.classList.add("ov-flow-table");
+	const toggle = forecast.receipts || forecast.payments ? chart_with_table(chart, table) : null;
+	const lowest = forecast.lowest;
+
+	const foot = el(
+		"p",
+		{ class: "ov-list-foot" },
+		report_link(
+			"Cash Flow Forecast",
+			forecast.report_filters,
+			lowest && lowest.closing < forecast.opening
+				? __("Lowest {0} in the week of {1}. Open Cash Flow Forecast", [
+						format_money(lowest.closing, currency),
+						format_date(lowest.start),
+				  ])
+				: __("Open Cash Flow Forecast")
+		)
+	);
+	return section({
+		title,
+		caption: __(
+			"Next 13 weeks: {0} in the bank today, {1} due in ({2} of it milestone billing still to invoice), {3} due out, {4} at the end",
+			[
+				format_money(forecast.opening, currency),
+				format_money(forecast.receipts, currency),
+				format_money(forecast.planned, currency),
+				format_money(forecast.payments, currency),
+				format_money(forecast.closing, currency),
+			]
+		),
+		body: el("div", { class: "ov-card ov-chart-card" }, chart, table, foot),
+		action: toggle,
+	});
+}
+
+// Paired columns per period: money in (green) beside money out (navy).
+// A point's `tick` labels its column; without one it is a month of the trend.
+function render_flow_chart(trend, currency, empty = null) {
 	const max = Math.max(0, ...trend.flatMap((point) => [point.money_in, point.money_out]));
 	if (!max) {
-		return el("p", { class: "ov-empty", text: __("No money moved through bank or cash in the last 12 months.") });
+		return el("p", {
+			class: "ov-empty",
+			text: empty || __("No money moved through bank or cash in the last 12 months."),
+		});
 	}
 
 	const { top, step } = nice_scale(max);
@@ -553,10 +638,11 @@ function render_flow_chart(trend, currency) {
 			trend.map((point, index) =>
 				el("span", {
 					// The first month and every January carry the year.
-					text:
-						index === 0 || point.month.endsWith("-01")
-							? `${point.short} ’${point.month.slice(2, 4)}`
-							: point.short,
+					text: point.tick
+						? point.tick
+						: index === 0 || point.month.endsWith("-01")
+						? `${point.short} ’${point.month.slice(2, 4)}`
+						: point.short,
 				})
 			)
 		)
@@ -568,6 +654,6 @@ mount_overview({
 	api: "a3_constructa.api.finance_accounting_overview.get_overview",
 	storage_key: "a3_constructa.finance_accounting.tab",
 	labels: { overview: __("Finance & Accounting Overview"), menu: __("Finance & Accounting") },
-	intro: __("Cash, money owed either way, profit and commitments across A3 Constructa."),
+	intro: __("Cash, the cash forecast, money owed either way, retention, profit and commitments across A3 Constructa."),
 	render,
 });

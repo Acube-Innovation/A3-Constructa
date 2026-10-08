@@ -40,6 +40,11 @@ DELIVERABLE_STATUSES = ("Not Started", "In Progress", "Submitted", "Revise and R
 # Deliverable statuses where the next move is ours. A Submitted one is with the client.
 DELIVERABLE_OPEN = ("Not Started", "In Progress", "Revise and Resubmit", "Rejected")
 
+PLAN_CLOSED = ("Cancelled", "Completed")
+PLAN_STATUSES = ("Draft", "Submitted", "Completed", "Cancelled")
+ROUTES = ("Buy", "Hire", "Subcontract")
+PLAN_WINDOW_DAYS = 14
+
 TIMELINE_AWARDS = 8
 BUDGET_PROJECTS = 6
 LIST_LIMIT = 8
@@ -54,22 +59,25 @@ def get_overview() -> dict:
 	readable = {doctype for doctype in DOCTYPES if _can_read(doctype)}
 
 	awards = _awards(readable, currency, now)
-	milestones = _milestones(readable, now)
 	budget = _budget(readable)
+	plan = _plan(readable, now)
 
+	# Milestones, deliverables and the order book are Contracts & Awards' to show
+	# (D-03). The award timeline stays here as the programme view; it only borrows
+	# the overdue-milestone count for each bar's warning.
 	if not awards["restricted"]:
+		overdue = _milestones(readable, now)["overdue_by_award"]
 		for award in awards["timeline"]:
-			award["overdue_milestones"] = milestones["overdue_by_award"].get(award["name"], 0)
+			award["overdue_milestones"] = overdue.get(award["name"], 0)
 
 	return {
 		"generated_at": now_datetime(),
 		"currency": currency,
 		"awards": awards,
-		"milestones": milestones,
 		"budget": budget,
+		"plan": plan,
 		"variations": _variations(readable, currency),
-		"deliverables": _deliverables(readable, now),
-		"health": _health(readable, now, milestones, budget),
+		"health": _health(readable, now, budget, plan),
 	}
 
 
@@ -349,10 +357,115 @@ def _deliverables(readable: set, now) -> dict:
 	}
 
 
-def _health(readable: set, now, milestones: dict, budget: dict) -> list[dict]:
+def _plan(readable: set, now) -> dict:
+	"""Procurement plan lines on open plans (P-05A): most follow the programme,
+	required on site a buffer before their task starts and requested a lead time
+	before that. A line's state is the first that fits: requested, overdue (the
+	pr_overdue flag the plan and a daily job keep), no date to order by, past its
+	date but covered (not flagged, e.g. plant on a hire order), due within the
+	window, or not yet due."""
+	if "Procurement Plan" not in readable:
+		return {"restricted": True}
+
+	child = "`tabProcurement Plan Item`"
+	lines = _get_list(
+		"Procurement Plan",
+		filters=[["Procurement Plan", "status", "not in", PLAN_CLOSED], _joined("Procurement Plan Item")],
+		fields=[
+			"name as plan",
+			"project",
+			f"{child}.item_code as item_code",
+			f"{child}.task as task",
+			f"{child}.procurement_route as route",
+			f"{child}.anticipated_qty as qty",
+			f"{child}.uom as uom",
+			f"{child}.required_on_site_date as on_site",
+			f"{child}.recommended_pr_date as pr_date",
+			f"{child}.material_request as material_request",
+			f"{child}.pr_overdue as pr_overdue",
+		],
+		limit_page_length=0,
+	)
+	horizon = getdate(add_days(now, PLAN_WINDOW_DAYS))
+
+	def state(line):
+		if line.material_request:
+			return "requested"
+		if line.pr_overdue:
+			return "overdue"
+		if not line.pr_date:
+			return "no_date"
+		if getdate(line.pr_date) < now:
+			# Past its date and not flagged: covered another way, such as plant
+			# already on a hire order (P-05A).
+			return "requested"
+		return "due_soon" if getdate(line.pr_date) <= horizon else "later"
+
+	for line in lines:
+		line.state = state(line)
+
+	def plans(rows):
+		return sorted({r.plan for r in rows})
+
+	def by(key, order, labels=None):
+		result = []
+		for value in order:
+			rows = [line for line in lines if line[key] == value]
+			if rows:
+				result.append({"key": value, "label": (labels or {}).get(value) or _(value or "Not set"),
+				               "value": ["in", plans(rows)], "count": len(rows)})
+		return result
+
+	states = {
+		"overdue": _("PR date passed"),
+		"due_soon": _("PR due in {0} days").format(PLAN_WINDOW_DAYS),
+		"later": _("Not yet due"),
+		"no_date": _("No date to order by"),
+		"requested": _("Requested or ordered"),
+	}
+	due = sorted((line for line in lines if line.state in ("overdue", "due_soon")), key=lambda l: getdate(l.pr_date))
+	items = {}
+	if due and frappe.has_permission("Item", "read"):
+		items = dict(frappe.get_list("Item", filters={"name": ["in", list({l.item_code for l in due})]},
+		                             fields=["name", "item_name"], as_list=True))
+	statuses = _get_list("Procurement Plan", fields=["status", "count(name) as n"], group_by="status")
+
+	return {
+		"restricted": False,
+		"lines": len(lines),
+		"plans": len(plans(lines)),
+		"from_schedule": sum(bool(line.task) for line in lines),
+		"by_hand": sum(not line.task for line in lines),
+		"requested": sum(line.state == "requested" for line in lines),
+		"overdue": sum(line.state == "overdue" for line in lines),
+		"due_soon": sum(line.state == "due_soon" for line in lines),
+		"no_date": sum(line.state == "no_date" for line in lines),
+		"window_days": PLAN_WINDOW_DAYS,
+		"by_state": by("state", list(states), states),
+		"by_route": by("route", ROUTES + (None,)),
+		"by_status": _in_order(statuses, PLAN_STATUSES),
+		"list": [
+			{
+				"plan": line.plan,
+				"item": items.get(line.item_code) or line.item_code,
+				"route": line.route,
+				"qty": flt(line.qty),
+				"uom": line.uom,
+				"on_site": line.on_site,
+				"pr_date": line.pr_date,
+				"days": date_diff(line.pr_date, now),
+				"from_schedule": bool(line.task),
+			}
+			for line in due[:LIST_LIMIT]
+		],
+	}
+
+
+def _health(readable: set, now, budget: dict, plan: dict) -> list[dict]:
 	"""Checks that count things needing action, so zero always means healthy.
 
 	`critical` is kept for dates the client holds us to that have already passed.
+	Milestone and deliverable dates are checked on Contracts & Awards.
 	"""
 	checks = []
 	today_str = str(now)
@@ -374,26 +487,6 @@ def _health(readable: set, now, milestones: dict, budget: dict) -> list[dict]:
 
 	award_readable = "Awarded Quotation" in readable
 	active_awards = {"status": ["in", ACTIVE_STATUSES]}
-
-	late_awards = set(milestones["overdue_by_award"]) if award_readable else set()
-	check(
-		"Milestones past their planned end",
-		"critical",
-		"Awarded Quotation",
-		milestones.get("overdue_count") if award_readable else None,
-		names_filter(late_awards),
-		_("Across {0} awards").format(len(late_awards)) if late_awards else None,
-	)
-
-	deliverable_readable = "Deliverable" in readable
-	late_deliverables = {"status": ["in", DELIVERABLE_OPEN], "due_date": ["<", today_str]}
-	check(
-		"Deliverables past their due date",
-		"critical",
-		"Deliverable",
-		_count("Deliverable", late_deliverables) if deliverable_readable else None,
-		late_deliverables,
-	)
 
 	past_completion = {**active_awards, "revised_end_date": ["<", today_str]}
 	check(
@@ -491,6 +584,20 @@ def _health(readable: set, now, milestones: dict, budget: dict) -> list[dict]:
 		"Procurement Plan",
 		len(late_lines) if late_lines is not None else None,
 		names_filter({line.name for line in late_lines or []}),
+	)
+
+	# A line with no required date has nothing to work back from, so it can never
+	# be flagged late: usually a task with no start date, or a line typed in by
+	# hand without one.
+	undated = None
+	if not plan.get("restricted"):
+		undated = next((row for row in plan["by_state"] if row["key"] == "no_date"), None)
+	check(
+		"Plan lines with no date to order by",
+		"warning",
+		"Procurement Plan",
+		(undated or {}).get("count", 0) if not plan.get("restricted") else None,
+		{"name": undated["value"]} if undated else names_filter([]),
 	)
 
 	return sorted(checks, key=lambda c: (c["count"] is None, not c["count"], c["severity"] != "critical"))

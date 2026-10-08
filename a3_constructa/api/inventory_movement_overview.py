@@ -23,6 +23,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, date_diff, flt, getdate, now_datetime, today
 
+from a3_constructa.a3_constructa.report.boq_vs_consumption import boq_vs_consumption
 from a3_constructa.api.utils import company_projects, default_company, default_currency
 
 # Workspace report filters, reused so the counts here match the reports.
@@ -57,6 +58,7 @@ def get_overview() -> dict:
 		for dt in ("Stock Entry", "Bin", "Material Request", "Stock Ledger Entry")
 		if frappe.has_permission(dt, "read")
 	}
+	overuse = _overuse(readable)
 	return {
 		"generated_at": now_datetime(),
 		"currency": default_currency(),
@@ -65,7 +67,8 @@ def get_overview() -> dict:
 		"issues": _issues(readable, now),
 		"movements": _movements(readable, now),
 		"requests": _requests(readable, now),
-		"health": _health(readable, now),
+		"overuse": overuse,
+		"health": _health(readable, now, overuse),
 	}
 
 
@@ -285,6 +288,12 @@ def _issues(readable, now) -> dict:
 		filters=_scoped("Stock Entry", {**ISSUE, **recent}),
 		fields=["count(name) as n", "sum(total_outgoing_value) as amount"],
 	)[0]
+	# Material booked on a Daily Site Report is issued from the report (P-06F).
+	from_reports = frappe.get_list(
+		"Stock Entry",
+		filters=_scoped("Stock Entry", {**ISSUE, **recent, "daily_site_report": ["is", "set"]}),
+		fields=["count(name) as n", "sum(total_outgoing_value) as amount"],
+	)[0]
 
 	period = {**ISSUE, "posting_date": [">=", _since(now, PERIOD_DAYS)]}
 	lines = frappe.get_list(
@@ -292,6 +301,7 @@ def _issues(readable, now) -> dict:
 		filters=_scoped("Stock Entry", period),
 		fields=[
 			"name",
+			"daily_site_report",
 			"`tabStock Entry Detail`.wbs as wbs",
 			"`tabStock Entry Detail`.cost_code as cost_code",
 			"`tabStock Entry Detail`.amount as amount",
@@ -320,10 +330,24 @@ def _issues(readable, now) -> dict:
 	by_wbs, wbs_total = by("wbs", "WBS", "wbs_name")
 	by_cost_code, cost_code_total = by("cost_code", "Cost Code", "description")
 
+	by_source = []
+	for value, label, test in (
+		(["is", "set"], _("From daily site reports"), lambda line: line.daily_site_report),
+		(["is", "not set"], _("Issued in the store"), lambda line: not line.daily_site_report),
+	):
+		matched = [line for line in lines if test(line)]
+		if matched:
+			by_source.append({"label": label, "value": value, "count": len({line.name for line in matched}),
+			                  "amount": flt(sum(flt(line.amount) for line in matched), 2)})
+
 	return {
 		"restricted": False,
 		"value_30d": flt(month.amount),
 		"count_30d": month.n,
+		"from_reports_30d": from_reports.n,
+		"from_reports_value_30d": flt(from_reports.amount),
+		"by_source": by_source,
+		"source_total": flt(sum(row["amount"] for row in by_source), 2),
 		"returns_30d": _count("Stock Entry", {"docstatus": 1, "stock_entry_type": SITE_RETURN, **recent}),
 		"filters": period,
 		"by_wbs": by_wbs,
@@ -407,7 +431,41 @@ def _requests(readable, now) -> dict:
 	}
 
 
-def _health(readable, now) -> list[dict]:
+def _overuse(readable) -> dict:
+	"""Material issued beyond what the approved BOQ allows, wastage included
+	(P-13B), as BOQ vs Consumption works it out. The report reads the BOQs, so
+	this needs BOQ access as well as stock entries."""
+	if "Stock Entry" not in readable or not frappe.has_permission("BOQ", "read"):
+		return {"restricted": True}
+
+	company = default_company()
+	rows = boq_vs_consumption.get_data(frappe._dict(company=company, only_over_consumed=1))
+	items = _titles("Item", "item_name", list({row["item_code"] for row in rows}))
+	wbs = _titles("WBS", "wbs_name", list({row["wbs"] for row in rows if row["wbs"]}))
+	return {
+		"restricted": False,
+		"count": len(rows),
+		"value": flt(sum(flt(row["over_value"]) for row in rows), 2),
+		"not_in_boq": sum(row["not_in_boq"] for row in rows),
+		"report_filters": {"company": company, "only_over_consumed": 1},
+		"rows": [
+			{
+				"item": items.get(row["item_code"]) or row["item_code"],
+				"wbs": (wbs.get(row["wbs"]) or row["wbs"]) if row["wbs"] else None,
+				"project": row["project"],
+				"cost_code": row["cost_code"],
+				"over_qty": flt(row["over_qty"], 3),
+				"uom": row.get("stock_uom"),
+				"over_value": flt(row["over_value"], 2),
+				"wastage_percent": flt(row["wastage_percent"], 1),
+				"not_in_boq": row["not_in_boq"],
+			}
+			for row in rows[:LATEST]
+		],
+	}
+
+
+def _health(readable, now, overuse) -> list[dict]:
 	"""Checks that count what needs someone to act, so zero always means healthy.
 
 	`critical` is kept for stock the books cannot account for: goods still out in
@@ -417,9 +475,10 @@ def _health(readable, now) -> list[dict]:
 	se = "Stock Entry" in readable
 	bins = "Bin" in readable
 
-	def check(label, severity, doctype, count, filters=None, meta=None):
+	def check(label, severity, doctype, count, filters=None, meta=None, report=None):
 		checks.append(
-			{"label": label, "severity": severity, "doctype": doctype, "count": count, "filters": filters or {}, "meta": meta}
+			{"label": label, "severity": severity, "doctype": doctype, "count": count, "filters": filters or {}, "meta": meta,
+			 "report": report}
 		)
 
 	late = {**OPEN_DISPATCH, "posting_date": ["<", _since(now, TRANSIT_DAYS)]}
@@ -512,6 +571,16 @@ def _health(readable, now) -> list[dict]:
 		len(idle) if idle is not None else None,
 		{"name": ["in", idle or []]},
 		meta=_("Slow-moving stock"),
+	)
+
+	check(
+		_("Materials issued beyond the BOQ allowance"),
+		"warning",
+		"BOQ",
+		None if overuse["restricted"] else overuse["count"],
+		overuse.get("report_filters"),
+		meta=_("BOQ vs Consumption, wastage included"),
+		report="BOQ vs Consumption",
 	)
 
 	drafts = {"docstatus": 0, "posting_date": ["<", _since(now, DRAFT_DAYS)]}

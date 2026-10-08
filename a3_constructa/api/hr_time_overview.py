@@ -29,6 +29,8 @@ from frappe import _
 from frappe.utils import add_days, add_months, date_diff, flt, get_first_day, get_last_day, getdate, now_datetime, today
 
 from a3_constructa.a3_constructa.report.site_wise_attendance.site_wise_attendance import PRESENT_STATUSES
+from a3_constructa.a3_constructa.report.certificates_expiring import certificates_expiring
+from a3_constructa.api.labour import FLAG_BELOW
 from a3_constructa.api.utils import company_projects, default_company, default_currency
 
 DOCTYPES = (
@@ -41,6 +43,7 @@ DOCTYPES = (
 	"Expense Claim",
 	"Employee Advance",
 	"Timesheet",
+	"Crew",
 )
 
 ATTENDED = (*PRESENT_STATUSES, "Half Day")
@@ -53,6 +56,9 @@ CLAIM_WAITING = {"docstatus": 0, "approval_status": "Draft"}
 # Paid out and not yet claimed or returned in full, or approved and not yet paid.
 ADVANCE_OPEN = {"docstatus": 1, "status": ["in", ["Unpaid", "Paid"]]}
 
+CERTIFICATE_DAYS = 60
+CERTIFICATE_WARN_DAYS = 30
+CERTIFICATE_ROWS = 6
 CLAIM_WAIT_DAYS = 14
 AWAITING_ROWS = 8
 TOP_GROUPS = 5
@@ -63,6 +69,8 @@ TREND_MONTHS = 12
 def get_overview() -> dict:
 	now = getdate(today())
 	readable = {dt for dt in DOCTYPES if frappe.has_permission(dt, "read")}
+	crews = _crews(readable)
+	certificates = _certificates(readable, now)
 	return {
 		"generated_at": now_datetime(),
 		"currency": default_currency(),
@@ -75,7 +83,10 @@ def get_overview() -> dict:
 		"expenses": _expenses(readable, now),
 		"timesheets": _timesheets(readable, now),
 		"awaiting": _awaiting(readable, now),
-		"health": _health(readable, now),
+		"crews": crews,
+		"certificates": certificates,
+		"productivity": _productivity(now),
+		"health": _health(readable, now, crews, certificates),
 	}
 
 
@@ -462,10 +473,87 @@ def _awaiting(readable, now) -> dict:
 	return {"restricted": False, "rows": rows[:AWAITING_ROWS], "total": total}
 
 
-def _health(readable, now) -> list[dict]:
+def _crews(readable) -> dict:
+	"""Crews and gangs (P-07A): who works together, at what daily cost. A crew's
+	headcount and daily cost are its active members, kept on the crew."""
+	if "Crew" not in readable:
+		return {"restricted": True}
+
+	active = frappe.get_list(
+		"Crew",
+		filters=_scoped("Crew", {"is_active": 1}),
+		fields=["name", "trade", "headcount", "daily_cost"],
+		limit_page_length=0,
+	)
+	trades = {}
+	for crew in active:
+		t = trades.setdefault(crew.trade, {"label": _(crew.trade) if crew.trade else _("Not set"), "value": crew.trade,
+		                                   "count": 0, "amount": 0.0, "people": 0})
+		t["count"] += 1
+		t["amount"] += flt(crew.daily_cost)
+		t["people"] += crew.headcount or 0
+	return {
+		"restricted": False,
+		"active": len(active),
+		"people": sum(crew.headcount or 0 for crew in active),
+		"daily_cost": flt(sum(flt(crew.daily_cost) for crew in active), 2),
+		"empty": sorted(crew.name for crew in active if not crew.headcount),
+		"filters": _listed("Crew", {"is_active": 1}),
+		"by_trade": sorted(trades.values(), key=lambda t: -t["amount"]),
+	}
+
+
+def _certificates(readable, now) -> dict:
+	"""Certificates on active employees expired or expiring in the next 60 days
+	(P-07B), as Certificates Expiring lists them, with the machines that need them."""
+	if "Employee" not in readable:
+		return {"restricted": True}
+
+	rows = certificates_expiring.data(frappe._dict(company=default_company(), days=CERTIFICATE_DAYS))
+	expired = [r for r in rows if r.days_left < 0]
+	soon = [r for r in rows if 0 <= r.days_left <= CERTIFICATE_WARN_DAYS]
+	return {
+		"restricted": False,
+		"days": CERTIFICATE_DAYS,
+		"warn_days": CERTIFICATE_WARN_DAYS,
+		"expired": len(expired),
+		"soon": len(soon),
+		"later": len(rows) - len(expired) - len(soon),
+		"expired_employees": sorted({r.employee for r in expired}),
+		"soon_employees": sorted({r.employee for r in soon}),
+		"report_filters": {"company": default_company(), "days": CERTIFICATE_DAYS},
+		"rows": [
+			{
+				"employee": r.employee,
+				"employee_name": r.employee_name,
+				"certificate_type": r.certificate_type,
+				"crew": r.crew,
+				"expiry_date": r.expiry_date,
+				"days_left": r.days_left,
+				"needed_for": r.needed_for,
+			}
+			for r in rows[:CERTIFICATE_ROWS]
+		],
+	}
+
+
+def _productivity(now) -> dict:
+	"""Labour productivity by trade over the last eight weeks (P-13E): planned
+	hours for the work done against the hours booked. The check on low weeks is
+	WBS Analysis & Reporting's, so it is not repeated here."""
+	from a3_constructa.api.wbs_analysis_overview import _productivity as by_trade
+
+	result = by_trade(default_company(), now)
+	if not result.get("restricted"):
+		result["flag_below"] = FLAG_BELOW
+	return result
+
+
+def _health(readable, now, crews, certificates) -> list[dict]:
 	"""Checks that count what needs someone to act, so zero always means healthy.
 
-	`critical` is kept for people payroll would leave out.
+	`critical` is kept for people payroll would leave out, and for certificates
+	that have already lapsed.
 	"""
 	checks = []
 
@@ -536,5 +624,31 @@ def _health(readable, now) -> list[dict]:
 
 	timesheets = _listed("Timesheet", {"docstatus": 0})
 	check("Timesheets not yet submitted", "warning", "Timesheet", counted("Timesheet", timesheets), timesheets)
+
+	check(
+		"Certificates expired",
+		"critical",
+		"Employee",
+		None if certificates["restricted"] else certificates["expired"],
+		{"name": ["in", certificates.get("expired_employees") or []]},
+		meta=_("Not fit for work that needs them"),
+	)
+	check(
+		f"Certificates expiring within {CERTIFICATE_WARN_DAYS} days",
+		"warning",
+		"Employee",
+		None if certificates["restricted"] else certificates["soon"],
+		{"name": ["in", certificates.get("soon_employees") or []]},
+		meta=_("Renew before they lapse"),
+	)
+
+	check(
+		"Active crews with no members",
+		"warning",
+		"Crew",
+		None if crews["restricted"] else len(crews["empty"]),
+		{"name": ["in", crews.get("empty") or []]},
+		meta=_("Nobody to book the crew's hours to"),
+	)
 
 	return sorted(checks, key=lambda c: (c["count"] is None, not c["count"], c["severity"] != "critical"))

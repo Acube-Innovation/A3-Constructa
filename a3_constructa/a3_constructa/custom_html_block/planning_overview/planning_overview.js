@@ -16,15 +16,20 @@ function render(data) {
 			{ class: "ov-split" },
 			section({
 				title: __("Needs attention"),
-				caption: __("Dates we have missed and planning steps still to do"),
+				caption: __("Budget and planning steps still to do, and requests the programme needs"),
 				body: render_health(data.health),
 			}),
-			render_milestones_section(data.milestones)
+			render_plan_due_section(data.plan)
 		),
 		section({
 			title: __("Budget allocated to WBS"),
 			caption: __("Approved BOQ budget by project, and how much of it has been split across the works"),
 			body: render_budget(data.budget, data.currency),
+		}),
+		section({
+			title: __("Procurement plan"),
+			caption: __("Lines on open plans. Most follow the programme: wanted on site before their task starts, requested a lead time before that."),
+			body: el("div", { class: "ov-breakdowns" }, plan_breakdowns(data.plan).map(render_breakdown)),
 		}),
 		section({
 			title: __("Pipeline"),
@@ -34,7 +39,7 @@ function render(data) {
 		el("p", {
 			class: "ov-footnote",
 			text: __(
-				"Money is shown in {0}, the company's default currency. Awards and variations priced in another currency are left out of the totals. Counts follow your permissions.",
+				"Money is shown in {0}, the company's default currency. Awards and variations priced in another currency are left out of the totals. Milestones, deliverables and the order book are on Contracts & Awards. Counts follow your permissions.",
 				[data.currency]
 			),
 		}),
@@ -44,27 +49,33 @@ function render(data) {
 // ---------- Summary ----------
 
 function render_summary(data) {
-	const { budget, variations, currency } = data;
+	const { plan, variations, currency } = data;
 	return el(
 		"div",
 		{ class: "ov-summary" },
-		render_order_book(data.awards, currency),
+		render_budget_hero(data.budget, currency),
 		el(
 			"div",
 			{ class: "ov-kpis" },
 			kpi(
-				__("Approved BOQ budget"),
-				budget.restricted ? "—" : format_money(budget.approved_budget, currency),
+				__("Plan lines"),
+				plan.restricted ? "—" : format_count(plan.lines),
 				note(
-					budget.restricted
-						? __("You do not have access to BOQs")
-						: __("{0} approved · {1} awaiting approval", [budget.approved_count, budget.pending_count])
+					plan.restricted
+						? __("You do not have access to procurement plans")
+						: __("{0} from the programme · {1} typed in", [plan.from_schedule, plan.by_hand])
 				)
 			),
 			kpi(
-				__("Allocated to WBS"),
-				budget.restricted || budget.allocation_restricted ? "—" : format_money(budget.allocated, currency),
-				note(allocation_note(budget))
+				__("Requests due in {0} days", [plan.restricted ? 14 : plan.window_days]),
+				plan.restricted ? "—" : format_count(plan.due_soon),
+				note(
+					plan.restricted
+						? __("You do not have access to procurement plans")
+						: plan.overdue
+						? __("{0} more already past their PR date", [plan.overdue])
+						: __("None past their PR date")
+				)
 			),
 			kpi(
 				__("Approved variations"),
@@ -76,10 +87,10 @@ function render_summary(data) {
 	);
 }
 
-function render_order_book(awards, currency) {
-	const card = el("div", { class: "ov-card ov-hero" }, el("p", { class: "ov-label", text: __("Order book") }));
-	if (awards.restricted) {
-		card.append(el("p", { class: "ov-hero-caption", text: __("You do not have access to awarded quotations.") }));
+function render_budget_hero(budget, currency) {
+	const card = el("div", { class: "ov-card ov-hero" }, el("p", { class: "ov-label", text: __("Approved BOQ budget") }));
+	if (budget.restricted) {
+		card.append(el("p", { class: "ov-hero-caption", text: __("You do not have access to BOQs.") }));
 		return card;
 	}
 
@@ -87,80 +98,64 @@ function render_order_book(awards, currency) {
 		el(
 			"p",
 			{ class: "ov-hero-figure" },
-			el("span", { class: "ov-hero-value ov-hero-money", text: format_money(awards.order_book, currency) })
+			el("span", { class: "ov-hero-value ov-hero-money", text: format_money(budget.approved_budget, currency) })
 		),
 		el("p", {
 			class: "ov-hero-caption",
-			text:
-				awards.active_count === 1
-					? __("Revised contract value of 1 active award")
-					: __("Revised contract value of {0} active awards", [awards.active_count]),
+			text: __("{0} approved · {1} awaiting approval", [budget.approved_count, budget.pending_count]),
 		})
 	);
 
-	if (!awards.active_count) {
+	if (!budget.approved_budget) {
 		card.append(
 			el(
 				"p",
 				{ class: "ov-hero-caption" },
-				list_link("Awarded Quotation", {}, __("Record the first awarded quotation"), { class: "ov-text-link" })
+				list_link("BOQ", {}, __("Approve the first BOQ"), { class: "ov-text-link" })
 			)
 		);
 		return card;
 	}
 
-	const progress = Math.round(flt(awards.weighted_progress));
-	card.append(
-		el(
-			"div",
-			{ class: "ov-hero-progress" },
-			el(
-				"div",
-				{ class: "ov-meter-head" },
-				el("span", { text: __("Delivered") }),
-				el("strong", { text: `${progress}%` })
-			),
-			el(
-				"div",
-				{
-					class: "ov-meter",
-					role: "meter",
-					"aria-label": __("Delivered"),
-					"aria-valuemin": 0,
-					"aria-valuemax": 100,
-					"aria-valuenow": progress,
-				},
-				el("div", { class: "ov-meter-fill", style: `width: ${Math.min(100, flt(awards.weighted_progress))}%` })
-			),
-			el("p", { class: "ov-hero-caption", text: __("Milestone progress, weighted by contract value") })
-		),
-		el(
-			"dl",
-			{ class: "ov-hero-split" },
-			el("dt", { text: __("Original contracts") }),
-			el("dd", { text: format_money(awards.original_value, currency) }),
-			el("dt", { text: __("Approved variations") }),
-			el("dd", { text: signed_money(awards.approved_variations, currency) })
-		)
-	);
-	if (awards.other_currency) {
+	if (!budget.allocation_restricted) {
+		const ratio = budget.allocated / budget.approved_budget;
+		const percent = Math.round(ratio * 100);
 		card.append(
-			el("p", {
-				class: "ov-hero-caption",
-				text:
-					awards.other_currency === 1
-						? __("1 award priced in another currency is not included.")
-						: __("{0} awards priced in another currency are not included.", [awards.other_currency]),
-			})
+			el(
+				"div",
+				{ class: "ov-hero-progress" },
+				el(
+					"div",
+					{ class: "ov-meter-head" },
+					el("span", { text: __("Allocated to WBS") }),
+					el("strong", { text: `${percent}%` })
+				),
+				el(
+					"div",
+					{
+						class: "ov-meter",
+						role: "meter",
+						"aria-label": __("Allocated to WBS"),
+						"aria-valuemin": 0,
+						"aria-valuemax": 100,
+						"aria-valuenow": percent,
+					},
+					el("div", { class: "ov-meter-fill", style: `width: ${Math.min(100, ratio * 100)}%` })
+				)
+			),
+			el(
+				"dl",
+				{ class: "ov-hero-split" },
+				el("dt", { text: __("On the works") }),
+				el("dd", { text: format_money(budget.allocated, currency) }),
+				el("dt", { text: __("Still to allocate") }),
+				el("dd", { text: format_money(Math.max(0, budget.approved_budget - budget.allocated), currency) })
+			)
 		);
+	} else {
+		card.append(el("p", { class: "ov-hero-caption", text: __("You do not have access to WBS allocations.") }));
 	}
 	return card;
-}
-
-function allocation_note(budget) {
-	if (budget.restricted || budget.allocation_restricted) return __("You do not have access to WBS allocations");
-	if (!budget.approved_budget) return __("No approved budget yet");
-	return __("{0}% of the approved budget", [Math.round((budget.allocated / budget.approved_budget) * 100)]);
 }
 
 function variations_note(variations, currency) {
@@ -179,7 +174,7 @@ function render_timeline_section(awards) {
 		const text = awards.restricted
 			? __("You do not have access to awarded quotations.")
 			: __("No active awards yet.");
-		return section({ title, body: el("div", { class: "ov-card" }, el("p", { class: "ov-empty", text })) });
+		return section({ title, body: el("div", { class: "ov-card" }, el("p", { class: "ov-empty", text }), contracts_link()) });
 	}
 
 	const rows = awards.timeline;
@@ -203,7 +198,7 @@ function render_timeline_section(awards) {
 	return section({
 		title,
 		caption,
-		body: el("div", { class: "ov-card ov-chart-card" }, chart, table),
+		body: el("div", { class: "ov-card ov-chart-card" }, chart, table, contracts_link()),
 		action: chart_with_table(chart, table),
 	});
 }
@@ -330,42 +325,64 @@ function render_award_label(award) {
 	);
 }
 
-// ---------- Milestones ----------
+// Milestones, deliverables and the order book moved to Contracts & Awards (D-03).
+function contracts_link() {
+	const href = "/app/contracts-%26-awards";
+	const link = el(
+		"a",
+		{ class: "ov-text-link", href },
+		__("Milestones, deliverables and the order book are on Contracts & Awards")
+	);
+	link.addEventListener("click", (event) => {
+		if (!is_plain_click(event)) return;
+		event.preventDefault();
+		frappe.router.push_state(href);
+	});
+	return el("p", { class: "ov-contracts-link" }, link);
+}
 
-function render_milestones_section(milestones) {
-	const title = __("Milestones due");
+// ---------- Requests the programme needs ----------
+
+function render_plan_due_section(plan) {
+	const title = __("Requests due");
 	const card = el("div", { class: "ov-card ov-list-card" });
-	if (milestones.restricted) {
-		card.append(el("p", { class: "ov-empty", text: __("You do not have access to awarded quotations.") }));
+	if (plan.restricted) {
+		card.append(el("p", { class: "ov-empty", text: __("You do not have access to procurement plans.") }));
 		return section({ title, body: card });
 	}
 
-	if (!milestones.list.length) {
-		const text = milestones.total
-			? __("Nothing overdue or due in the next {0} days.", [milestones.window_days])
-			: __("No milestones yet. Add them on an award's Timeline.");
+	if (!plan.list.length) {
+		const text = plan.lines
+			? __("No request is due in the next {0} days.", [plan.window_days])
+			: __("No plan lines yet. Use Refresh from schedule on a procurement plan.");
 		card.append(el("p", { class: "ov-empty", text }));
 	} else {
 		card.append(
 			el(
 				"ul",
 				{ class: "ov-rows" },
-				milestones.list.map((milestone) =>
+				plan.list.map((line) =>
 					el(
 						"li",
 						{},
 						form_link(
-							"Awarded Quotation",
-							milestone.award,
+							"Procurement Plan",
+							line.plan,
 							[
-								milestone.days < 0 ? icon("critical", "is-critical") : icon("empty", "is-muted"),
+								line.days < 0 ? icon("critical", "is-critical") : icon("empty", "is-muted"),
 								row_text(
-									milestone.milestone,
-									`${milestone.award_title} · ${format_date(milestone.planned_end)}`
+									line.item,
+									[
+										format_qty(line.qty, line.uom),
+										__(line.route || "Buy"),
+										line.on_site ? __("on site {0}", [format_date(line.on_site)]) : null,
+									]
+										.filter(Boolean)
+										.join(" · ")
 								),
 								el("span", {
-									class: milestone.days < 0 ? "ov-row-when is-late" : "ov-row-when",
-									text: due_in(milestone.days),
+									class: line.days < 0 ? "ov-row-when is-late" : "ov-row-when",
+									text: due_in(line.days),
 								}),
 								icon("chevron", "ov-chevron"),
 							],
@@ -379,12 +396,10 @@ function render_milestones_section(milestones) {
 
 	return section({
 		title,
-		caption: __("{0} overdue · {1} due in the next {2} days · {3} of {4} complete", [
-			milestones.overdue_count,
-			milestones.upcoming_count,
-			milestones.window_days,
-			milestones.completed,
-			milestones.total,
+		caption: __("Purchase requests to raise: {0} past their PR date · {1} due in the next {2} days", [
+			plan.overdue,
+			plan.due_soon,
+			plan.window_days,
 		]),
 		body: card,
 	});
@@ -474,8 +489,24 @@ function render_budget(budget, currency) {
 
 // ---------- Pipeline ----------
 
+function plan_breakdowns(plan) {
+	const lines = (title, rows) => ({
+		title,
+		doctype: "Procurement Plan",
+		field: "name",
+		filters: {},
+		restricted: plan.restricted,
+		rows: plan.restricted ? [] : rows,
+		total: plan.restricted ? 0 : plan.lines,
+	});
+	return [
+		lines(__("Plan lines by state"), plan.by_state),
+		lines(__("Plan lines by route"), plan.by_route),
+	];
+}
+
 function pipeline(data) {
-	const { awards, budget, variations, deliverables, currency } = data;
+	const { budget, plan, currency } = data;
 	const by_status = (title, doctype, part, with_money = false) => ({
 		title,
 		doctype,
@@ -487,10 +518,8 @@ function pipeline(data) {
 		total: part.restricted ? 0 : part.by_status.reduce((sum, row) => sum + row.count, 0),
 	});
 	return [
-		by_status(__("Awards by status"), "Awarded Quotation", awards),
 		by_status(__("BOQs by status"), "BOQ", budget, true),
-		by_status(__("Variation orders by status"), "Variation Order", variations, true),
-		by_status(__("Deliverables by status"), "Deliverable", deliverables),
+		by_status(__("Procurement plans by status"), "Procurement Plan", plan),
 	];
 }
 
@@ -502,6 +531,6 @@ mount_overview({
 	api: "a3_constructa.api.planning_overview.get_overview",
 	storage_key: "a3_constructa.planning.tab",
 	labels: { overview: __("Planning & Budgeting Overview"), menu: __("Planning & Budgeting") },
-	intro: __("Awards, budgets and the programme across A3 Constructa."),
+	intro: __("Budgets, the award programme and what the programme needs ordered, across A3 Constructa."),
 	render,
 });

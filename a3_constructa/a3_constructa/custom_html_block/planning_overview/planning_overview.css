@@ -59,6 +59,11 @@
 	border-bottom-color: currentColor;
 }
 
+.ov-contracts-link {
+	margin: 12px 0 0;
+	font-size: var(--text-sm, 13px);
+}
+
 /* ---------- Award timeline ---------- */
 
 .ov-timeline {

@@ -26,6 +26,8 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, add_months, flt, get_first_day, get_last_day, getdate, now_datetime, today
 
+from a3_constructa.a3_constructa.report.equipment_utilisation import equipment_utilisation
+from a3_constructa.a3_constructa.report.fuel_consumption import fuel_consumption
 from a3_constructa.api.utils import company_projects, default_company, default_currency
 
 DOCTYPES = (
@@ -36,6 +38,7 @@ DOCTYPES = (
 	"Asset Spare Part",
 	"Tool Issue",
 	"Bin",
+	"Equipment Log",
 )
 
 OFF_REGISTER = ("Sold", "Scrapped", "Capitalized")
@@ -60,6 +63,11 @@ REPAIR_WAIT_DAYS = 7
 TREND_HALF = 6
 COMING_UP = 8
 TOP_ROWS = 5
+# Plant use and fuel are read over the last month, as their reports default to.
+USE_DAYS = 30
+LOW_UTILISATION = 50
+LOG_DRAFT_DAYS = 2
+PLANT_ROWS = 6
 
 
 @frappe.whitelist()
@@ -69,6 +77,8 @@ def get_overview() -> dict:
 	# Read once, used by several sections.
 	assets = _assets(readable)
 	tools = _tool_lines(readable, now)
+	utilisation = _utilisation(readable, now)
+	fuel = _fuel(readable, now)
 	return {
 		"generated_at": now_datetime(),
 		"currency": default_currency(),
@@ -78,7 +88,9 @@ def get_overview() -> dict:
 		"repairs": _repairs(readable, now),
 		"maintenance": _maintenance(readable, now),
 		"coming_up": _coming_up(readable, assets, tools, now),
-		"health": _health(readable, assets, tools, now),
+		"utilisation": utilisation,
+		"fuel": fuel,
+		"health": _health(readable, assets, tools, now, utilisation, fuel),
 	}
 
 
@@ -491,7 +503,75 @@ def _coming_up(readable, assets, tools, now) -> dict:
 	return {"restricted": False, "rows": rows[:COMING_UP]}
 
 
-def _health(readable, assets, tools, now) -> list[dict]:
+def _utilisation(readable, now) -> dict:
+	"""Plant use over the last month from the Equipment Logs (P-08A), as Equipment
+	Utilisation works it out: utilisation = worked / (worked + idle). Internal hire
+	is what owned plant charged the jobs at its internal rate; hired plant costs
+	what its supplier invoiced."""
+	if "Equipment Log" not in readable:
+		return {"restricted": True}
+
+	start = getdate(add_days(now, -USE_DAYS))
+	rows = equipment_utilisation.get_data(frappe._dict(company=default_company(), from_date=start, to_date=now))
+	machines = {}
+	for row in rows:
+		m = machines.setdefault(row["asset"], {"asset": row["asset"], "label": row["asset_name"] or row["asset"],
+		                                       "hired": row["ownership"] == _("Hired"), "worked": 0.0, "idle": 0.0,
+		                                       "breakdown": 0.0, "cost": 0.0})
+		for key in ("worked", "idle", "breakdown", "cost"):
+			m[key] += flt(row[key])
+	for m in machines.values():
+		available = m["worked"] + m["idle"]
+		m["utilisation"] = flt(m["worked"] / available * 100, 1) if available else None
+	worked = sum(m["worked"] for m in machines.values())
+	available = worked + sum(m["idle"] for m in machines.values())
+	low = sorted(m["asset"] for m in machines.values() if m["utilisation"] is not None and m["utilisation"] < LOW_UTILISATION)
+	return {
+		"restricted": False,
+		"from_date": start,
+		"to_date": now,
+		"days": USE_DAYS,
+		"machines": len(machines),
+		"worked": flt(worked, 1),
+		"idle": flt(sum(m["idle"] for m in machines.values()), 1),
+		"breakdown": flt(sum(m["breakdown"] for m in machines.values()), 1),
+		"percent": flt(worked / available * 100, 1) if available else None,
+		"internal_hire": flt(sum(m["cost"] for m in machines.values() if not m["hired"]), 2),
+		"hired_cost": flt(sum(m["cost"] for m in machines.values() if m["hired"]), 2),
+		"low_threshold": LOW_UTILISATION,
+		"low": low,
+		"rows": sorted(machines.values(), key=lambda m: (m["utilisation"] is None, m["utilisation"] or 0))[:PLANT_ROWS],
+	}
+
+
+def _fuel(readable, now) -> dict:
+	"""Fuel against each machine's norm over the last month (P-08B), as Fuel
+	Consumption flags it: more than 15% over, or fuel with no hours logged."""
+	if not {"Equipment Log", "Asset"} <= readable or not frappe.has_permission("Stock Entry", "read"):
+		return {"restricted": True}
+
+	start = getdate(add_days(now, -USE_DAYS))
+	rows = fuel_consumption.data(frappe._dict(company=default_company(), from_date=start, to_date=now))
+	fuelled = [row for row in rows if row["litres"]]
+	over = sorted(row["asset"] for row in fuelled if row["variance"] is not None and row["variance"] > fuel_consumption.TOLERANCE)
+	return {
+		"restricted": False,
+		"from_date": start,
+		"to_date": now,
+		"days": USE_DAYS,
+		"litres": flt(sum(row["litres"] for row in fuelled), 1),
+		"cost": flt(sum(row["cost"] for row in fuelled), 2),
+		"tolerance": fuel_consumption.TOLERANCE,
+		"over": over,
+		"flagged": sum(bool(row["flag"]) for row in fuelled),
+		"rows": [
+			{key: row[key] for key in ("asset", "asset_name", "litres", "worked_hours", "lph", "norm", "variance", "flag")}
+			for row in fuelled[:PLANT_ROWS]
+		],
+	}
+
+
+def _health(readable, assets, tools, now, utilisation, fuel) -> list[dict]:
 	"""Checks that count what needs someone to act, so zero always means healthy.
 
 	`critical` is kept for dates already missed.
@@ -557,6 +637,34 @@ def _health(readable, assets, tools, now) -> list[dict]:
 		len(short) if short is not None else None,
 		{"name": ["in", short or []]},
 		meta=_("Minimum set on the spare part, stock in its warehouse"),
+	)
+
+	check(
+		f"Plant used under {LOW_UTILISATION}% of its available time, last {USE_DAYS} days",
+		"warning",
+		"Asset",
+		None if utilisation["restricted"] or "Asset" not in readable else len(utilisation["low"]),
+		{"name": ["in", utilisation.get("low") or []]},
+		meta=_("Idle on site: worked hours against worked and idle"),
+	)
+
+	check(
+		f"Plant using fuel over its norm, last {USE_DAYS} days",
+		"warning",
+		"Asset",
+		None if fuel["restricted"] else len(fuel["over"]),
+		{"name": ["in", fuel.get("over") or []]},
+		meta=_("More than {0}% over the litres per hour set on the machine").format(fuel_consumption.TOLERANCE),
+	)
+
+	draft_logs = {"docstatus": 0, "log_date": ["<", str(add_days(now, -LOG_DRAFT_DAYS))]}
+	check(
+		f"Equipment logs left in draft over {LOG_DRAFT_DAYS} days",
+		"warning",
+		"Equipment Log",
+		_count("Equipment Log", draft_logs) if "Equipment Log" in readable else None,
+		_list_filters("Equipment Log", draft_logs),
+		meta=_("Hours not yet charged to the job"),
 	)
 
 	return sorted(checks, key=lambda c: (c["count"] is None, not c["count"], c["severity"] != "critical"))

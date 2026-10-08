@@ -16,13 +16,31 @@ function render(data) {
 			{ class: "ov-split" },
 			section({
 				title: __("Needs attention"),
-				caption: __("Overdue maintenance, unreturned tools and idle equipment"),
+				caption: __("Overdue maintenance, unreturned tools, idle plant and fuel over the norm"),
 				body: render_health(data.health),
 			}),
 			section({
 				title: __("Coming up"),
 				caption: __("Maintenance, tool returns, warranties and insurance, soonest first"),
 				body: render_coming_up(data.coming_up),
+			})
+		),
+		el(
+			"div",
+			{ class: "ov-split" },
+			section({
+				title: __("Plant utilisation"),
+				caption: __("Worked hours against worked and idle, from the equipment logs of the last {0} days. Lowest first.", [
+					data.utilisation.restricted ? 30 : data.utilisation.days,
+				]),
+				body: render_utilisation(data.utilisation, currency),
+			}),
+			section({
+				title: __("Fuel against the norm"),
+				caption: __("Litres per worked hour against each machine's norm, last {0} days", [
+					data.fuel.restricted ? 30 : data.fuel.days,
+				]),
+				body: render_fuel(data.fuel, currency),
 			})
 		),
 		section({
@@ -58,7 +76,7 @@ function render(data) {
 // ---------- Summary ----------
 
 function render_summary(data) {
-	const { depreciation, repairs, maintenance, currency } = data;
+	const { utilisation, repairs, maintenance, currency } = data;
 	return el(
 		"div",
 		{ class: "ov-summary" },
@@ -67,14 +85,14 @@ function render_summary(data) {
 			"div",
 			{ class: "ov-kpis" },
 			kpi(
-				__("Depreciation, last 12 months"),
-				depreciation.restricted ? "—" : format_money(depreciation.booked_year, currency),
+				__("Plant utilisation, last 30 days"),
+				utilisation.restricted || utilisation.percent === null ? "—" : `${Math.round(utilisation.percent)}%`,
 				note(
-					depreciation.restricted
-						? __("You do not have access to depreciation schedules")
-						: depreciation.next_date
-						? __("Next {0} on {1}", [format_money(depreciation.next_amount, currency), format_date(depreciation.next_date)])
-						: __("Nothing scheduled")
+					utilisation.restricted
+						? __("You do not have access to equipment logs")
+						: utilisation.percent === null
+						? __("No equipment logged")
+						: __("{0} internal hire charged to the jobs", [format_money(utilisation.internal_hire, currency)])
 				)
 			),
 			kpi(
@@ -99,6 +117,133 @@ function render_summary(data) {
 			health_kpi(data.health)
 		)
 	);
+}
+
+// ---------- Plant use and fuel ----------
+
+function render_utilisation(part, currency) {
+	const card = el("div", { class: "ov-card ov-list-card" });
+	if (part.restricted) {
+		card.append(el("p", { class: "ov-empty", text: __("You do not have access to equipment logs.") }));
+		return card;
+	}
+	if (!part.rows.length) {
+		card.append(el("p", { class: "ov-empty", text: __("No equipment logged in the last {0} days.", [part.days]) }));
+		return card;
+	}
+	const period = { docstatus: 1, log_date: ["between", [part.from_date, part.to_date]] };
+	card.append(
+		el(
+			"dl",
+			{ class: "ov-totals" },
+			el("dt", { text: __("Worked") }),
+			el("dd", { text: __("{0} h", [format_number(part.worked, null, 1)]) }),
+			el("dt", { text: __("Idle") }),
+			el("dd", { text: __("{0} h", [format_number(part.idle, null, 1)]) }),
+			el("dt", { text: __("Internal hire") }),
+			el("dd", { text: format_money(part.internal_hire, currency) }),
+			el("dt", { text: __("Hired plant") }),
+			el("dd", { text: format_money(part.hired_cost, currency) })
+		),
+		el(
+			"ul",
+			{ class: "ov-rows" },
+			part.rows.map((row) => {
+				const low = row.utilisation !== null && row.utilisation < part.low_threshold;
+				return el(
+					"li",
+					{},
+					list_link(
+						"Equipment Log",
+						{ ...period, asset: row.asset },
+						[
+							low ? icon("warning", "is-warning") : icon("empty", "is-muted"),
+							row_text(
+								row.label,
+								[
+									row.hired ? __("Hired") : __("Owned"),
+									__("{0} h worked · {1} h idle", [
+										format_number(row.worked, null, 1),
+										format_number(row.idle, null, 1),
+									]),
+									row.breakdown ? __("{0} h broken down", [format_number(row.breakdown, null, 1)]) : null,
+								]
+									.filter(Boolean)
+									.join(" · ")
+							),
+							el("span", {
+								class: low ? "ov-row-when is-late" : "ov-row-when",
+								text: row.utilisation === null ? "—" : `${Math.round(row.utilisation)}%`,
+							}),
+							icon("chevron", "ov-chevron"),
+						],
+						{ class: "ov-row" }
+					)
+				);
+			})
+		)
+	);
+	return card;
+}
+
+function render_fuel(part, currency) {
+	const card = el("div", { class: "ov-card ov-list-card" });
+	if (part.restricted) {
+		card.append(el("p", { class: "ov-empty", text: __("Fuel needs read access to equipment logs, assets and stock entries.") }));
+		return card;
+	}
+	if (!part.rows.length) {
+		card.append(el("p", { class: "ov-empty", text: __("No fuel issued to plant in the last {0} days.", [part.days]) }));
+		return card;
+	}
+	const period = { from_date: part.from_date, to_date: part.to_date };
+	card.append(
+		el(
+			"ul",
+			{ class: "ov-rows" },
+			part.rows.map((row) => {
+				const over = row.variance !== null && row.variance > part.tolerance;
+				return el(
+					"li",
+					{},
+					report_link(
+						"Fuel Consumption",
+						{ ...period, asset: row.asset },
+						[
+							row.flag ? icon("warning", "is-warning") : icon("empty", "is-muted"),
+							row_text(
+								row.asset_name || row.asset,
+								[
+									__("{0} L", [format_number(row.litres, null, 1)]),
+									row.lph === null ? null : __("{0} L/h", [format_number(row.lph, null, 2)]),
+									row.norm ? __("norm {0} L/h", [format_number(row.norm, null, 2)]) : __("no norm set"),
+									!over && row.flag ? row.flag : null,
+								]
+									.filter(Boolean)
+									.join(" · ")
+							),
+							el("span", {
+								class: over ? "ov-row-when is-late" : "ov-row-when",
+								text: row.variance === null ? "—" : `${row.variance > 0 ? "+" : ""}${Math.round(row.variance)}%`,
+							}),
+							icon("chevron", "ov-chevron"),
+						],
+						{ class: "ov-row" }
+					)
+				);
+			})
+		),
+		el(
+			"p",
+			{ class: "ov-list-foot" },
+			report_link(
+				"Fuel Consumption",
+				period,
+				__("{0} L costing {1} in Fuel Consumption", [format_number(part.litres, null, 1), format_money(part.cost, currency)])
+			)
+		)
+	);
+	return card;
 }
 
 function repair_note(repairs) {
@@ -339,7 +484,15 @@ function render_depreciation_section(depreciation, currency) {
 	const any = trend.some((point) => point.booked || point.scheduled);
 	return section({
 		title: __("Depreciation by month"),
-		caption: __("Booked for the last six months and scheduled for the next six, in {0}", [currency]),
+		caption: [
+			__("Booked for the last six months and scheduled for the next six, in {0}.", [currency]),
+			__("{0} booked in the last 12 months.", [format_money(depreciation.booked_year, currency)]),
+			depreciation.next_date
+				? __("Next {0} on {1}.", [format_money(depreciation.next_amount, currency), format_date(depreciation.next_date)])
+				: null,
+		]
+			.filter(Boolean)
+			.join(" "),
 		body: el("div", { class: "ov-card ov-chart-card" }, chart, table),
 		action: any ? chart_with_table(chart, table) : null,
 	});

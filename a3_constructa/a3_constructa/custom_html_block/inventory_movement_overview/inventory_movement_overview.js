@@ -34,6 +34,20 @@ function render(data) {
 			"div",
 			{ class: "ov-split" },
 			section({
+				title: __("Used beyond the BOQ"),
+				caption: __("Material issued past what the approved BOQ allows, wastage included: a variation to claim or a loss to explain"),
+				body: render_overuse(data.overuse, currency),
+			}),
+			section({
+				title: __("Where issues were booked"),
+				caption: __("Material issued over the last 90 days: from the daily site report, or in the store"),
+				body: render_breakdown(sources(data.issues, currency)),
+			})
+		),
+		el(
+			"div",
+			{ class: "ov-split" },
+			section({
 				title: __("Stock by warehouse"),
 				caption: __("Value on hand in each warehouse"),
 				body: render_breakdown(holdings(stock, currency, "warehouse")),
@@ -80,6 +94,7 @@ function render_summary(data) {
 						? __("No material issued")
 						: [
 								issues.count_30d === 1 ? __("1 issue") : __("{0} issues", [issues.count_30d]),
+								__("{0} from site reports", [issues.from_reports_30d]),
 								issues.returns_30d === 1
 									? __("1 site return")
 									: __("{0} site returns", [issues.returns_30d]),
@@ -300,6 +315,78 @@ function flows(data) {
 	];
 }
 
+function sources(issues, currency) {
+	return {
+		title: __("By where it was booked"),
+		doctype: "Stock Entry",
+		field: "daily_site_report",
+		filters: issues.filters,
+		restricted: issues.restricted,
+		measure: "amount",
+		currency,
+		rows: issues.restricted ? [] : issues.by_source,
+		total: issues.restricted ? 0 : issues.source_total,
+	};
+}
+
+function render_overuse(overuse, currency) {
+	const card = el("div", { class: "ov-card ov-list-card" });
+	if (overuse.restricted) {
+		card.append(el("p", { class: "ov-empty", text: __("Over-use needs read access to BOQs and stock entries.") }));
+		return card;
+	}
+	if (!overuse.rows.length) {
+		card.append(el("p", { class: "ov-empty", text: __("Nothing issued beyond the BOQ allowance.") }));
+		return card;
+	}
+	card.append(
+		el(
+			"ul",
+			{ class: "ov-rows" },
+			overuse.rows.map((row) =>
+				el(
+					"li",
+					{},
+					report_link(
+						"BOQ vs Consumption",
+						{ ...overuse.report_filters, project: row.project, cost_code: row.cost_code },
+						[
+							icon("warning", "is-warning"),
+							row_text(
+								row.item,
+								[
+									row.wbs,
+									row.not_in_boq
+										? __("not in the BOQ")
+										: __("{0} over, {1}% wastage allowed", [
+												format_qty(row.over_qty, row.uom),
+												row.wastage_percent,
+										  ]),
+								]
+									.filter(Boolean)
+									.join(" · ")
+							),
+							el("span", { class: "ov-row-when", text: format_money(row.over_value, currency) }),
+							icon("chevron", "ov-chevron"),
+						],
+						{ class: "ov-row" }
+					)
+				)
+			)
+		),
+		el(
+			"p",
+			{ class: "ov-list-foot" },
+			report_link(
+				"BOQ vs Consumption",
+				overuse.report_filters,
+				__("{0} lines over, worth {1}, in BOQ vs Consumption", [overuse.count, format_money(overuse.value, currency)])
+			)
+		)
+	);
+	return card;
+}
+
 function holdings(stock, currency, field) {
 	return {
 		title: field === "warehouse" ? __("By value on hand") : __("Top items by value"),
@@ -318,6 +405,6 @@ mount_overview({
 	api: "a3_constructa.api.inventory_movement_overview.get_overview",
 	storage_key: "a3_constructa.inventory_movement.tab",
 	labels: { overview: __("Inventory Movement Overview"), menu: __("Inventory Movement") },
-	intro: __("Stock on hand, transit, site receipts and issues to the works across A3 Constructa."),
+	intro: __("Stock on hand, transit, site receipts, issues to the works and use against the BOQ across A3 Constructa."),
 	render,
 });

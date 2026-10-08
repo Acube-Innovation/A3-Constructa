@@ -33,6 +33,20 @@ function render(data) {
 				body: render_recent_orders(data.orders, currency),
 			})
 		),
+		el(
+			"div",
+			{ class: "ov-split" },
+			section({
+				title: __("Waiting for approval"),
+				caption: __("Requests and orders still to pass their approval levels, longest waiting first"),
+				body: render_approvals(data.approvals, currency),
+			}),
+			section({
+				title: __("Subcontract accounts"),
+				caption: __("What the work certificates have certified, what was held back, and what is still to pay"),
+				body: render_subcontracts(data.subcontracts, currency),
+			})
+		),
 		section({
 			title: __("Pipeline"),
 			caption: __("Where every buying document stands. Open a row to see those documents."),
@@ -64,7 +78,7 @@ function render(data) {
 // ---------- Summary ----------
 
 function render_summary(data) {
-	const { orders, requests, awards, currency } = data;
+	const { orders, requests, awards, approvals, currency } = data;
 	return el(
 		"div",
 		{ class: "ov-summary" },
@@ -84,14 +98,14 @@ function render_summary(data) {
 				)
 			),
 			kpi(
-				__("Ordered in the last 30 days"),
-				orders.restricted ? "—" : format_money(orders.ordered_30d, currency),
+				__("Awaiting approval"),
+				approvals.restricted ? "—" : format_count(approvals.count),
 				note(
-					orders.restricted
-						? __("You do not have access to purchase orders")
-						: orders.ordered_30d_count === 1
-						? __("1 purchase order")
-						: __("{0} purchase orders", [orders.ordered_30d_count])
+					approvals.restricted
+						? __("You do not have access to requests or orders")
+						: approvals.count
+						? __("Worth {0} · {1} waiting on you", [format_money(approvals.value, currency), approvals.mine])
+						: __("Nothing waiting")
 				)
 			),
 			kpi(
@@ -208,6 +222,140 @@ function render_recent_orders(orders, currency) {
 	return card;
 }
 
+function render_approvals(approvals, currency) {
+	const card = el("div", { class: "ov-card ov-list-card" });
+	if (approvals.restricted) {
+		card.append(el("p", { class: "ov-empty", text: __("You do not have access to requests or orders.") }));
+		return card;
+	}
+	if (!approvals.list.length) {
+		card.append(el("p", { class: "ov-empty", text: __("Nothing is waiting for approval.") }));
+		return card;
+	}
+	card.append(
+		el(
+			"ul",
+			{ class: "ov-rows" },
+			approvals.list.map((row) =>
+				el(
+					"li",
+					{},
+					form_link(
+						row.document_type,
+						row.document,
+						[
+							row.is_rejected
+								? icon("critical", "is-critical")
+								: row.age_days > approvals.wait_days
+								? icon("warning", "is-warning")
+								: icon("empty", "is-muted"),
+							row_text(
+								`${row.document} · ${format_money(row.value, currency)}`,
+								`${row.status} · ${row.is_mine ? __("you") : row.approver}`
+							),
+							el("span", {
+								class: row.age_days > approvals.wait_days ? "ov-row-when is-late" : "ov-row-when",
+								text: row.age_days === 1 ? __("1 day") : __("{0} days", [row.age_days]),
+							}),
+							icon("chevron", "ov-chevron"),
+						],
+						{ class: "ov-row" }
+					)
+				)
+			)
+		),
+		el(
+			"p",
+			{ class: "ov-list-foot" },
+			report_link(
+				"Approvals Pending",
+				{},
+				approvals.rejected
+					? __("All {0} in Approvals Pending, {1} rejected and back with the requester", [
+							approvals.count + approvals.rejected,
+							approvals.rejected,
+					  ])
+					: __("All {0} in Approvals Pending", [approvals.count]),
+				{ class: "ov-text-link" }
+			)
+		)
+	);
+	return card;
+}
+
+function render_subcontracts(part, currency) {
+	if (part.restricted) {
+		return restricted_card(__("Subcontract accounts need read access to work certificates and purchase orders."));
+	}
+	const card = el("div", { class: "ov-card ov-list-card" });
+	if (!part.count) {
+		card.append(el("p", { class: "ov-empty", text: __("No subcontract certified yet.") }));
+		return card;
+	}
+	card.append(
+		el(
+			"dl",
+			{ class: "ov-totals" },
+			el("dt", { text: __("Certified") }),
+			el("dd", { text: format_money(part.certified, currency) }),
+			el("dt", { text: __("Retention held") }),
+			el("dd", { text: format_money(part.retention, currency) }),
+			el("dt", { text: __("Back-charges and deductions") }),
+			el("dd", { text: format_money(part.deductions, currency) }),
+			el("dt", { text: __("Balance to pay") }),
+			el("dd", { text: format_money(part.balance, currency) })
+		),
+		el(
+			"ul",
+			{ class: "ov-rows" },
+			part.rows.map((row) =>
+				el(
+					"li",
+					{},
+					form_link(
+						"Purchase Order",
+						row.subcontract_po,
+						[
+							row.note ? icon("warning", "is-warning") : icon("empty", "is-muted"),
+							row_text(
+								row.supplier,
+								[
+									row.subcontract_po,
+									row.certified_percent === null
+										? null
+										: __("{0}% certified", [Math.round(row.certified_percent)]),
+									row.note || null,
+								]
+									.filter(Boolean)
+									.join(" · ")
+							),
+							el("span", { class: "ov-row-when", text: format_money(row.balance, currency) }),
+							icon("chevron", "ov-chevron"),
+						],
+						{ class: "ov-row" }
+					)
+				)
+			)
+		)
+	);
+	const wrap = el("div", { class: "ov-stack" }, card);
+	if (part.by_deduction.length) {
+		wrap.append(
+			render_breakdown({
+				title: __("Held back by type"),
+				doctype: "Work Certificate",
+				field: "name",
+				filters: {},
+				measure: "amount",
+				currency,
+				rows: part.by_deduction,
+				total: part.deductions,
+			})
+		);
+	}
+	return wrap;
+}
+
 function restricted_card(text) {
 	return el("div", { class: "ov-card" }, el("p", { class: "ov-empty", text }));
 }
@@ -265,6 +413,6 @@ mount_overview({
 	api: "a3_constructa.api.procurement_overview.get_overview",
 	storage_key: "a3_constructa.procurement.tab",
 	labels: { overview: __("Procurement Overview"), menu: __("Procurement") },
-	intro: __("Requests, quotations, orders and deliveries across A3 Constructa."),
+	intro: __("Requests, approvals, quotations, orders, subcontracts and deliveries across A3 Constructa."),
 	render,
 });

@@ -31,6 +31,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, add_months, date_diff, flt, get_first_day, getdate, now_datetime, today
 
+from a3_constructa.a3_constructa.report.cash_flow_forecast import cash_flow_forecast
 from a3_constructa.api.utils import company_projects, default_company, default_currency
 
 DOCTYPES = (
@@ -59,6 +60,7 @@ LONG_OVERDUE_DAYS = 90
 DUE_SOON_DAYS = 30
 UNBILLED_RECEIPT_DAYS = 30
 TREND_MONTHS = 12
+FORECAST_WEEKS = 13
 TOP_PARTIES = 5
 TOP_ACCOUNTS = 4
 DUE_LIST = 8
@@ -85,6 +87,7 @@ def get_overview() -> dict:
 		"profit": _profit(readable, now),
 		"flow": _flow(readable, now),
 		"commitments": _commitments(readable, now, ordered),
+		"forecast": _forecast(readable, now),
 		"budget": _budget(readable, ordered),
 		"projects": _projects(readable),
 		"health": _health(readable, now),
@@ -421,7 +424,64 @@ def _commitments(readable, now, ordered) -> dict:
 	else:
 		result["retention"] = {"restricted": True}
 
+	result["retention_receivable"] = _retention_receivable()
 	return result
+
+
+def _retention_receivable() -> dict:
+	"""Retention the clients hold from our IPCs (P-04C), less what release invoices
+	have billed: worked out as the Sales & Billing tab works it out, so the two agree."""
+	from a3_constructa.api import sales_billing_overview as sb
+
+	readable = {d for d in sb.DOCTYPES if sb._can_read(d)}
+	retention = sb._retention(readable, sb._ipcs(readable), sb._invoices(readable))
+	if retention.get("restricted"):
+		return {"restricted": True}
+	return {
+		"restricted": False,
+		"amount": flt(retention["balance"], 2),
+		"held": flt(retention["held"], 2),
+		"released": flt(retention["released"], 2),
+		"awards": len(retention["by_award"]),
+		"due": len(retention["due"]),
+	}
+
+
+def _forecast(readable, now) -> dict:
+	"""The next 13 weeks of the Cash Flow Forecast report: cash today, money due
+	in and out, and milestone billing still to invoice (P-04B) as planned money in.
+	The report reads the ledger directly, so it is shown only to those who may
+	read the ledger."""
+	if not {"GL Entry", "Account"} <= readable:
+		return {"restricted": True}
+
+	end = add_days(now, FORECAST_WEEKS * 7 - 1)
+	filters = {"company": default_company(), "from_date": str(now), "to_date": str(end), "interval": "Weekly"}
+	_columns, rows = cash_flow_forecast.execute(filters)
+	weeks = [
+		{
+			"label": getdate(add_days(now, i * 7)).strftime("%d %b"),
+			"start": add_days(now, i * 7),
+			"receipts": flt(row["receipts"], 2),
+			"planned": flt(row["planned_billing"], 2),
+			"payments": flt(row["payments"], 2),
+			"net": flt(row["net_movement"], 2),
+			"closing": flt(row["closing_balance"], 2),
+		}
+		for i, row in enumerate(rows)
+	]
+	lowest = min(weeks, key=lambda w: w["closing"]) if weeks else None
+	return {
+		"restricted": False,
+		"weeks": weeks,
+		"opening": flt(rows[0]["opening_balance"], 2) if rows else 0,
+		"closing": weeks[-1]["closing"] if weeks else 0,
+		"receipts": flt(sum(w["receipts"] for w in weeks), 2),
+		"planned": flt(sum(w["planned"] for w in weeks), 2),
+		"payments": flt(sum(w["payments"] for w in weeks), 2),
+		"lowest": lowest,
+		"report_filters": filters,
+	}
 
 
 def _budget(readable, ordered) -> dict:
