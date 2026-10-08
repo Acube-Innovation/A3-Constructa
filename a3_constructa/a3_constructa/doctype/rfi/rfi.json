@@ -1,0 +1,256 @@
+{
+ "actions": [],
+ "creation": "2026-10-09 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "project",
+  "company",
+  "wbs",
+  "drawing",
+  "cb_1",
+  "status",
+  "raised_by",
+  "raised_on",
+  "addressed_to",
+  "required_by",
+  "sb_q",
+  "subject",
+  "question",
+  "sb_a",
+  "answer",
+  "cb_2",
+  "answered_on",
+  "cost_impact",
+  "time_impact",
+  "change_event"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "RFI-.YYYY.-.####",
+   "default": "RFI-.YYYY.-.####",
+   "hidden": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "fetch_from": "project.company",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "wbs",
+   "fieldtype": "Link",
+   "label": "WBS",
+   "options": "WBS"
+  },
+  {
+   "fieldname": "drawing",
+   "fieldtype": "Link",
+   "label": "Drawing",
+   "options": "Drawing Register",
+   "description": "The drawing the question is about, if any."
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nAnswered\nClosed",
+   "default": "Open",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "raised_by",
+   "fieldtype": "Link",
+   "label": "Raised By",
+   "options": "User",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "raised_on",
+   "fieldtype": "Date",
+   "label": "Raised On",
+   "default": "Today",
+   "reqd": 1
+  },
+  {
+   "fieldname": "addressed_to",
+   "fieldtype": "Data",
+   "label": "Addressed To",
+   "reqd": 1,
+   "in_standard_filter": 1,
+   "description": "The designer or consultant who must answer: architect, structural engineer, MEP consultant."
+  },
+  {
+   "fieldname": "required_by",
+   "fieldtype": "Date",
+   "label": "Answer Required By",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "sb_q",
+   "fieldtype": "Section Break",
+   "label": "Question"
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "label": "Subject",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "question",
+   "fieldtype": "Text",
+   "label": "Question",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sb_a",
+   "fieldtype": "Section Break",
+   "label": "Answer"
+  },
+  {
+   "fieldname": "answer",
+   "fieldtype": "Text",
+   "label": "Answer",
+   "no_copy": 1,
+   "description": "Entering the answer marks the RFI Answered."
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "answered_on",
+   "fieldtype": "Date",
+   "label": "Answered On",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "cost_impact",
+   "fieldtype": "Check",
+   "label": "Cost Impact",
+   "no_copy": 1,
+   "default": "0"
+  },
+  {
+   "fieldname": "time_impact",
+   "fieldtype": "Check",
+   "label": "Time Impact",
+   "no_copy": 1,
+   "default": "0"
+  },
+  {
+   "fieldname": "change_event",
+   "fieldtype": "Link",
+   "label": "Change Event",
+   "options": "Change Event",
+   "read_only": 1,
+   "no_copy": 1,
+   "description": "Raised from the RFI when the answer costs money or time (Raise change event)."
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-09 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "RFI",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "raised_on",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "index_web_pages_for_search": 0,
+ "title_field": "subject",
+ "show_title_field_in_link": 1,
+ "search_fields": "project,subject,status"
+}
