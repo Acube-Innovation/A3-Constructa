@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "creation": "2026-10-08 18:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "criterion",
+  "weight",
+  "score",
+  "weighted",
+  "note"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "criterion",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Criterion",
+   "options": "Capacity\nMargin\nRisk\nPayment terms\nClient history\nStrategic fit",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "description": "The weights of all criteria add up to 100%.",
+   "fieldname": "weight",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Weight",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "description": "1 poor to 5 excellent.",
+   "fieldname": "score",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Score (1-5)",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "description": "Weight × score ÷ 5: the points this criterion adds, out of its weight.",
+   "fieldname": "weighted",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Points",
+   "precision": "1",
+   "read_only": 1
+  },
+  {
+   "columns": 4,
+   "fieldname": "note",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Why this score"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-08 18:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Bid Score",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"crm_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"CRM & Estimating Overview\", \"col\": 12}}, {\"id\": \"crm_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>CRM &amp; Estimating</b></span>\", \"col\": 12}}, {\"id\": \"card_pipeline\", \"type\": \"card\", \"data\": {\"card_name\": \"Pipeline\", \"col\": 4}}, {\"id\": \"card_tender_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Tender Register\", \"col\": 4}}, {\"id\": \"card_quantity_take_off\", \"type\": \"card\", \"data\": {\"card_name\": \"Quantity Take-off\", \"col\": 4}}, {\"id\": \"card_rate_build_up\", \"type\": \"card\", \"data\": {\"card_name\": \"Rate Build-up\", \"col\": 4}}, {\"id\": \"card_quotation\", \"type\": \"card\", \"data\": {\"card_name\": \"Quotation\", \"col\": 4}}, {\"id\": \"card_crm_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"CRM Reports\", \"col\": 4}}]",
+ "content": "[{\"id\": \"crm_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"CRM & Estimating Overview\", \"col\": 12}}, {\"id\": \"crm_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>CRM &amp; Estimating</b></span>\", \"col\": 12}}, {\"id\": \"card_pipeline\", \"type\": \"card\", \"data\": {\"card_name\": \"Pipeline\", \"col\": 4}}, {\"id\": \"card_bid_no_bid\", \"type\": \"card\", \"data\": {\"card_name\": \"Bid / No-bid\", \"col\": 4}}, {\"id\": \"card_tender_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Tender Register\", \"col\": 4}}, {\"id\": \"card_quantity_take_off\", \"type\": \"card\", \"data\": {\"card_name\": \"Quantity Take-off\", \"col\": 4}}, {\"id\": \"card_rate_build_up\", \"type\": \"card\", \"data\": {\"card_name\": \"Rate Build-up\", \"col\": 4}}, {\"id\": \"card_quotation\", \"type\": \"card\", \"data\": {\"card_name\": \"Quotation\", \"col\": 4}}, {\"id\": \"card_crm_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"CRM Reports\", \"col\": 4}}]",
  "creation": "2026-10-06 13:22:31.505579",
  "custom_blocks": [
   {
@@ -83,6 +83,26 @@
    "label": "Sales Pipeline Analytics",
    "link_count": 0,
    "link_to": "Sales Pipeline Analytics",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Opportunity",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bid / No-bid",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Bid Decisions",
+   "link_count": 0,
+   "link_to": "Bid Decisions",
    "link_type": "Report",
    "onboard": 0,
    "report_ref_doctype": "Opportunity",
@@ -289,7 +309,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-06 15:06:37.403242",
+ "modified": "2026-10-08 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "CRM & Estimating",

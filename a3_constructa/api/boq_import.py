@@ -32,6 +32,9 @@ def make_tender_boq(opportunity: str):
 	ready for the client's bill to be imported."""
 	frappe.has_permission("Opportunity", "read", opportunity, throw=True)
 	frappe.has_permission("BOQ", "create", throw=True)
+	from a3_constructa.overrides.opportunity import refuse_if_no_go
+
+	refuse_if_no_go(opportunity)
 	boq = frappe.new_doc("BOQ")
 	boq.update({"boq_stage": "Tender", **boq_defaults(opportunity=opportunity)})
 	return boq.as_dict()

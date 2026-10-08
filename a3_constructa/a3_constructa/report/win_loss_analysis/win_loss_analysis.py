@@ -9,9 +9,11 @@ and how they ended:
 - Lost: declared lost, with its reasons, competitors and the winning price;
 - Open: neither yet.
 
-Four views: by sector or by month (count and value won, lost and open, and the
-win rate: won ÷ decided), the lost reasons, and the competitor prices against
-ours. Values are grand totals in company currency.
+Five views: by sector or by month (count and value won, lost and open, and the
+win rate: won ÷ decided), the lost reasons, the competitor prices against
+ours, and the no-bid reasons: opportunities the company decided not to bid
+(catalogue 2.2), by the reason given. Values are grand totals in company
+currency; a no-bid is valued at its opportunity's estimate.
 """
 
 from collections import OrderedDict
@@ -20,19 +22,21 @@ import frappe
 from frappe import _
 from frappe.utils import flt, getdate
 
-VIEWS = ("Sector", "Month", "Lost Reasons", "Competitor Prices")
+VIEWS = ("Sector", "Month", "Lost Reasons", "Competitor Prices", "No-bid Reasons")
 
 
 def execute(filters=None):
 	filters = frappe._dict(filters or {})
 	view = filters.get("view") or "Sector"
+	if view == "No-bid Reasons":
+		return no_bid_columns(), no_bid_rows(get_no_bids(filters))
 	quotes = get_quotations(filters)
 	if view == "Lost Reasons":
 		return reason_columns(), reason_rows(quotes)
 	if view == "Competitor Prices":
 		return competitor_columns(), competitor_rows(quotes)
 	rows = group_rows(quotes, view)
-	return group_columns(view), rows, None, get_chart(rows), get_summary(quotes)
+	return group_columns(view), rows, None, get_chart(rows), get_summary(quotes, get_no_bids(filters))
 
 
 def get_quotations(filters):
@@ -149,7 +153,7 @@ def get_chart(rows):
 	}
 
 
-def get_summary(quotes):
+def get_summary(quotes, no_bids=()):
 	won = [q for q in quotes if q.outcome == "Won"]
 	lost = [q for q in quotes if q.outcome == "Lost"]
 	decided = len(won) + len(lost)
@@ -158,7 +162,47 @@ def get_summary(quotes):
 		{"label": _("Lost"), "value": sum(flt(q.base_grand_total) for q in lost), "datatype": "Currency", "indicator": "Red"},
 		{"label": _("Win Rate (count)"), "value": f"{len(won) / decided * 100:.0f}%" if decided else "—", "datatype": "Data",
 		 "indicator": "Blue"},
+		{"label": _("Not bid (No-go)"), "value": len(no_bids), "datatype": "Int", "indicator": "Grey"},
 	]
+
+
+# ---------------------------------------------------------------- no-bid reasons
+
+def get_no_bids(filters):
+	"""Opportunities decided No-go in the period (by the day of the decision)."""
+	conditions = {"bid_decision": "No-go"}
+	if filters.get("company"):
+		conditions["company"] = filters.company
+	if filters.get("from_date") and filters.get("to_date"):
+		conditions["decided_on"] = ["between", [filters.from_date, filters.to_date]]
+	return frappe.get_list(
+		"Opportunity",
+		filters=conditions,
+		fields=["name", "title", "customer_name", "party_name", "estimated_value", "opportunity_amount", "no_go_reason", "total_score"],
+		order_by="decided_on asc",
+		limit_page_length=0,
+	)
+
+
+def no_bid_columns():
+	return [
+		{"fieldname": "reason", "label": _("No-go Reason"), "fieldtype": "Data", "width": 160},
+		{"fieldname": "count", "label": _("Opportunities"), "fieldtype": "Int", "width": 110},
+		{"fieldname": "share", "label": _("Share of No-bids %"), "fieldtype": "Percent", "width": 140},
+		{"fieldname": "value", "label": _("Value Not Bid"), "fieldtype": "Currency", "width": 140},
+		{"fieldname": "opportunities", "label": _("Opportunities"), "fieldtype": "Data", "width": 380},
+	]
+
+
+def no_bid_rows(no_bids):
+	by_reason = OrderedDict()
+	for o in no_bids:
+		by_reason.setdefault(o.no_go_reason or _("Not given"), []).append(o)
+	value = lambda o: flt(o.estimated_value) or flt(o.opportunity_amount)
+	rows = [{"reason": _(reason), "count": len(os), "share": len(os) / len(no_bids) * 100, "value": sum(value(o) for o in os),
+	         "opportunities": ", ".join(f"{o.name} ({o.title}, score {flt(o.total_score):g})" for o in os)}
+	        for reason, os in by_reason.items()]
+	return sorted(rows, key=lambda r: (-r["count"], -r["value"]))
 
 
 # ---------------------------------------------------------------- lost reasons

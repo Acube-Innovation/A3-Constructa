@@ -27,7 +27,8 @@ STAGES = [
 	("estimates", "a3_constructa.demo.masiha.estimates.run"),  # P-02C: rate build-up on the hospital tender
 	("pricing", "a3_constructa.demo.masiha.pricing.run"),  # P-02D: preliminaries, markups, contingency
 	("quotations", "a3_constructa.demo.masiha.quotations.run"),  # P-02E: revisions, margin approval, win / loss
-	("crm_overview", "a3_constructa.demo.masiha.crm_overview.run"),  # D-02: a case for every overview check
+	("crm_overview", "a3_constructa.demo.masiha.crm_overview.run"),
+	("bid_decisions", "a3_constructa.demo.masiha.bid_decisions.run"),  # P-02F: bid scores, Go / No-go decisions, one waiting for the MD  # D-02: a case for every overview check
 	("change_events", "a3_constructa.demo.masiha.change_events.run"),  # P-03A: change events in every status
 	("variations", "a3_constructa.demo.masiha.variations.run"),  # P-03B: variation orders in every status, budget moves
 	("handover", "a3_constructa.demo.masiha.handover.run"),  # P-03C: the hospital is won and handed over in one step

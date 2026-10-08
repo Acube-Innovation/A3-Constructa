@@ -91,9 +91,13 @@ fixtures = [
 	# rows link to its states and actions.
 	{"dt": "Workflow State", "filters": [["name", "in", [
 		"Draft", "Pending Approval", "Pending Management Approval", "Submitted", "Cancelled",
+		# Catalogue 2.2: the bid / no-bid decision on an opportunity.
+		"Scoring", "Awaiting Bid Decision", "Go", "No-go",
 	]]]},
-	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Submit for Approval", "Submit"]]]},
-	{"dt": "Workflow", "filters": [["name", "in", ["BOQ Approval", "Quotation Margin Approval"]]]},
+	{"dt": "Workflow Action Master", "filters": [["name", "in", [
+		"Submit for Approval", "Submit", "Send for Decision", "Confirm Go", "Confirm No-go", "Send Back", "Reopen",
+	]]]},
+	{"dt": "Workflow", "filters": [["name", "in", ["BOQ Approval", "Quotation Margin Approval", "Bid Decision"]]]},
 ]
 
 # Naming series are not a doctype of their own: `bench setup naming-series` and
@@ -196,6 +200,8 @@ doc_events = {
 		"validate": [ACTIVE_COST_CODE, "a3_constructa.overrides.sales_order.validate"],
 		"before_submit": "a3_constructa.overrides.sales_order.before_submit",
 	},
+	# Catalogue 2.2: the bid / no-bid score and decision.
+	"Opportunity": {"validate": "a3_constructa.overrides.opportunity.validate"},
 	# Catalogue 2.7: a tender quotation's margin, revisions and margin approval.
 	"Quotation": {
 		"validate": "a3_constructa.overrides.quotation.validate",

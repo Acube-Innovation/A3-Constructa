@@ -6,7 +6,7 @@ frappe.query_reports["Win Loss Analysis"] = {
 		{ fieldname: "company", label: __("Company"), fieldtype: "Link", options: "Company",
 		  default: frappe.defaults.get_user_default("Company") },
 		{ fieldname: "view", label: __("View"), fieldtype: "Select",
-		  options: ["Sector", "Month", "Lost Reasons", "Competitor Prices"], default: "Sector" },
+		  options: ["Sector", "Month", "Lost Reasons", "Competitor Prices", "No-bid Reasons"], default: "Sector" },
 		{ fieldname: "from_date", label: __("From Date"), fieldtype: "Date",
 		  default: frappe.datetime.add_months(frappe.datetime.get_today(), -12) },
 		{ fieldname: "to_date", label: __("To Date"), fieldtype: "Date", default: frappe.datetime.get_today() },

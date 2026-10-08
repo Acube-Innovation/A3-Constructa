@@ -10,6 +10,8 @@
   "budget_tolerance_percent",
   "sb_quotation",
   "min_margin_percent",
+  "sb_bid",
+  "bid_threshold_score",
   "sb_handover",
   "default_contract_item",
   "contract_payment_terms",
@@ -50,6 +52,20 @@
    "fieldname": "min_margin_percent",
    "fieldtype": "Percent",
    "label": "Minimum Quotation Margin %"
+  },
+  {
+   "fieldname": "sb_bid",
+   "fieldtype": "Section Break",
+   "label": "Bid / No-bid"
+  },
+  {
+   "default": "60",
+   "description": "An opportunity whose bid score (out of 100) is at or above this suggests Go; below it, No-go. A sales manager confirms the decision either way.",
+   "fieldname": "bid_threshold_score",
+   "fieldtype": "Float",
+   "label": "Bid Threshold Score",
+   "non_negative": 1,
+   "precision": "1"
   },
   {
    "fieldname": "sb_handover",
@@ -95,7 +111,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-08 16:00:00.000000",
+ "modified": "2026-10-08 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "A3 Constructa Settings",

@@ -12,5 +12,40 @@
   "modified": "2026-10-06 14:35:30.701320",
   "name": "Submit",
   "workflow_action_name": "Submit"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "Send for Decision",
+  "workflow_action_name": "Send for Decision"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "Confirm Go",
+  "workflow_action_name": "Confirm Go"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "Confirm No-go",
+  "workflow_action_name": "Confirm No-go"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "Send Back",
+  "workflow_action_name": "Send Back"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "Reopen",
+  "workflow_action_name": "Reopen"
  }
 ]

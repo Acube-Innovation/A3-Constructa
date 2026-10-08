@@ -304,7 +304,7 @@ def create_onboarding_template():
 
 def set_settings_defaults():
 	"""A Single's new field has no stored value (it reads as 0): store its default once."""
-	for field, value in (("site_buffer_days", 7),):
+	for field, value in (("site_buffer_days", 7), ("bid_threshold_score", 60)):
 		if not frappe.db.sql("select 1 from tabSingles where doctype = 'A3 Constructa Settings' and field = %s", field):
 			frappe.db.set_single_value("A3 Constructa Settings", field, value)
 

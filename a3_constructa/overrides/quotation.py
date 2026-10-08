@@ -28,6 +28,10 @@ APPROVER_ROLE = "A3 Constructa Admin"
 
 
 def validate(doc, method=None):
+	if doc.is_new() and not doc.amended_from and doc.get("opportunity"):
+		from a3_constructa.overrides.opportunity import refuse_if_no_go
+
+		refuse_if_no_go(doc.opportunity)
 	set_revision(doc)
 	set_margin(doc)
 	log_revision(doc)

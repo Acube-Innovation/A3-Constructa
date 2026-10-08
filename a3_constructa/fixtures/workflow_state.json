@@ -43,5 +43,41 @@
   "name": "Cancelled",
   "style": "Danger",
   "workflow_state_name": "Cancelled"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "Scoring",
+  "style": "Info",
+  "workflow_state_name": "Scoring"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "Awaiting Bid Decision",
+  "style": "Warning",
+  "workflow_state_name": "Awaiting Bid Decision"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "Go",
+  "style": "Success",
+  "workflow_state_name": "Go"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-10-08 18:00:00.000000",
+  "name": "No-go",
+  "style": "Danger",
+  "workflow_state_name": "No-go"
  }
 ]
