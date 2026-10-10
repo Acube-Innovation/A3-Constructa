@@ -1,0 +1,451 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"po_overview\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Project Operations Overview\",\"col\":12}},{\"id\":\"po_header\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Project Operations</b></span>\",\"col\":12}},{\"id\":\"po_gantt\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Gantt\",\"col\":4}},{\"id\":\"card_master_schedule\",\"type\":\"card\",\"data\":{\"card_name\":\"Master Schedule\",\"col\":4}},{\"id\":\"card_tasks_dependencies\",\"type\":\"card\",\"data\":{\"card_name\":\"Tasks & Dependencies\",\"col\":4}},{\"id\":\"card_resources\",\"type\":\"card\",\"data\":{\"card_name\":\"Resources\",\"col\":4}},{\"id\":\"card_baselines\",\"type\":\"card\",\"data\":{\"card_name\":\"Baselines\",\"col\":4}},{\"id\":\"card_look_ahead\",\"type\":\"card\",\"data\":{\"card_name\":\"Look-ahead\",\"col\":4}},{\"id\":\"card_progress\",\"type\":\"card\",\"data\":{\"card_name\":\"Progress\",\"col\":4}},{\"id\":\"card_daily_site_report\",\"type\":\"card\",\"data\":{\"card_name\":\"Daily Site Report\",\"col\":4}},{\"id\":\"card_quality\",\"type\":\"card\",\"data\":{\"card_name\":\"Quality\",\"col\":4}},{\"id\":\"card_health_safety\",\"type\":\"card\",\"data\":{\"card_name\":\"Health & Safety\",\"col\":4}},{\"id\":\"card_rfis_drawings\",\"type\":\"card\",\"data\":{\"card_name\":\"RFIs & Drawings\",\"col\":4}},{\"id\":\"card_snagging_handover\",\"type\":\"card\",\"data\":{\"card_name\":\"Snagging & Handover\",\"col\":4}}]",
+ "creation": "2026-10-06 21:58:51.743801",
+ "custom_blocks": [
+  {
+   "custom_block_name": "Project Operations Overview",
+   "label": "Project Operations Overview"
+  }
+ ],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "project",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Project Operations",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Master Schedule",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Project",
+   "link_count": 0,
+   "link_to": "Project",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Task",
+   "link_count": 0,
+   "link_to": "Task",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Project Template",
+   "link_count": 0,
+   "link_to": "Project Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tasks & Dependencies",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Task",
+   "link_count": 0,
+   "link_to": "Task",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Task Type",
+   "link_count": 0,
+   "link_to": "Task Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Critical Path",
+   "link_count": 0,
+   "link_to": "Critical Path",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Task",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Resources",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Resource Loading",
+   "link_count": 0,
+   "link_to": "Resource Loading",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Task",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Crew",
+   "link_count": 0,
+   "link_to": "Crew",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Baselines",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Schedule Revision",
+   "link_count": 0,
+   "link_to": "Schedule Revision",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Baseline Variance",
+   "link_count": 0,
+   "link_to": "Baseline Variance",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Task",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Look-ahead",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Three-Week Look-Ahead",
+   "link_count": 0,
+   "link_to": "Three-Week Look-Ahead",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Task",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Progress",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "WBS Progress",
+   "link_count": 0,
+   "link_to": "WBS Progress",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Task",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Daily Site Report",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Daily Site Report",
+   "link_count": 0,
+   "link_to": "Daily Site Report",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Timesheet",
+   "link_count": 0,
+   "link_to": "Timesheet",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stock Entry",
+   "link_count": 0,
+   "link_to": "Stock Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quality",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quality Inspection Template",
+   "link_count": 0,
+   "link_to": "Quality Inspection Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quality Inspection",
+   "link_count": 0,
+   "link_to": "Quality Inspection",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Non Conformance",
+   "link_count": 0,
+   "link_to": "Non Conformance",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "NCR Register",
+   "link_count": 0,
+   "link_to": "NCR Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Non Conformance",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Health & Safety",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Toolbox Talk",
+   "link_count": 0,
+   "link_to": "Toolbox Talk",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Permit to Work",
+   "link_count": 0,
+   "link_to": "Permit to Work",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Site Incident",
+   "link_count": 0,
+   "link_to": "Site Incident",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "HSE Register",
+   "link_count": 0,
+   "link_to": "HSE Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Site Incident",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "RFIs & Drawings",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "RFI",
+   "link_count": 0,
+   "link_to": "RFI",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Drawing Register",
+   "link_count": 0,
+   "link_to": "Drawing Register",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Overdue RFIs",
+   "link_count": 0,
+   "link_to": "Overdue RFIs",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "RFI",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Snagging & Handover",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Snag List",
+   "link_count": 0,
+   "link_to": "Snag List",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Snag Status",
+   "link_count": 0,
+   "link_to": "Snag Status",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Snag List",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Warranty Claim",
+   "link_count": 0,
+   "link_to": "Warranty Claim",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Site Material Returns",
+   "link_count": 0,
+   "link_to": "Site Material Returns",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Stock Entry",
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-10-08 20:27:39.383189",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Project Operations",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "A3 Constructa",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 6.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "label": "Gantt",
+   "type": "URL",
+   "url": "/app/task/view/gantt"
+  }
+ ],
+ "title": "Project Operations"
+}

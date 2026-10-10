@@ -11,6 +11,9 @@ Everything here is already committed, not estimated. Money in is invoices raised
 and not yet settled, at their due dates. Money out is supplier invoices due,
 purchase orders at their delivery dates, and certified work not yet invoiced.
 Nothing speculative is included, so the forecast is a floor rather than a guess.
+The one planned inflow (P-04B) is milestone billing not yet invoiced on awards
+billed by milestones: each milestone's billing % of the revised contract value,
+expected at its planned end plus the contract's credit days.
 
 The `period` and `net_movement` fieldnames back the Cash Flow Forecast chart.
 """
@@ -30,6 +33,7 @@ def execute(filters=None):
 	opening = flt(get_cash_balance(filters, start))
 
 	inflow = get_receivable_due(filters, start, end)
+	planned = get_planned_milestone_billing(filters, start, end)
 	out_invoice = get_payable_due(filters, start, end)
 	out_po = get_po_commitments(filters, start, end)
 	out_cert = get_certified_unbilled(filters, start, end)
@@ -37,7 +41,7 @@ def execute(filters=None):
 	data = []
 	running = opening
 	for label, b_start, b_end in buckets:
-		receipts = sum_in_range(inflow, b_start, b_end)
+		receipts = sum_in_range(inflow, b_start, b_end) + sum_in_range(planned, b_start, b_end)
 		payments = (sum_in_range(out_invoice, b_start, b_end)
 		            + sum_in_range(out_po, b_start, b_end)
 		            + sum_in_range(out_cert, b_start, b_end))
@@ -47,6 +51,7 @@ def execute(filters=None):
 			"period": label,
 			"opening_balance": running - net,
 			"receipts": receipts,
+			"planned_billing": sum_in_range(planned, b_start, b_end),
 			"supplier_invoices": sum_in_range(out_invoice, b_start, b_end),
 			"purchase_orders": sum_in_range(out_po, b_start, b_end),
 			"certified_work": sum_in_range(out_cert, b_start, b_end),
@@ -63,8 +68,10 @@ def get_columns():
 		{"fieldname": "period", "label": _("Period"), "fieldtype": "Data", "width": 130},
 		{"fieldname": "opening_balance", "label": _("Opening"), "fieldtype": "Currency",
 		 "width": 140},
-		{"fieldname": "receipts", "label": _("Receipts Due"), "fieldtype": "Currency",
+		{"fieldname": "receipts", "label": _("Receipts Expected"), "fieldtype": "Currency",
 		 "width": 140},
+		{"fieldname": "planned_billing", "label": _("of which Planned Billing"), "fieldtype": "Currency",
+		 "width": 160},
 		{"fieldname": "supplier_invoices", "label": _("Supplier Invoices"),
 		 "fieldtype": "Currency", "width": 150},
 		{"fieldname": "purchase_orders", "label": _("PO Deliveries"), "fieldtype": "Currency",
@@ -189,9 +196,16 @@ def get_po_commitments(filters, start, end):
 
 
 def get_certified_unbilled(filters, start, end):
-	"""Subcontractor work certified and not yet invoiced - net of retention."""
-	conditions = ["wc.docstatus = 1"]
+	"""Subcontractor work certified and not yet invoiced - net of retention.
+
+	A certificate whose purchase invoice is submitted is already in the supplier
+	invoices due, so it is left out here rather than counted twice. Certificates
+	carry no company, so they are narrowed through their project."""
+	conditions = ["wc.docstatus = 1", "(pi.name is null or pi.docstatus != 1)"]
 	values = {}
+	if filters.get("company"):
+		conditions.append("wc.project in (select p.name from `tabProject` p where p.company = %(company)s)")
+		values["company"] = filters.company
 	if filters.get("project"):
 		conditions.append("wc.project = %(project)s")
 		values["project"] = filters.project
@@ -200,6 +214,7 @@ def get_certified_unbilled(filters, start, end):
 		"""
 		select wc.period_to as `date`, sum(wc.total_net_payable) as amount
 		from `tabWork Certificate` wc
+		left join `tabPurchase Invoice` pi on pi.name = wc.purchase_invoice
 		where {conditions}
 		group by wc.period_to
 		""".format(conditions=" and ".join(conditions)),
@@ -207,3 +222,29 @@ def get_certified_unbilled(filters, start, end):
 	)
 	return [{"date": r.date if r.date and getdate(r.date) >= start else start,
 	         "amount": r.amount} for r in rows]
+
+
+def get_planned_milestone_billing(filters, start, end):
+	"""Milestones not yet invoiced on awards billed by milestones (P-04B)."""
+	from a3_constructa.api.milestone_billing import bills_by_milestones, credit_days, milestone_amount
+
+	conditions = {"status": ["in", ["Awarded", "In Progress", "On Hold"]]}
+	if filters.get("company"):
+		conditions["company"] = filters.company
+	if filters.get("project"):
+		conditions["project"] = filters.project
+	credit = credit_days(frappe.db.get_single_value("A3 Constructa Settings", "contract_payment_terms"))
+	rows = []
+	for name in frappe.get_all("Awarded Quotation", filters=conditions, pluck="name"):
+		a = frappe.get_doc("Awarded Quotation", name)
+		if not bills_by_milestones(a):
+			continue
+		for m in a.milestones:
+			if not flt(m.billing_percent) or m.sales_invoice:
+				continue
+			when = add_days(m.actual_end or m.planned_end, credit) if (m.actual_end or m.planned_end) else None
+			if not when:
+				continue
+			# Already late: expected in the first period, like an overdue invoice.
+			rows.append({"date": when if getdate(when) >= start else start, "amount": milestone_amount(a, m)})
+	return rows

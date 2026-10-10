@@ -1,0 +1,163 @@
+/* A3 Constructa Overview: the parts only the home draws. The shared stylesheet
+   (_shared/overview.css) is placed in front of this one. */
+
+.ov-hero-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	width: fit-content;
+	color: var(--ms-green-600);
+	font-size: var(--text-sm, 13px);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ov-hero-link:hover,
+.ov-hero-link:focus-visible {
+	color: var(--ms-green-800);
+	text-decoration: underline;
+}
+
+.ov-hero {
+	min-width: 0;
+}
+
+.ov-hero-figure {
+	flex-wrap: wrap;
+}
+
+.ov-home-facts {
+	display: grid;
+	gap: 4px;
+	margin: 6px 0;
+	padding: 0;
+	list-style: none;
+	font-size: 13px;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-home-facts li {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	color: var(--ms-muted);
+}
+
+.ov-home-facts b {
+	color: var(--ms-ink-2);
+	font-weight: 600;
+}
+
+/* ---------- Module cards ---------- */
+
+.ov-modules {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ov-module {
+	display: grid;
+	align-content: start;
+	gap: 4px;
+	height: 100%;
+	padding: 14px 16px;
+	border: 1px solid var(--ms-border);
+	border-radius: var(--ov-radius);
+	background: var(--ms-surface);
+	color: inherit;
+	text-decoration: none;
+	transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.ov-module:hover,
+.ov-module:focus-visible {
+	border-color: var(--ms-green-400);
+	background: var(--ms-row-hover);
+}
+
+.ov-module-head {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	column-gap: 6px;
+}
+
+.ov-module-division {
+	grid-column: 1 / -1;
+	color: var(--ms-muted-2);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.ov-module-name {
+	overflow: hidden;
+	color: var(--ms-ink);
+	font-size: 15px;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-module-label {
+	margin: 6px 0 0;
+	color: var(--ms-muted);
+	font-size: 12px;
+}
+
+.ov-module-value {
+	margin: 0;
+	color: var(--ms-green-800);
+	font-family: var(--ms-font-display);
+	font-size: 26px;
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+	overflow-wrap: anywhere;
+}
+
+.ov-module-note {
+	margin: 0;
+	color: var(--ms-muted-2);
+	font-size: 12px;
+}
+
+.ov-module-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 6px;
+}
+
+.ov-chip {
+	padding: 1px 8px;
+	border-radius: var(--ms-r-pill);
+	font-size: 11.5px;
+	font-weight: 600;
+}
+
+.ov-chip.is-critical {
+	background: var(--ov-critical-tint);
+	color: var(--ov-critical);
+}
+
+.ov-chip.is-warning {
+	background: var(--ms-amber-050);
+	color: var(--ms-amber-700);
+}
+
+.ov-chip.is-good {
+	background: var(--ms-green-050);
+	color: var(--ms-green-600);
+}
+
+/* A nine-digit order book doesn't fit a phone at the hero size. */
+@media (max-width: 640px) {
+	.ov-hero-value {
+		font-size: 36px;
+	}
+}

@@ -15,6 +15,8 @@ from frappe.utils import add_days, add_months, date_diff, flt, getdate, now_date
 
 from a3_constructa.api.award_procurement import OPEN_PO_STATUSES, SHIPMENT_DONE, active_awards, award_rows
 from a3_constructa.api.boq_procurement import can_trace
+from a3_constructa.a3_constructa.report.approvals_pending import approvals_pending
+from a3_constructa.a3_constructa.report.subcontract_account import subcontract_account
 from a3_constructa.api.utils import company_projects, default_company, default_currency
 
 MR_STATUSES = ("Draft", "Pending", "Partially Ordered", "Ordered", "Partially Received", "Received", "Stopped")
@@ -31,6 +33,9 @@ SHIPMENT_STATUSES = (
 	"In Inland Transit",
 )
 
+APPROVAL_WAIT_DAYS = 3
+APPROVAL_LIST = 6
+SUBCONTRACT_LIST = 6
 REQUEST_WAIT_DAYS = 14
 RFQ_WAIT_DAYS = 7
 TOP_SUPPLIERS = 5
@@ -49,10 +54,13 @@ def get_overview() -> dict:
 			"Purchase Order",
 			"Awarded Quotation",
 			"Shipment Tracking",
+			"Work Certificate",
 		)
 		if frappe.has_permission(dt, "read")
 	}
 	awards = _awards(readable)
+	approvals = _approvals(readable)
+	subcontracts = _subcontracts(readable)
 	return {
 		"generated_at": now_datetime(),
 		"currency": default_currency(),
@@ -60,8 +68,10 @@ def get_overview() -> dict:
 		"requests": _requests(readable, now),
 		"quotes": _quotes(readable),
 		"awards": awards,
+		"approvals": approvals,
+		"subcontracts": subcontracts,
 		"shipments": _shipments(readable),
-		"health": _health(readable, now, awards),
+		"health": _health(readable, now, awards, approvals, subcontracts),
 	}
 
 
@@ -224,7 +234,79 @@ def _shipments(readable) -> dict:
 	return {"restricted": False, "by_status": rows, "active": sum(row["count"] for row in rows)}
 
 
-def _health(readable, now, awards) -> list[dict]:
+def _approvals(readable) -> dict:
+	"""Requests and orders waiting for an approval level (P-09A), read through the
+	Approvals Pending report so the two always agree. A rejected one waits for its
+	requester to revise it, so it is counted apart from those waiting on an approver."""
+	if not readable & {"Material Request", "Purchase Order"}:
+		return {"restricted": True}
+
+	rows = approvals_pending.execute({"company": default_company()})[1]
+	waiting = [row for row in rows if not row["is_rejected"]]
+	return {
+		"restricted": False,
+		"count": len(waiting),
+		"value": sum(flt(row["value"]) for row in waiting),
+		"mine": sum(row["is_mine"] for row in waiting),
+		"rejected": len(rows) - len(waiting),
+		"oldest_days": max((row["age_days"] for row in waiting), default=0),
+		"stale": sum(row["age_days"] > APPROVAL_WAIT_DAYS for row in waiting),
+		"wait_days": APPROVAL_WAIT_DAYS,
+		"list": [
+			{key: row[key] for key in ("document_type", "document", "status", "approver", "age_days", "value", "is_rejected", "is_mine")}
+			for row in rows[:APPROVAL_LIST]
+		],
+	}
+
+
+def _subcontracts(readable) -> dict:
+	"""Subcontract accounts (P-09B), as the Subcontract Account report works them
+	out: certified, retention and deductions held back, paid, and the balance still
+	owed. Certificates are for project managers, QS and accounts, so the buying
+	roles see this section restricted."""
+	if not {"Work Certificate", "Purchase Order"} <= readable:
+		return {"restricted": True}
+
+	rows = subcontract_account.get_data(frappe._dict(company=default_company()))
+	total = lambda key: sum(flt(row[key]) for row in rows)
+
+	deductions = {}
+	for row in frappe.get_list(
+		"Work Certificate",
+		filters=_scoped("Work Certificate", [["Work Certificate", "docstatus", "=", 1], ["Work Certificate Deduction", "amount", "!=", 0]]),
+		fields=["name", "`tabWork Certificate Deduction`.deduction_type as type", "`tabWork Certificate Deduction`.amount as amount"],
+		limit_page_length=0,
+	):
+		entry = deductions.setdefault(row.type or "Other", {"amount": 0.0, "names": set()})
+		entry["amount"] += flt(row.amount)
+		entry["names"].add(row.name)
+
+	return {
+		"restricted": False,
+		"count": len(rows),
+		"contract": total("contract_value"),
+		"certified": total("certified"),
+		"retention": total("retention"),
+		"deductions": total("deductions"),
+		"paid": total("paid"),
+		"balance": total("balance"),
+		"ahead": sorted(row["subcontract_po"] for row in rows if row["note"]),
+		"rows": [
+			{key: row[key] for key in ("subcontract_po", "supplier", "project", "contract_value", "certified", "certified_percent",
+			                           "deductions", "balance", "note")}
+			for row in sorted(rows, key=lambda r: -flt(r["balance"]))[:SUBCONTRACT_LIST]
+		],
+		"by_deduction": sorted(
+			(
+				{"label": _(kind), "value": ["in", sorted(entry["names"])], "count": len(entry["names"]), "amount": entry["amount"]}
+				for kind, entry in deductions.items()
+			),
+			key=lambda row: -row["amount"],
+		),
+	}
+
+
+def _health(readable, now, awards, approvals, subcontracts) -> list[dict]:
 	"""Checks that count what needs someone to act, so zero always means healthy.
 
 	`critical` is kept for delivery dates a supplier has already missed.
@@ -344,6 +426,24 @@ def _health(readable, now, awards) -> list[dict]:
 		"Purchase Order",
 		len(off_boq) if off_boq is not None else None,
 		{"name": ["in", sorted(off_boq or [])]},
+	)
+
+	check(
+		f"Requests and orders waiting over {APPROVAL_WAIT_DAYS} days for approval",
+		"warning",
+		"Material Request",
+		None if approvals["restricted"] else approvals["stale"],
+		{},
+		report="Approvals Pending",
+		meta=_("Approvals Pending, oldest first"),
+	)
+
+	check(
+		"Subcontracts invoiced beyond what is certified",
+		"warning",
+		"Purchase Order",
+		None if subcontracts["restricted"] else len(subcontracts["ahead"]),
+		{"name": ["in", subcontracts.get("ahead") or []]},
 	)
 
 	awards.pop("_traced_request_lines", None)

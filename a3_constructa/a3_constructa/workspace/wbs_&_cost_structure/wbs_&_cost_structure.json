@@ -1,0 +1,372 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"wbs_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"WBS & Cost Structure Overview\", \"col\": 12}}, {\"id\": \"wbs_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>WBS &amp; Cost Structure</b></span>\", \"col\": 12}}, {\"id\": \"card_cost_head_tree\", \"type\": \"card\", \"data\": {\"card_name\": \"Cost Head Tree\", \"col\": 4}}, {\"id\": \"card_wbs_tree\", \"type\": \"card\", \"data\": {\"card_name\": \"WBS Tree\", \"col\": 4}}, {\"id\": \"card_cost_codes\", \"type\": \"card\", \"data\": {\"card_name\": \"Cost Codes\", \"col\": 4}}, {\"id\": \"card_allowances_&_allocation\", \"type\": \"card\", \"data\": {\"card_name\": \"Allowances & Allocation\", \"col\": 4}}, {\"id\": \"card_budget_revisions\", \"type\": \"card\", \"data\": {\"card_name\": \"Budget Revisions\", \"col\": 4}}, {\"id\": \"card_accounting_dimensions\", \"type\": \"card\", \"data\": {\"card_name\": \"Accounting Dimensions\", \"col\": 4}}, {\"id\": \"card_budget_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Budget Reports\", \"col\": 4}}]",
+ "creation": "2026-10-06 11:10:52.370070",
+ "custom_blocks": [
+  {
+   "custom_block_name": "WBS & Cost Structure Overview",
+   "label": "WBS & Cost Structure Overview"
+  }
+ ],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "branch",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "WBS & Cost Structure",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost Head Tree",
+   "link_count": 7,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost Head tree",
+   "link_count": 0,
+   "link_to": "Cost Head",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "University package",
+   "link_count": 0,
+   "link_to": "Cost Head - University",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Cost Head",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Hospital package",
+   "link_count": 0,
+   "link_to": "Cost Head - Hospital",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Cost Head",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Road Works package",
+   "link_count": 0,
+   "link_to": "Cost Head - Road Works",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Cost Head",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "External Works package",
+   "link_count": 0,
+   "link_to": "Cost Head - External Works",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Cost Head",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Temporary Works package",
+   "link_count": 0,
+   "link_to": "Cost Head - Temporary Works",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Cost Head",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost Center",
+   "link_count": 0,
+   "link_to": "Cost Center",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WBS Tree",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WBS tree",
+   "link_count": 0,
+   "link_to": "WBS",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "WBS Register",
+   "link_count": 0,
+   "link_to": "WBS Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "WBS",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost Codes",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost Code",
+   "link_count": 0,
+   "link_to": "Cost Code",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Chart of Accounts",
+   "link_count": 0,
+   "link_to": "Account",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost Center",
+   "link_count": 0,
+   "link_to": "Cost Center",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Allowances & Allocation",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "BOQ",
+   "link_count": 0,
+   "link_to": "BOQ",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WBS Allocation",
+   "link_count": 0,
+   "link_to": "WBS Allocation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Budget vs WBS",
+   "link_count": 0,
+   "link_to": "Budget vs WBS",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "WBS Allocation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Unallocated BOQ Lines",
+   "link_count": 0,
+   "link_to": "Unallocated BOQ Lines",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "BOQ",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Budget Revisions",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Variation Order",
+   "link_count": 0,
+   "link_to": "Variation Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Budget Transfer",
+   "link_count": 0,
+   "link_to": "Budget Transfer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Budget Revision Log",
+   "link_count": 0,
+   "link_to": "Budget Revision Log",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Budget Revision Log",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Accounting Dimensions",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Accounting Dimension",
+   "link_count": 0,
+   "link_to": "Accounting Dimension",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "General Ledger",
+   "link_count": 0,
+   "link_to": "General Ledger",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Budget Reports",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Budget vs WBS",
+   "link_count": 0,
+   "link_to": "Budget vs WBS",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "WBS Allocation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Budget vs Cost Code",
+   "link_count": 0,
+   "link_to": "Budget vs Cost Code",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "WBS Allocation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Cost Code Wise Costing",
+   "link_count": 0,
+   "link_to": "Cost Code Wise Costing",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Budget vs Commitment",
+   "link_count": 0,
+   "link_to": "Budget vs Commitment",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Purchase Order",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Cost to Complete",
+   "link_count": 0,
+   "link_to": "Cost to Complete",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "BOQ",
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-10-06 13:11:12.202302",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "WBS & Cost Structure",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "A3 Constructa",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [],
+ "title": "WBS & Cost Structure"
+}

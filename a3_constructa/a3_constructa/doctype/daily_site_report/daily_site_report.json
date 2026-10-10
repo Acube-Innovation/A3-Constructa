@@ -1,0 +1,378 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-08 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "title",
+  "project",
+  "report_date",
+  "site",
+  "cb_top",
+  "weather",
+  "temperature_c",
+  "prepared_by",
+  "prepared_by_name",
+  "company",
+  "sb_labour",
+  "labour",
+  "total_hours",
+  "cb_labour",
+  "total_overtime_hours",
+  "total_headcount",
+  "sb_subcontractors",
+  "subcontractors",
+  "sb_equipment",
+  "equipment",
+  "sb_progress",
+  "progress",
+  "sb_materials",
+  "materials",
+  "material_issue",
+  "sb_delays",
+  "delays",
+  "hours_lost",
+  "sb_notes",
+  "visitors",
+  "photos",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "DSR-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "DSR-.YYYY.-.####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Title",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "report_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "project.location",
+   "fetch_if_empty": 1,
+   "fieldname": "site",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Site",
+   "options": "Location"
+  },
+  {
+   "fieldname": "cb_top",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "weather",
+   "fieldtype": "Select",
+   "label": "Weather",
+   "options": "\nSunny\nCloudy\nRain\nHeavy rain\nStorm"
+  },
+  {
+   "fieldname": "temperature_c",
+   "fieldtype": "Float",
+   "label": "Temperature (°C)",
+   "precision": "1"
+  },
+  {
+   "fieldname": "prepared_by",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Prepared By",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "prepared_by.employee_name",
+   "fieldname": "prepared_by_name",
+   "fieldtype": "Data",
+   "label": "Prepared By Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "project.company",
+   "fetch_if_empty": 1,
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "hidden": 0,
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "sb_labour",
+   "fieldtype": "Section Break",
+   "label": "Labour"
+  },
+  {
+   "fieldname": "labour",
+   "fieldtype": "Table",
+   "label": "Labour",
+   "options": "DSR Labour"
+  },
+  {
+   "fieldname": "total_hours",
+   "fieldtype": "Float",
+   "label": "Labour Hours",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_labour",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_overtime_hours",
+   "fieldtype": "Float",
+   "label": "Overtime Hours",
+   "read_only": 1
+  },
+  {
+   "description": "Own labour and subcontractors.",
+   "fieldname": "total_headcount",
+   "fieldtype": "Int",
+   "label": "Headcount on Site",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:(doc.subcontractors || []).length",
+   "fieldname": "sb_subcontractors",
+   "fieldtype": "Section Break",
+   "label": "Subcontractors"
+  },
+  {
+   "fieldname": "subcontractors",
+   "fieldtype": "Table",
+   "label": "Subcontractors",
+   "options": "DSR Subcontractor"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:(doc.equipment || []).length",
+   "fieldname": "sb_equipment",
+   "fieldtype": "Section Break",
+   "label": "Equipment"
+  },
+  {
+   "fieldname": "equipment",
+   "fieldtype": "Table",
+   "label": "Equipment",
+   "options": "DSR Equipment"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:(doc.progress || []).length",
+   "fieldname": "sb_progress",
+   "fieldtype": "Section Break",
+   "label": "Progress"
+  },
+  {
+   "fieldname": "progress",
+   "fieldtype": "Table",
+   "label": "Progress",
+   "options": "DSR Progress"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:(doc.materials || []).length",
+   "fieldname": "sb_materials",
+   "fieldtype": "Section Break",
+   "label": "Materials Used"
+  },
+  {
+   "fieldname": "materials",
+   "fieldtype": "Table",
+   "label": "Materials",
+   "options": "DSR Material"
+  },
+  {
+   "fieldname": "material_issue",
+   "fieldtype": "Link",
+   "label": "Material Issue",
+   "no_copy": 1,
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:(doc.delays || []).length",
+   "fieldname": "sb_delays",
+   "fieldtype": "Section Break",
+   "label": "Delays"
+  },
+  {
+   "fieldname": "delays",
+   "fieldtype": "Table",
+   "label": "Delays",
+   "options": "DSR Delay"
+  },
+  {
+   "fieldname": "hours_lost",
+   "fieldtype": "Float",
+   "label": "Hours Lost",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.visitors || (doc.photos || []).length",
+   "fieldname": "sb_notes",
+   "fieldtype": "Section Break",
+   "label": "Visitors and Photos"
+  },
+  {
+   "fieldname": "visitors",
+   "fieldtype": "Small Text",
+   "label": "Visitors"
+  },
+  {
+   "fieldname": "photos",
+   "fieldtype": "Table",
+   "label": "Photos",
+   "options": "DSR Photo"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Daily Site Report",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-10-08 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Daily Site Report",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Projects User"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  }
+ ],
+ "search_fields": "project,report_date,site",
+ "show_title_field_in_link": 0,
+ "sort_field": "report_date",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}

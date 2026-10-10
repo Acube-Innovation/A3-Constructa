@@ -21,12 +21,17 @@
   "period_to",
   "sb_2",
   "items",
+  "sb_deductions",
+  "deductions",
+  "sb_compliance",
+  "compliance",
   "sb_3",
   "total_amount",
   "total_retention",
+  "total_deductions",
   "cb_3",
   "total_net_payable",
-  "amended_from",
+  "purchase_invoice",
   "amended_from"
  ],
  "fields": [
@@ -114,6 +119,30 @@
    "reqd": 1
   },
   {
+   "fieldname": "sb_deductions",
+   "fieldtype": "Section Break",
+   "label": "Deductions"
+  },
+  {
+   "description": "Back-charges, damage, materials we supplied and penalties, each on the WBS and cost code it recovers.",
+   "fieldname": "deductions",
+   "fieldtype": "Table",
+   "label": "Deductions",
+   "options": "Work Certificate Deduction"
+  },
+  {
+   "fieldname": "sb_compliance",
+   "fieldtype": "Section Break",
+   "label": "Compliance"
+  },
+  {
+   "description": "The documents the subcontractor must hold before a certificate is submitted: see Mandatory Document Rule for Work Certificate. Copied from the subcontractor's last certificate.",
+   "fieldname": "compliance",
+   "fieldtype": "Table",
+   "label": "Compliance Documents",
+   "options": "Compliance Document"
+  },
+  {
    "fieldname": "sb_3",
    "fieldtype": "Section Break",
    "label": "Totals"
@@ -132,22 +161,31 @@
    "read_only": 1
   },
   {
+   "fieldname": "total_deductions",
+   "fieldtype": "Currency",
+   "label": "Total Deductions",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
    "fieldname": "cb_3",
    "fieldtype": "Column Break"
   },
   {
+   "bold": 1,
+   "description": "Amount less retention and deductions: what the subcontractor is paid now.",
    "fieldname": "total_net_payable",
    "fieldtype": "Currency",
    "label": "Total Net Payable",
    "read_only": 1
   },
   {
-   "fieldname": "amended_from",
+   "allow_on_submit": 1,
+   "fieldname": "purchase_invoice",
    "fieldtype": "Link",
-   "label": "Amended From",
+   "label": "Purchase Invoice",
    "no_copy": 1,
-   "options": "Work Certificate",
-   "print_hide": 1,
+   "options": "Purchase Invoice",
    "read_only": 1
   },
   {
@@ -157,15 +195,14 @@
    "no_copy": 1,
    "options": "Work Certificate",
    "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-15 12:30:22.908060",
+ "modified": "2026-10-06 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Work Certificate",
@@ -229,6 +266,22 @@
    "share": 1,
    "submit": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
   }
  ],
  "row_format": "Dynamic",

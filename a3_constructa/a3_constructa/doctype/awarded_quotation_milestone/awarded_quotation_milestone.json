@@ -7,12 +7,15 @@
  "engine": "InnoDB",
  "field_order": [
   "milestone",
+  "component",
   "planned_start",
   "planned_end",
   "actual_end",
   "status",
   "weightage",
   "billing_percent",
+  "billing_due",
+  "sales_invoice",
   "variance_days",
   "sb_1",
   "remarks"
@@ -90,13 +93,37 @@
    "fieldname": "remarks",
    "fieldtype": "Small Text",
    "label": "Remarks"
+  },
+  {
+   "description": "The award component this milestone bills; its cost head gives the invoice's WBS.",
+   "fieldname": "component",
+   "fieldtype": "Data",
+   "in_list_view": 0,
+   "label": "Component"
+  },
+  {
+   "columns": 1,
+   "fieldname": "billing_due",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Billing Due",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "label": "Sales Invoice",
+   "no_copy": 1,
+   "options": "Sales Invoice",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-22 13:10:01.077360",
+ "modified": "2026-10-06 18:04:14.092106",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Awarded Quotation Milestone",

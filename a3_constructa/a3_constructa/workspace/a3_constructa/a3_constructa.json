@@ -1,8 +1,13 @@
 {
  "charts": [],
- "content": "[{\"id\": \"a3c_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>A3 Constructa</b></span>\", \"col\": 12}}, {\"id\": \"card_master_data\", \"type\": \"card\", \"data\": {\"card_name\": \"Master Data\", \"col\": 4}}, {\"id\": \"card_planning_&_budgeting\", \"type\": \"card\", \"data\": {\"card_name\": \"Planning & Budgeting\", \"col\": 4}}, {\"id\": \"card_procurement\", \"type\": \"card\", \"data\": {\"card_name\": \"Procurement\", \"col\": 4}}]",
+ "content": "[{\"id\":\"a3h_overview\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"A3 Constructa Overview\",\"col\":12}},{\"id\":\"a3h_01\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>A3 Constructa</b></span><br><span class=\\\"text-muted small\\\">The construction workspaces, by division. Each opens its module, with its overview first.</span>\",\"col\":12}},{\"id\":\"a3h_02\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Most used</b></span>\",\"col\":12}},{\"id\":\"a3h_03\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":3}},{\"id\":\"a3h_04\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Site Report\",\"col\":3}},{\"id\":\"a3h_05\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Client IPC\",\"col\":3}},{\"id\":\"a3h_06\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"a3h_07\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Entry\",\"col\":3}},{\"id\":\"a3h_08\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>1 \u00b7 Core</b></span><br><span class=\\\"text-muted small\\\">The cost structure every job is built on</span>\",\"col\":12}},{\"id\":\"a3h_09\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WBS & Cost Structure\",\"col\":3}},{\"id\":\"a3h_10\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>2 \u00b7 Win</b></span><br><span class=\\\"text-muted small\\\">From the enquiry to the signed contract and the client's invoices</span>\",\"col\":12}},{\"id\":\"a3h_11\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"CRM & Estimating\",\"col\":3}},{\"id\":\"a3h_12\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contracts & Awards\",\"col\":3}},{\"id\":\"a3h_13\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales & Billing\",\"col\":3}},{\"id\":\"a3h_14\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>3 \u00b7 Plan</b></span><br><span class=\\\"text-muted small\\\">Budgets and the programme, then the work on site</span>\",\"col\":12}},{\"id\":\"a3h_15\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Planning & Budgeting\",\"col\":3}},{\"id\":\"a3h_16\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Project Operations\",\"col\":3}},{\"id\":\"a3h_17\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>4 \u00b7 Resource</b></span><br><span class=\\\"text-muted small\\\">People, plant and tools</span>\",\"col\":12}},{\"id\":\"a3h_18\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"HR & Time\",\"col\":3}},{\"id\":\"a3h_19\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Asset & Equipment\",\"col\":3}},{\"id\":\"a3h_20\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>5 \u00b7 Buy</b></span><br><span class=\\\"text-muted small\\\">Buying, shipping and storing materials</span>\",\"col\":12}},{\"id\":\"a3h_21\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Procurement\",\"col\":3}},{\"id\":\"a3h_22\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery & Logistics\",\"col\":3}},{\"id\":\"a3h_23\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Inventory Movement\",\"col\":3}},{\"id\":\"a3h_24\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>6 \u00b7 Control</b></span><br><span class=\\\"text-muted small\\\">Money, job analysis and the masters</span>\",\"col\":12}},{\"id\":\"a3h_25\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Finance & Accounting\",\"col\":3}},{\"id\":\"a3h_26\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WBS Analysis & Reporting\",\"col\":3}},{\"id\":\"a3h_27\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Master Data\",\"col\":3}},{\"id\":\"a3h_28\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>7 \u00b7 Demo &amp; Guides</b></span><br><span class=\\\"text-muted small\\\">The Masiha Services SARL demo, and the printable guides</span>\",\"col\":12}},{\"id\":\"a3h_29\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Load the Masiha demo</b> (a company of its own, so it does not touch your data): bench --site &lt;site&gt; execute a3_constructa.demo.masiha.run.run. It is idempotent: run it again after a failure, or run one stage with --kwargs \\\"{'stage': 'quality'}\\\". Demo users sign in with the password Masiha@Demo2026.<br><b>Remove it</b>: on the company <i>Masiha Services SARL</i>, use <i>Delete Transactions</i> (ERPNext), then disable the @masiha.demo users. Take a backup first. There is no one-step removal for this demo yet.\",\"col\":12}},{\"id\":\"a3h_30\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"How it works\",\"col\":3}},{\"id\":\"a3h_31\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document flow\",\"col\":3}},{\"id\":\"a3h_32\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Maintenance guide\",\"col\":3}}]",
  "creation": "2026-09-15 12:42:35.160809",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "A3 Constructa Overview",
+   "label": "A3 Constructa Overview"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "hide_custom": 0,
@@ -11,166 +16,8 @@
  "indicator_color": "green",
  "is_hidden": 0,
  "label": "A3 Constructa",
- "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Master Data",
-   "link_count": 9,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Cost Head",
-   "link_count": 0,
-   "link_to": "Cost Head",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "WBS",
-   "link_count": 0,
-   "link_to": "WBS",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Cost Code",
-   "link_count": 0,
-   "link_to": "Cost Code",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Port",
-   "link_count": 0,
-   "link_to": "Port",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Service Route",
-   "link_count": 0,
-   "link_to": "Service Route",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Freight Rate Contract",
-   "link_count": 0,
-   "link_to": "Freight Rate Contract",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Document Type",
-   "link_count": 0,
-   "link_to": "Document Type",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Mandatory Document Rule",
-   "link_count": 0,
-   "link_to": "Mandatory Document Rule",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Approval Matrix",
-   "link_count": 0,
-   "link_to": "Approval Matrix",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Planning & Budgeting",
-   "link_count": 3,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "BOQ",
-   "link_count": 0,
-   "link_to": "BOQ",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "WBS Allocation",
-   "link_count": 0,
-   "link_to": "WBS Allocation",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Procurement Plan",
-   "link_count": 0,
-   "link_to": "Procurement Plan",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Procurement",
-   "link_count": 1,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Work Certificate",
-   "link_count": 0,
-   "link_to": "Work Certificate",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  }
- ],
- "modified": "2026-09-15 12:42:35.160809",
+ "links": [],
+ "modified": "2026-10-08 20:32:47.636347",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "A3 Constructa",
@@ -180,6 +27,227 @@
  "quick_lists": [],
  "roles": [],
  "sequence_id": 1.5,
- "shortcuts": [],
+ "shortcuts": [
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "format": "",
+   "icon": "",
+   "label": "Material Request",
+   "link_to": "Material Request",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "icon": "",
+   "label": "Daily Site Report",
+   "link_to": "Daily Site Report",
+   "stats_filter": "",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "icon": "",
+   "label": "Client IPC",
+   "link_to": "Client IPC",
+   "stats_filter": "",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "icon": "",
+   "label": "Purchase Order",
+   "link_to": "Purchase Order",
+   "stats_filter": "",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "icon": "",
+   "label": "Stock Entry",
+   "link_to": "Stock Entry",
+   "stats_filter": "",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "WBS & Cost Structure",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/wbs-%26-cost-structure"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "CRM & Estimating",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/crm-%26-estimating"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Contracts & Awards",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/contracts-%26-awards"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Sales & Billing",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/sales-%26-billing"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Planning & Budgeting",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/planning-%26-budgeting"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Project Operations",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/project-operations"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "HR & Time",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/hr-%26-time"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Asset & Equipment",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/asset-%26-equipment"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Procurement",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/procurement"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Delivery & Logistics",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/delivery-%26-logistics"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Inventory Movement",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/inventory-movement"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Finance & Accounting",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/finance-%26-accounting"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "WBS Analysis & Reporting",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/wbs-analysis-%26-reporting"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Master Data",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/app/master-data"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "How it works",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/assets/a3_constructa/docs/how_it_works.html"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Document flow",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/assets/a3_constructa/docs/doctype_flow.html"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "icon": "",
+   "label": "Maintenance guide",
+   "stats_filter": "",
+   "type": "URL",
+   "url": "/assets/a3_constructa/docs/maintenance_guide.html"
+  }
+ ],
  "title": "A3 Constructa"
 }

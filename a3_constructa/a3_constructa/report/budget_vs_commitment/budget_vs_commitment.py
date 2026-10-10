@@ -68,6 +68,10 @@ def get_budget(filters, field):
 	if filters.get("project"):
 		conditions.append("alloc.project = %(project)s")
 		values["project"] = filters.project
+	if filters.get("company"):
+		# An allocation has no company of its own; its project does.
+		conditions.append("alloc.project in (select name from `tabProject` where company = %(company)s)")
+		values["company"] = filters.company
 
 	rows = frappe.db.sql(
 		"""
@@ -85,10 +89,18 @@ def get_budget(filters, field):
 
 def get_committed(filters, field):
 	# docstatus 1 only: a draft PO commits nothing, a cancelled one releases it.
-	conditions = ["po.docstatus = 1", "poi.%s is not null" % field, "poi.%s != ''" % field]
+	# A closed or completed PO will not be billed any further, so it releases
+	# whatever it has not been billed for.
+	conditions = [
+		"po.docstatus = 1",
+		"po.status not in ('Closed', 'Completed')",
+		"poi.%s is not null" % field,
+		"poi.%s != ''" % field,
+	]
 	values = {}
 	if filters.get("project"):
-		conditions.append("po.project = %(project)s")
+		# The project is on the PO line; the header field is rarely filled.
+		conditions.append("(poi.project = %(project)s or po.project = %(project)s)")
 		values["project"] = filters.project
 	if filters.get("company"):
 		conditions.append("po.company = %(company)s")
@@ -102,7 +114,9 @@ def get_committed(filters, field):
 
 	rows = frappe.db.sql(
 		"""
-		select poi.{field} as grouping, sum(poi.base_amount) as amount
+		select poi.{field} as grouping,
+			-- What is left to bill: billed_amt is in the PO's currency, base_amount in the company's.
+			sum(greatest(poi.base_amount - poi.billed_amt * ifnull(nullif(po.conversion_rate, 0), 1), 0)) as amount
 		from `tabPurchase Order Item` poi
 		inner join `tabPurchase Order` po on po.name = poi.parent
 		where {conditions}

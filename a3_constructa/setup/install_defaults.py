@@ -169,6 +169,202 @@ def _payables_parent(company: str) -> str | None:
 	return groups[0].name
 
 
+# Catalogue 4.3-4.5 (P-04C): client billing needs two accounts of its own. Retention
+# the client holds back is still ours, so it is an asset until released; an advance
+# the client paid is owed back as work is certified, so it is a liability until
+# recovered. Neither carries an account type: they appear only on tax rows of the
+# certificate's invoice, which take no party.
+RETENTION_RECEIVABLE = "Retention Receivable"
+CUSTOMER_ADVANCES = "Advances from Customers"
+
+
+def create_contract_accounts():
+	"""Idempotently create Retention Receivable and Advances from Customers per company."""
+	for company in frappe.get_all("Company", fields=["name", "abbr"]):
+		for account_name, root_type, fragments in (
+			(RETENTION_RECEIVABLE, "Asset", ("Accounts Receivable", "Current Assets")),
+			(CUSTOMER_ADVANCES, "Liability", ("Current Liabilities", "Accounts Payable")),
+		):
+			if frappe.db.exists("Account", f"{account_name} - {company.abbr}"):
+				continue
+			parent = _group(company.name, root_type, fragments)
+			if not parent:
+				continue
+			doc = frappe.new_doc("Account")
+			doc.update({"account_name": account_name, "parent_account": parent, "company": company.name,
+			            "root_type": root_type, "is_group": 0})
+			doc.flags.ignore_permissions = True
+			doc.insert()
+
+
+# Catalogue 9.6 (P-09B): what is taken off a subcontractor's certificate - back-charges,
+# damage, materials we supplied, penalties - recovers cost the job already bore, so it is
+# credited to an expense account of its own, on the WBS and cost code it recovers.
+BACK_CHARGES = "Subcontract Back-charges"
+# The documents a subcontractor must hold before a Work Certificate is submitted.
+SUBCONTRACT_DOCUMENTS = ("Insurance Certificate", "Labour Compliance Certificate", "Tax Clearance Certificate")
+
+
+def create_back_charge_account():
+	for company in frappe.get_all("Company", fields=["name", "abbr"]):
+		if frappe.db.exists("Account", f"{BACK_CHARGES} - {company.abbr}"):
+			continue
+		parent = _group(company.name, "Expense", ("Direct Expenses", "Expenses"))
+		if not parent:
+			continue
+		doc = frappe.new_doc("Account")
+		doc.update({"account_name": BACK_CHARGES, "parent_account": parent, "company": company.name, "root_type": "Expense",
+		            "account_type": "Expense Account", "is_group": 0})
+		doc.flags.ignore_permissions = True
+		doc.insert()
+
+
+# Catalogue 8.1 (P-08A): owned plant is charged to the job at an internal hourly rate;
+# the other side of that charge is income to the plant department.
+PLANT_RECOVERY = "Internal Plant Recovery"
+
+
+def create_plant_recovery_account():
+	for company in frappe.get_all("Company", fields=["name", "abbr"]):
+		if frappe.db.exists("Account", f"{PLANT_RECOVERY} - {company.abbr}"):
+			continue
+		parent = _group(company.name, "Income", ("Indirect Income", "Income"))
+		if not parent:
+			continue
+		doc = frappe.new_doc("Account")
+		doc.update({"account_name": PLANT_RECOVERY, "parent_account": parent, "company": company.name, "root_type": "Income",
+		            "account_type": "Income Account", "is_group": 0})
+		doc.flags.ignore_permissions = True
+		doc.insert()
+
+
+# W-06: the site team works these records from Project Operations. This site carries
+# its own permissions for some of them (Task only for Projects User, Project Template
+# only for System Manager), so the Constructa roles are added on top, idempotently.
+OPERATIONS_PERMISSIONS = {
+	"Task": {"Constructa Project Manager": ("read", "write", "create", "delete", "report", "export"),
+	         "Constructa Site Engineer": ("read", "write", "create", "report"),
+	         "Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
+	"Project Template": {"Constructa Project Manager": ("read", "write", "create", "report")},
+	"Task Type": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
+	"Quality Inspection": {"Constructa Project Manager": ("read", "write", "create", "submit", "cancel", "report"),
+	                       "Constructa Site Engineer": ("read", "write", "create", "submit", "report"),
+	                       "Constructa Quantity Surveyor": ("read", "report")},
+	"Quality Inspection Parameter": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
+	"Quality Inspection Template": {"Constructa Project Manager": ("read", "write", "create"), "Constructa Site Engineer": ("read",)},
+	"Non Conformance": {"Constructa Project Manager": ("read", "write", "create", "report"),
+	                    "Constructa Site Engineer": ("read", "write", "create", "report"),
+	                    "Constructa Quantity Surveyor": ("read", "report")},
+	# Catalogue 13 (W-13): finance reads the budget, cost-to-complete and variation reports; the PM
+	# reads the timesheets behind Project Profitability. The ledger and salaries stay restricted.
+	"BOQ": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
+	"WBS Allocation": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
+	"Variation Order": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
+	"Timesheet": {"Constructa Project Manager": ("read", "report")},
+	# P-13A: actual cost opens the material issued to the job.
+	"Stock Entry": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report")},
+	# The masters those reports label their rows with; the QS follows the BOQ's procurement.
+	"WBS": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report"), "Constructa Quantity Surveyor": ("read", "report"),
+	        # P-13A: the Job Cost Report is a report on the WBS.
+	        "Constructa Project Manager": ("read", "report"),
+	        # Buyers and stores pick the WBS and cost code on orders, receipts and issues.
+	        "Purchase User": ("read",)},
+	"Cost Code": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",),
+	              "Purchase User": ("read",)},
+	"Cost Head": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",),
+	              "Purchase User": ("read",)},
+	"Material Request": {"Constructa Quantity Surveyor": ("read", "report")},
+	"Purchase Order": {"Constructa Quantity Surveyor": ("read", "report")},
+	"Purchase Receipt": {"Constructa Quantity Surveyor": ("read", "report")},
+	# Catalogue 8.2: the equipment plan and task resources are by asset category.
+	"Asset Category": {"Constructa Project Manager": ("read",), "Constructa Site Engineer": ("read",)},
+	# Catalogue 5.4: procurement raises requests from the plan; the procurement manager keeps it.
+	"Procurement Plan": {"Purchase Manager": ("read", "write", "report"), "Purchase User": ("read", "report")},
+	"Warranty Claim": {"Constructa Project Manager": ("read", "write", "create", "report"),
+	                   "Constructa Site Engineer": ("read", "write", "create", "report"),
+	                   "Constructa Quantity Surveyor": ("read", "report")},
+	# Lead and Opportunity carry a Project Location, the project its site: sales, the QS and
+	# the PM pick it, so they read the Location master.
+	"Location": {"Sales User": ("read",), "Sales Manager": ("read",), "Constructa Quantity Surveyor": ("read",),
+	             "Constructa Project Manager": ("read",)},
+	# Tender documents (sales, the QS), subcontractor compliance and shipment papers (buying,
+	# logistics) are typed by a Document Type.
+	"Document Type": {"Sales User": ("read",), "Sales Manager": ("read",), "Constructa Quantity Surveyor": ("read",),
+	                  "Purchase User": ("read",)},
+}
+
+
+# Catalogue 7.7: what a new site worker goes through before starting.
+SITE_WORKER_ONBOARDING = [
+	("Copy of national ID (carte d'électeur) on file", "HR User", 0, 1),
+	("Bank or mobile-money account details for wages", "HR User", 0, 1),
+	("Site safety induction", "Constructa Site Engineer", 0, 1),
+	("PPE issued: helmet, boots, high-visibility vest, gloves", "Constructa Site Engineer", 0, 1),
+	("Trade test, recorded on the employee's certificates", "Constructa Site Engineer", 1, 3),
+]
+
+
+def create_onboarding_template():
+	if not frappe.db.exists("DocType", "Employee Onboarding Template") or frappe.db.exists("Employee Onboarding Template", {"title": "Site worker"}):
+		return
+	doc = frappe.get_doc({"doctype": "Employee Onboarding Template", "title": "Site worker",
+	                      "activities": [{"activity_name": name, "role": role if frappe.db.exists("Role", role) else None,
+	                                      "begin_on": begin, "duration": days} for name, role, begin, days in SITE_WORKER_ONBOARDING]})
+	doc.flags.ignore_permissions = True
+	doc.insert()
+
+
+def set_settings_defaults():
+	"""A Single's new field has no stored value (it reads as 0): store its default once."""
+	for field, value in (("site_buffer_days", 7), ("bid_threshold_score", 60)):
+		if not frappe.db.sql("select 1 from tabSingles where doctype = 'A3 Constructa Settings' and field = %s", field):
+			frappe.db.set_single_value("A3 Constructa Settings", field, value)
+
+
+def grant_operations_permissions():
+	from frappe.permissions import add_permission, update_permission_property
+
+	for doctype, roles in OPERATIONS_PERMISSIONS.items():
+		if not frappe.db.exists("DocType", doctype):
+			continue
+		for role, rights in roles.items():
+			if not frappe.db.exists("Role", role):
+				continue
+			if not frappe.db.exists("Custom DocPerm", {"parent": doctype, "role": role, "permlevel": 0}):
+				add_permission(doctype, role, 0)
+			for right in rights:
+				if not frappe.db.get_value("Custom DocPerm", {"parent": doctype, "role": role, "permlevel": 0}, right):
+					update_permission_property(doctype, role, 0, right, 1, validate=False)
+
+
+def create_subcontract_document_rule():
+	"""One blocking rule for Work Certificate, created once; edit it to change the list."""
+	if frappe.db.exists("Mandatory Document Rule", {"reference_doctype": "Work Certificate"}):
+		return
+	present = [t for t in SUBCONTRACT_DOCUMENTS if frappe.db.exists("Document Type", t)]
+	if not present:
+		return
+	doc = frappe.get_doc({"doctype": "Mandatory Document Rule", "reference_doctype": "Work Certificate", "is_blocking": 1,
+	                      "document_type": [{"document_type": t} for t in present]})
+	doc.flags.ignore_permissions = True
+	doc.insert()
+
+
+def contract_account(company: str, account_name: str) -> str | None:
+	abbr = frappe.get_cached_value("Company", company, "abbr")
+	name = f"{account_name} - {abbr}"
+	return name if frappe.db.exists("Account", name) else None
+
+
+def _group(company: str, root_type: str, fragments) -> str | None:
+	groups = frappe.get_all("Account", filters={"company": company, "is_group": 1, "root_type": root_type}, pluck="name", order_by="lft")
+	for fragment in fragments:
+		match = [g for g in groups if fragment.lower() in g.lower()]
+		if match:
+			return match[0]
+	return groups[0] if groups else None
+
+
 # Head 72 row 39 links ERPNext's Project Profitability report, and head 75 row
 # 51 charts it. That report refuses to run until Standard Working Hours is set,
 # so the app supplies a sensible default rather than shipping a link that errors.
@@ -186,8 +382,42 @@ def set_standard_working_hours():
 	)
 
 
+# Catalogue 9.3: an amended request or order keeps its number, with -1, -2.
+AMEND_COUNTER_DOCTYPES = ("Material Request", "Purchase Order")
+
+
+def keep_number_on_amend():
+	"""Pin "Amend Counter" for requests and orders, so a change to the site-wide
+	default naming does not give their amendments new numbers."""
+	settings = frappe.get_single("Document Naming Settings")
+	pinned = {row.document_type for row in settings.amend_naming_override}
+	missing = [dt for dt in AMEND_COUNTER_DOCTYPES if dt not in pinned]
+	if not missing:
+		return
+	for doctype in missing:
+		settings.append("amend_naming_override", {"document_type": doctype, "action": "Amend Counter"})
+	settings.flags.ignore_permissions = True
+	settings.save()
+
+
+def init_settings():
+	"""A3 Constructa Settings start at their defaults: warn when over budget, no tolerance."""
+	if frappe.db.get_single_value("A3 Constructa Settings", "budget_check_action"):
+		return
+	frappe.db.set_single_value("A3 Constructa Settings", {"budget_check_action": "Warn", "budget_tolerance_percent": 0})
+
+
 def run():
 	"""Seed every baseline record. Idempotent."""
 	create_asset_categories()
 	create_retention_account()
+	create_contract_accounts()
+	create_back_charge_account()
+	create_subcontract_document_rule()
+	create_plant_recovery_account()
+	grant_operations_permissions()
+	set_settings_defaults()
+	create_onboarding_template()
 	set_standard_working_hours()
+	keep_number_on_amend()
+	init_settings()

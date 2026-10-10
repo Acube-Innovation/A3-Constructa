@@ -1,0 +1,292 @@
+/* WBS Analysis & Reporting Overview: the parts only this dashboard draws. The
+   shared stylesheet (_shared/overview.css) is placed in front of this one. */
+
+/* ---------- Hero: forecast margin by award ---------- */
+
+.ov-project-rows {
+	display: grid;
+	gap: 4px;
+	margin: 4px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ov-project-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 2px 10px;
+	padding: 4px 6px;
+	margin: 0 -6px;
+	border-radius: var(--ms-r-chip);
+	color: var(--ms-ink-2);
+	font-size: 13px;
+	font-variant-numeric: tabular-nums;
+	text-decoration: none;
+}
+
+a.ov-project-row:hover,
+a.ov-project-row:focus-visible {
+	background: var(--ms-row-hover);
+}
+
+.ov-project-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ov-behind {
+	color: var(--ov-critical);
+	font-weight: 600;
+}
+
+/* ---------- Bars: signed (variance, margin), paired (budget / forecast), factor ---------- */
+
+.ov-sbars,
+.ov-pairs {
+	display: grid;
+	grid-template-columns: minmax(0, 38%) minmax(0, 1fr) auto;
+	gap: 2px 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ov-sbars > li,
+.ov-pairs > li,
+.ov-sbar-row {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+}
+
+.ov-sbar-row {
+	align-items: center;
+	padding: 6px 8px;
+	margin: 0 -8px;
+	border-radius: var(--ms-r-chip);
+	color: inherit;
+	text-decoration: none;
+	transition: background-color 120ms ease;
+}
+
+a.ov-sbar-row:hover,
+a.ov-sbar-row:focus-visible {
+	background: var(--ms-row-hover);
+}
+
+.ov-sbar-value {
+	color: var(--ms-ink-2);
+	font-size: 12.5px;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	white-space: nowrap;
+}
+
+/* A signed bar grows from the middle: right for a gain, left for a loss. */
+.ov-sbar-track {
+	position: relative;
+	height: 10px;
+	border-radius: var(--ms-r-pill);
+	background: var(--ms-track-bar);
+}
+
+.ov-sbar-axis {
+	position: absolute;
+	top: -3px;
+	bottom: -3px;
+	left: 50%;
+	width: 1px;
+	background: var(--ms-muted-2);
+}
+
+.ov-sbar {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	width: calc(50% * var(--ov-share));
+	min-width: 2px;
+	border-radius: 0 var(--ms-r-pill) var(--ms-r-pill) 0;
+	background: linear-gradient(90deg, var(--ms-green-600), var(--ms-green-400));
+}
+
+.ov-sbar.is-negative {
+	left: auto;
+	right: 50%;
+	border-radius: var(--ms-r-pill) 0 0 var(--ms-r-pill);
+	background: var(--ov-critical);
+}
+
+.ov-pair-track {
+	display: grid;
+	gap: 3px;
+}
+
+.ov-pair-bar {
+	display: block;
+	width: calc(100% * var(--ov-share));
+	min-width: 2px;
+	height: 7px;
+	border-radius: var(--ms-r-pill);
+}
+
+.ov-pair-bar.is-budget,
+.ov-swatch.is-budget {
+	background: var(--ms-navy-400);
+}
+
+.ov-pair-bar.is-forecast,
+.ov-swatch.is-forecast {
+	background: var(--ms-green-600);
+}
+
+.ov-pair-bar.is-forecast.is-over {
+	background: var(--ov-critical);
+}
+
+.ov-pair-bar.is-none {
+	background: var(--ov-other);
+}
+
+.ov-fbar-track {
+	position: relative;
+	height: 10px;
+	border-radius: var(--ms-r-pill);
+	background: var(--ms-track-bar);
+}
+
+.ov-fbar {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: calc(100% * var(--ov-share));
+	min-width: 2px;
+	border-radius: var(--ms-r-pill);
+	background: linear-gradient(90deg, var(--ms-navy-700), var(--ms-navy-400));
+}
+
+.ov-fbar.is-low {
+	background: var(--ov-critical);
+}
+
+.ov-fbar-mark,
+.ov-fbar-one {
+	position: absolute;
+	top: -4px;
+	bottom: -4px;
+	width: 2px;
+	border-radius: 1px;
+}
+
+.ov-fbar-mark {
+	left: calc(100% * var(--ov-mark) - 1px);
+	background: var(--ms-amber-700);
+}
+
+.ov-fbar-one {
+	left: calc(100% * var(--ov-one) - 1px);
+	background: var(--ms-muted-2);
+	opacity: 0.6;
+}
+
+/* ---------- S-curve ---------- */
+
+.ov-chart {
+	position: relative;
+	margin: 0;
+	padding: 20px 24px 8px;
+}
+
+.ov-chart-legend {
+	margin-bottom: 14px;
+}
+
+.ov-curve {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 280px;
+	overflow: visible;
+}
+
+.ov-curve-grid {
+	stroke: var(--ov-grid);
+	stroke-width: 1;
+}
+
+.ov-curve-base {
+	stroke: var(--ms-muted-2);
+	stroke-width: 1;
+}
+
+.ov-curve-tick {
+	fill: var(--ms-muted-2);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+}
+
+.ov-curve-line {
+	stroke-width: 2.5;
+	stroke-linejoin: round;
+	stroke-linecap: round;
+}
+
+.ov-curve-line.is-pv { stroke: var(--ms-navy-400); stroke-dasharray: 6 4; }
+.ov-curve-line.is-ev { stroke: var(--ms-green-600); }
+.ov-curve-line.is-ac { stroke: var(--ov-critical); }
+.ov-curve-dot.is-pv, .ov-swatch.is-pv { fill: var(--ms-navy-400); background: var(--ms-navy-400); }
+.ov-curve-dot.is-ev, .ov-swatch.is-ev { fill: var(--ms-green-600); background: var(--ms-green-600); }
+.ov-curve-dot.is-ac, .ov-swatch.is-ac { fill: var(--ov-critical); background: var(--ov-critical); }
+
+.ov-curve-link {
+	margin: 4px 24px 16px;
+}
+
+@media (max-width: 640px) {
+	.ov-sbars,
+	.ov-pairs {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+
+	.ov-sbars .ov-bar-label,
+	.ov-pairs .ov-bar-label {
+		grid-column: 1 / -1;
+	}
+
+	.ov-chart {
+		padding: 16px 12px 8px;
+	}
+}
+
+.ov-hero-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	width: fit-content;
+	color: var(--ms-green-600);
+	font-size: var(--text-sm, 13px);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ov-hero-link:hover,
+.ov-hero-link:focus-visible {
+	color: var(--ms-green-800);
+	text-decoration: underline;
+}
+
+/* A seven-figure margin and its share don't fit beside each other on a phone. */
+.ov-hero {
+	min-width: 0;
+}
+
+.ov-hero-figure {
+	flex-wrap: wrap;
+	row-gap: 4px;
+}
+
+@media (max-width: 640px) {
+	.ov-hero-value {
+		font-size: 40px;
+	}
+}

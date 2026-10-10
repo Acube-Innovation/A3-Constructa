@@ -1,0 +1,95 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-10-08 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "certificate_type",
+  "certificate_no",
+  "issued_by",
+  "cb_1",
+  "issue_date",
+  "expiry_date",
+  "attachment",
+  "reminded_30",
+  "reminded_7"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "certificate_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Certificate",
+   "options": "Trade test\nOperator licence\nWork at height\nWelding\nScaffolding\nConfined space\nFirst aid\nDriving licence",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "certificate_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Certificate No"
+  },
+  {
+   "columns": 2,
+   "fieldname": "issued_by",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Issued By"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "issue_date",
+   "fieldtype": "Date",
+   "label": "Issue Date"
+  },
+  {
+   "columns": 2,
+   "description": "Leave empty if it doesn't expire.",
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Expiry Date"
+  },
+  {
+   "columns": 2,
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "reminded_30",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Reminded 30 Days Before",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "reminded_7",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Reminded 7 Days Before",
+   "no_copy": 1,
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-08 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Employee Certificate",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,174 @@
+/* WBS & Cost Structure Overview: the parts only this dashboard draws. The
+   shared stylesheet (_shared/overview.css) is placed in front of this one. */
+
+/* ---------- Hero: share of the approved BOQ on the works ---------- */
+
+.ov-alloc-track {
+	position: relative;
+	height: 10px;
+	border-radius: var(--ms-r-pill);
+	background: var(--ms-track);
+	overflow: hidden;
+}
+
+.ov-alloc-fill {
+	display: block;
+	height: 100%;
+	min-width: 4px;
+	border-radius: var(--ms-r-pill);
+	background: linear-gradient(90deg, var(--ms-green-400), var(--ms-green-600));
+}
+
+.ov-hero-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	width: fit-content;
+	color: var(--ms-green-600);
+	font-size: var(--text-sm, 13px);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ov-hero-link:hover,
+.ov-hero-link:focus-visible {
+	color: var(--ms-green-800);
+	text-decoration: underline;
+}
+
+/* ---------- Budget changes per month (diverging columns) ---------- */
+
+.ov-chart {
+	position: relative;
+	margin: 0;
+	padding: 20px 24px 16px;
+}
+
+.ov-change-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin: 0 0 14px 36px;
+	color: var(--ms-muted);
+	font-size: 12px;
+}
+
+.ov-change-key {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.ov-change-key::before {
+	content: "";
+	width: 10px;
+	height: 10px;
+	border-radius: 3px;
+	background: var(--ms-green-600);
+}
+
+.ov-change-key.is-removed::before {
+	background: var(--ms-amber-700);
+}
+
+.ov-plot {
+	position: relative;
+	height: 210px;
+	margin-left: 44px;
+}
+
+.ov-gridline {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: var(--ms-rule);
+}
+
+.ov-gridline.is-base {
+	background: var(--ms-ink-3);
+	opacity: 0.45;
+}
+
+.ov-tick {
+	position: absolute;
+	right: calc(100% + 8px);
+	transform: translateY(-50%);
+	color: var(--ms-muted);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.ov-columns {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+}
+
+.ov-change-col {
+	position: relative;
+	height: 100%;
+	cursor: default;
+}
+
+.ov-change-col:focus-visible {
+	outline-offset: -2px;
+	border-radius: var(--ms-r-chip);
+}
+
+.ov-change-bar {
+	position: absolute;
+	left: 50%;
+	width: 100%;
+	max-width: 46px;
+	transform: translateX(-50%);
+}
+
+.ov-change-bar.is-added {
+	border-radius: 6px 6px 0 0;
+	background: linear-gradient(180deg, var(--ms-green-400), var(--ms-green-600));
+}
+
+.ov-change-bar.is-removed {
+	border-radius: 0 0 6px 6px;
+	background: var(--ms-amber-700);
+}
+
+.ov-change-col:hover .ov-change-bar.is-added,
+.ov-change-col:focus-visible .ov-change-bar.is-added {
+	background: linear-gradient(180deg, var(--ms-green-600), var(--ms-green-800));
+}
+
+.ov-change-col:hover .ov-change-bar.is-removed,
+.ov-change-col:focus-visible .ov-change-bar.is-removed {
+	opacity: 0.85;
+}
+
+.ov-xlabels {
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+	margin: 10px 0 0 44px;
+	color: var(--ms-muted);
+	font-size: 11px;
+	text-align: center;
+}
+
+.ov-xlabels span:nth-child(odd) {
+	visibility: var(--ov-odd-labels, visible);
+}
+
+@media (max-width: 560px) {
+	.ov-chart {
+		--ov-odd-labels: hidden;
+		padding: 16px 12px 12px;
+	}
+
+	.ov-columns,
+	.ov-xlabels {
+		gap: 4px;
+	}
+}

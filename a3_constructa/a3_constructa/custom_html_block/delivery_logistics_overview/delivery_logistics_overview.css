@@ -1,0 +1,28 @@
+/* Delivery & Logistics Overview: the parts only this dashboard draws. The
+   shared stylesheet (_shared/overview.css) is placed in front of this one. */
+
+.ov-hero-issue {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	color: var(--ov-ink);
+	font-size: var(--text-sm, 13px);
+	font-weight: 500;
+}
+
+.ov-hero-transit {
+	display: grid;
+	gap: 8px;
+	margin-top: 4px;
+	padding-top: 12px;
+	border-top: 1px solid var(--ov-border);
+}
+
+.ov-hero-days {
+	color: var(--ms-green-800);
+	font-family: var(--ms-font-display);
+	font-size: 34px;
+	font-weight: 400;
+	line-height: 0.9;
+}

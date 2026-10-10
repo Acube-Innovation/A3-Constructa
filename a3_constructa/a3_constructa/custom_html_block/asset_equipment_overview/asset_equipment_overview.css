@@ -1,0 +1,225 @@
+/* Asset & Equipment Overview: the parts only this dashboard draws. The shared
+   stylesheet (_shared/overview.css) is placed in front of this one. */
+
+/* ---------- Hero: register, then small tools ---------- */
+
+.ov-hero-issue {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	color: var(--ov-ink);
+	font-size: var(--text-sm, 13px);
+	font-weight: 500;
+}
+
+.ov-hero-sub {
+	display: grid;
+	gap: 8px;
+	margin-top: 4px;
+	padding-top: 12px;
+	border-top: 1px solid var(--ov-border);
+}
+
+.ov-hero-sub-value {
+	color: var(--ms-green-800);
+	font-family: var(--ms-font-display);
+	font-size: 34px;
+	font-weight: 400;
+	line-height: 0.9;
+}
+
+/* ---------- Column chart (depreciation per month) ----------
+   After the Master Data overview's chart, with each column split into what is
+   booked and what is still scheduled. */
+
+.ov-chart {
+	position: relative;
+	margin: 0;
+	padding: 18px 24px 16px;
+}
+
+.ov-chart-legend {
+	justify-content: flex-end;
+	margin-bottom: 18px;
+}
+
+.ov-swatch.is-booked {
+	background: var(--ms-green-600);
+}
+
+.ov-swatch.is-scheduled {
+	border: 1px dashed var(--ms-green-600);
+	background: var(--ms-green-100);
+}
+
+.ov-plot {
+	position: relative;
+	height: 190px;
+	margin-left: 44px;
+}
+
+.ov-gridline {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: var(--ms-rule);
+}
+
+.ov-gridline.is-base {
+	background: var(--ms-border);
+}
+
+.ov-tick {
+	position: absolute;
+	right: calc(100% + 8px);
+	transform: translateY(-50%);
+	color: var(--ms-muted);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.ov-columns {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+}
+
+.ov-col {
+	position: relative;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	height: 100%;
+	cursor: default;
+}
+
+.ov-col:focus-visible {
+	outline-offset: -2px;
+	border-radius: var(--ms-r-chip);
+}
+
+.ov-col-bar {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 46px;
+	border-radius: 6px 6px 0 0;
+	overflow: visible;
+}
+
+.ov-col-part {
+	display: block;
+	flex-basis: 0;
+	min-height: 2px;
+}
+
+.ov-col-part:first-child {
+	border-radius: 6px 6px 0 0;
+}
+
+.ov-col-part.is-booked {
+	background: linear-gradient(180deg, var(--ms-green-400), var(--ms-green-600));
+}
+
+.ov-col-part.is-scheduled {
+	border: 1px dashed var(--ms-green-600);
+	border-bottom: 0;
+	background: var(--ms-green-100);
+}
+
+.ov-col:hover .ov-col-part.is-booked,
+.ov-col:focus-visible .ov-col-part.is-booked {
+	background: linear-gradient(180deg, var(--ms-green-600), var(--ms-green-800));
+}
+
+.ov-col:hover .ov-col-part.is-scheduled,
+.ov-col:focus-visible .ov-col-part.is-scheduled {
+	border-style: solid;
+}
+
+/* A month with nothing in it: a stub on the baseline, not a gap. */
+.ov-col .ov-col-bar.is-zero {
+	min-height: 3px;
+	border-radius: 0;
+	background: var(--ms-border-quiet);
+}
+
+.ov-col-cap {
+	position: absolute;
+	bottom: calc(100% + 4px);
+	left: 50%;
+	transform: translateX(-50%);
+	color: var(--ms-green-600);
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ov-xlabels {
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+	margin: 10px 0 0 44px;
+	color: var(--ms-muted);
+	font-size: 11px;
+	text-align: center;
+}
+
+.ov-xlabels span:nth-child(odd) {
+	visibility: var(--ov-odd-labels, visible);
+}
+
+@media (max-width: 560px) {
+	.ov-chart {
+		--ov-odd-labels: hidden;
+		padding: 16px 16px 12px;
+	}
+
+	.ov-columns,
+	.ov-xlabels {
+		gap: 4px;
+	}
+}
+
+/* ---------- Room for long names ----------
+   Projects, locations and machines carry long names. A bar label gets as much
+   room as its bar and may wrap to a second line; on a phone it sits above its
+   bar, and list titles wrap rather than cut off. */
+
+.ov-bars {
+	grid-template-columns: minmax(90px, 1fr) minmax(0, 1fr) minmax(28px, max-content);
+}
+
+.ov-bar-label {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-height: 1.3;
+	white-space: normal;
+}
+
+@media (max-width: 560px) {
+	.ov-bars {
+		grid-template-columns: minmax(0, 1fr) minmax(28px, max-content);
+		row-gap: 6px;
+	}
+
+	.ov-bar-row {
+		row-gap: 4px;
+	}
+
+	.ov-bar-label,
+	.ov-bar-track {
+		grid-column: 1 / -1;
+	}
+
+	.ov-row-title {
+		white-space: normal;
+	}
+}

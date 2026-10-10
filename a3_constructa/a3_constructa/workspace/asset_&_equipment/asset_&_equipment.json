@@ -1,8 +1,13 @@
 {
  "charts": [],
- "content": "[{\"id\": \"ae_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Asset &amp; Equipment</b></span>\", \"col\": 12}}, {\"id\": \"card_asset_creation\", \"type\": \"card\", \"data\": {\"card_name\": \"Asset Creation\", \"col\": 4}}, {\"id\": \"card_equipment_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Equipment Register\", \"col\": 4}}, {\"id\": \"card_maintenance_management\", \"type\": \"card\", \"data\": {\"card_name\": \"Maintenance Management\", \"col\": 4}}, {\"id\": \"card_spare_parts_management\", \"type\": \"card\", \"data\": {\"card_name\": \"Spare Parts Management\", \"col\": 4}}, {\"id\": \"card_small_tools_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Small Tools Register\", \"col\": 4}}, {\"id\": \"card_asset_movement\", \"type\": \"card\", \"data\": {\"card_name\": \"Asset Movement\", \"col\": 4}}, {\"id\": \"card_asset_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Asset Reports\", \"col\": 4}}]",
+ "content": "[{\"id\": \"ae_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Asset & Equipment Overview\", \"col\": 12}}, {\"id\": \"ae_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Asset &amp; Equipment</b></span>\", \"col\": 12}}, {\"id\": \"card_asset_creation\", \"type\": \"card\", \"data\": {\"card_name\": \"Asset Creation\", \"col\": 4}}, {\"id\": \"card_equipment_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Equipment Register\", \"col\": 4}}, {\"id\": \"card_usage_log\", \"type\": \"card\", \"data\": {\"card_name\": \"Usage Log\", \"col\": 4}}, {\"id\": \"card_maintenance_management\", \"type\": \"card\", \"data\": {\"card_name\": \"Maintenance Management\", \"col\": 4}}, {\"id\": \"card_spare_parts_management\", \"type\": \"card\", \"data\": {\"card_name\": \"Spare Parts Management\", \"col\": 4}}, {\"id\": \"card_small_tools_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Small Tools Register\", \"col\": 4}}, {\"id\": \"card_asset_movement\", \"type\": \"card\", \"data\": {\"card_name\": \"Asset Movement\", \"col\": 4}}, {\"id\": \"card_asset_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Asset Reports\", \"col\": 4}}]",
  "creation": "2026-09-15 13:54:26.203094",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "Asset & Equipment Overview",
+   "label": "Asset & Equipment Overview"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "hide_custom": 0,
@@ -111,6 +116,66 @@
    "link_type": "Report",
    "onboard": 0,
    "report_ref_doctype": "Asset",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Usage Log",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "description": null,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Equipment Log",
+   "link_count": 0,
+   "link_to": "Equipment Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "description": null,
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Equipment Utilisation",
+   "link_count": 0,
+   "link_to": "Equipment Utilisation",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Equipment Log",
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "description": null,
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Equipment Plan",
+   "link_count": 0,
+   "link_to": "Equipment Plan",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Task",
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "description": null,
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Fuel Consumption",
+   "link_count": 0,
+   "link_to": "Fuel Consumption",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Equipment Log",
    "type": "Link"
   },
   {
@@ -436,7 +501,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-15 13:54:26.203094",
+ "modified": "2026-10-08 18:30:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Asset & Equipment",
@@ -446,7 +511,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 7.0,
+ "sequence_id": 8.0,
  "shortcuts": [],
  "title": "Asset & Equipment"
 }

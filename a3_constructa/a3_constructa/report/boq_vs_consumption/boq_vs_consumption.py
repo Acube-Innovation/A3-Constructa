@@ -1,130 +1,98 @@
 # Copyright (c) 2026, Acube Innovations Pvt Ltd and contributors
 # For license information, please see license.txt
-"""BOQ vs Consumption - build sheet head 49, row 23.
+"""BOQ vs Consumption - build sheet head 49 row 23; catalogue 11.4 and 13.2 (P-13B).
 
-What the BOQ allowed against what has actually been issued, per cost code. The
-over-consumption flag is the point of the report: material issued beyond the
-BOQ quantity is either a variation to be claimed or a loss to be explained, and
-either way somebody needs to see it while the job is still running.
+What the approved BOQ allows against what has been issued to the works, per
+project, WBS, cost code and item (a line split by WBS Allocation is judged
+part by part, so over-use on one part of the works is not hidden by another). The over-use flag is the point of the report:
+material issued beyond the BOQ quantity plus its wastage allowance is either a
+variation to claim or a loss to explain, and somebody needs to see it while
+the job is still running.
 
-Approved quantities are used where the BOQ has them, since that is what was
-signed off; the original quantity is the fallback for a BOQ still in draft.
+Every quantity is in the item's stock unit before it is compared: a BOQ line
+measured in another unit (tonnes of steel against kilograms in store) is
+converted with the item's conversion factor. Allowed = BOQ qty × (1 + the BOQ
+line's wastage %). Only approved BOQs count: a draft or tender BOQ is not a
+budget. Material issued to a WBS with no BOQ line was never budgeted, so all
+of it is over-use; an issue with no WBS of an item no BOQ holds (diesel for
+plant) is a running cost, not BOQ material, and is left out. Over-use is valued at what the issued material cost.
 """
 
 import frappe
 from frappe import _
 from frappe.utils import flt
 
+from a3_constructa.api.quantity_chain import boq_parts, issues
+
+EPS = 1e-6
+
 
 def execute(filters=None):
 	filters = frappe._dict(filters or {})
-	boq = get_boq_quantities(filters)
-	issued = get_issued_quantities(filters)
+	frappe.has_permission("BOQ", "read", throw=True)
+	return get_columns(), get_data(filters)
 
+
+def get_data(filters):
+	rows = {}
+
+	def row(project, wbs, cost_code, item):
+		return rows.setdefault((project, wbs, cost_code, item), {"project": project, "wbs": wbs, "cost_code": cost_code, "item_code": item,
+		                                                    "boq_qty": 0.0, "allowed_qty": 0.0, "issued_qty": 0.0, "issued_value": 0.0})
+
+	parts = boq_parts(filters.company, filters.project)
+	in_boq = {(p["project"], p["item_code"]) for p in parts}
+	for p in parts:
+		if not p["cost_code"] or (filters.cost_code and p["cost_code"] != filters.cost_code):
+			continue
+		r = row(p["project"], p["wbs"], p["cost_code"], p["item_code"])
+		r["boq_qty"] += p["qty"]
+		r["allowed_qty"] += p["allowed"]
+		r["stock_uom"] = p["stock_uom"]
+	for i in issues(filters.company, filters.project, filters.to_date):
+		if not i.cost_code or (filters.cost_code and i.cost_code != filters.cost_code):
+			continue
+		if (i.project, i.item_code) not in in_boq and not i.wbs:
+			continue  # plant fuel and the like: running costs, not BOQ material
+		r = row(i.project, i.wbs, i.cost_code, i.item_code)
+		r["issued_qty"] += flt(i.qty)
+		r["issued_value"] += flt(i.value)
+
+	uoms = dict(frappe.get_all("Item", filters={"name": ["in", list({r["item_code"] for r in rows.values()})]},
+	                           fields=["name", "stock_uom"], as_list=True)) if rows else {}
 	data = []
-	for cost_code in sorted(set(boq) | set(issued)):
-		b = boq.get(cost_code, {})
-		boq_qty = flt(b.get("qty"))
-		issued_qty = flt(issued.get(cost_code))
-		data.append({
-			"cost_code": cost_code,
-			"item_code": b.get("item_code"),
-			"uom": b.get("uom"),
-			"boq_qty": boq_qty,
-			"issued_qty": issued_qty,
-			"balance_qty": boq_qty - issued_qty,
-			"consumed_percent": (issued_qty / boq_qty * 100) if boq_qty else
-			(100 if issued_qty else 0),
-			# Issued with no BOQ line at all is over-consumption too - it was
-			# never budgeted.
-			"over_consumed": 1 if issued_qty > boq_qty else 0,
-		})
-
+	for r in rows.values():
+		r["stock_uom"] = r.get("stock_uom") or uoms.get(r["item_code"])
+		r["wastage_percent"] = (r["allowed_qty"] / r["boq_qty"] - 1) * 100 if r["boq_qty"] else 0
+		r["balance_qty"] = r["allowed_qty"] - r["issued_qty"]
+		r["consumed_percent"] = r["issued_qty"] / r["allowed_qty"] * 100 if r["allowed_qty"] else (100 if r["issued_qty"] else 0)
+		r["over_qty"] = max(0.0, r["issued_qty"] - r["allowed_qty"])
+		rate = r["issued_value"] / r["issued_qty"] if r["issued_qty"] else 0
+		r["over_value"] = r["over_qty"] * rate
+		r["over_consumed"] = 1 if r["over_qty"] > EPS else 0
+		r["not_in_boq"] = 1 if not r["boq_qty"] else 0
+		data.append(r)
 	if filters.get("only_over_consumed"):
 		data = [r for r in data if r["over_consumed"]]
-
-	data.sort(key=lambda r: (-r["over_consumed"], -r["consumed_percent"]))
-	return get_columns(), data
+	data.sort(key=lambda r: (-r["over_consumed"], -r["over_value"], -r["consumed_percent"], r["project"], r["wbs"] or "", r["cost_code"], r["item_code"]))
+	return data
 
 
 def get_columns():
+	q = lambda name, label, width=110: {"fieldname": name, "label": label, "fieldtype": "Float", "width": width, "precision": 3}
 	return [
-		{"fieldname": "cost_code", "label": _("Cost Code"), "fieldtype": "Link",
-		 "options": "Cost Code", "width": 160},
-		{"fieldname": "item_code", "label": _("Item"), "fieldtype": "Link",
-		 "options": "Item", "width": 160},
-		{"fieldname": "uom", "label": _("UOM"), "fieldtype": "Link", "options": "UOM",
-		 "width": 80},
-		{"fieldname": "boq_qty", "label": _("BOQ Qty"), "fieldtype": "Float", "width": 110},
-		{"fieldname": "issued_qty", "label": _("Issued Qty"), "fieldtype": "Float",
-		 "width": 110},
-		{"fieldname": "balance_qty", "label": _("Balance Qty"), "fieldtype": "Float",
-		 "width": 110},
-		{"fieldname": "consumed_percent", "label": _("% Consumed"), "fieldtype": "Percent",
-		 "width": 120},
-		{"fieldname": "over_consumed", "label": _("Over Consumed"), "fieldtype": "Check",
-		 "width": 130},
+		{"fieldname": "project", "label": _("Project"), "fieldtype": "Link", "options": "Project", "width": 100},
+		{"fieldname": "wbs", "label": _("WBS"), "fieldtype": "Link", "options": "WBS", "width": 120},
+		{"fieldname": "cost_code", "label": _("Cost Code"), "fieldtype": "Link", "options": "Cost Code", "width": 140},
+		{"fieldname": "item_code", "label": _("Item"), "fieldtype": "Link", "options": "Item", "width": 140},
+		{"fieldname": "stock_uom", "label": _("Stock Unit"), "fieldtype": "Link", "options": "UOM", "width": 100},
+		q("boq_qty", _("BOQ Qty")),
+		{"fieldname": "wastage_percent", "label": _("Wastage %"), "fieldtype": "Percent", "width": 90},
+		q("allowed_qty", _("Allowed")),
+		q("issued_qty", _("Issued")),
+		q("balance_qty", _("Balance")),
+		{"fieldname": "consumed_percent", "label": _("% of Allowed"), "fieldtype": "Percent", "width": 110},
+		q("over_qty", _("Over-use Qty")),
+		{"fieldname": "over_value", "label": _("Over-use Value"), "fieldtype": "Currency", "width": 120},
+		{"fieldname": "over_consumed", "label": _("Over-use"), "fieldtype": "Check", "width": 80},
 	]
-
-
-def get_boq_quantities(filters):
-	conditions = ["boq.docstatus < 2", "item.cost_code is not null", "item.cost_code != ''"]
-	values = {}
-	if filters.get("project"):
-		conditions.append("boq.project = %(project)s")
-		values["project"] = filters.project
-	if filters.get("cost_code"):
-		conditions.append("item.cost_code = %(cost_code)s")
-		values["cost_code"] = filters.cost_code
-
-	rows = frappe.db.sql(
-		"""
-		select item.cost_code,
-		       sum(case when item.approved_qty > 0 then item.approved_qty
-		                else item.boq_qty end) as qty,
-		       max(item.item_code) as item_code,
-		       max(item.uom) as uom
-		from `tabBOQ Item` item
-		inner join `tabBOQ` boq on boq.name = item.parent
-		where {conditions}
-		group by item.cost_code
-		""".format(conditions=" and ".join(conditions)),
-		values,
-		as_dict=True,
-	)
-	return {r.cost_code: {"qty": r.qty, "item_code": r.item_code, "uom": r.uom} for r in rows}
-
-
-def get_issued_quantities(filters):
-	conditions = [
-		"sle.is_cancelled = 0",
-		"sle.voucher_type = 'Stock Entry'",
-		"sle.actual_qty < 0",
-		"se.purpose = 'Material Issue'",
-		"sed.cost_code is not null",
-		"sed.cost_code != ''",
-	]
-	values = {}
-	if filters.get("project"):
-		conditions.append("sed.project = %(project)s")
-		values["project"] = filters.project
-	if filters.get("cost_code"):
-		conditions.append("sed.cost_code = %(cost_code)s")
-		values["cost_code"] = filters.cost_code
-	if filters.get("to_date"):
-		conditions.append("sle.posting_date <= %(to_date)s")
-		values["to_date"] = filters.to_date
-
-	rows = frappe.db.sql(
-		"""
-		select sed.cost_code, sum(abs(sle.actual_qty)) as qty
-		from `tabStock Ledger Entry` sle
-		inner join `tabStock Entry Detail` sed on sed.name = sle.voucher_detail_no
-		inner join `tabStock Entry` se on se.name = sle.voucher_no
-		where {conditions}
-		group by sed.cost_code
-		""".format(conditions=" and ".join(conditions)),
-		values,
-		as_dict=True,
-	)
-	return {r.cost_code: flt(r.qty) for r in rows}

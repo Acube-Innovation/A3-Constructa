@@ -16,6 +16,47 @@ STAGES = [
 	("setup", "a3_constructa.demo.masiha.setup.run"),  # step 1: company, people, controls
 	("masters", "a3_constructa.demo.masiha.masters.run"),  # step 1: masters
 	("planning", "a3_constructa.demo.masiha.planning.run"),  # steps 2-4
+	("wbs", "a3_constructa.demo.masiha.wbs.run"),  # P-01A: node types, location, BOQ line, status cases
+	("allowances", "a3_constructa.demo.masiha.allowances.run"),  # P-01B: allowance lines, allocations in every state
+	("budget", "a3_constructa.demo.masiha.budget.run"),  # P-01C: revision reason, budget transfers in every state
+	("ledger", "a3_constructa.demo.masiha.ledger.run"),  # P-01D: WBS and cost code on invoices, journals, claims, GL
+	("approvals", "a3_constructa.demo.masiha.approvals.run"),  # P-09A: approval levels and budget check, every state
+	("wbs_overview", "a3_constructa.demo.masiha.wbs_overview.run"),  # D-01: cases for the overview's checks
+	("crm", "a3_constructa.demo.masiha.crm.run"),  # P-02A: leads and opportunities, tenders due this week
+	("tender", "a3_constructa.demo.masiha.tender.run"),  # P-02B: tender BOQs imported from the clients' bills
+	("estimates", "a3_constructa.demo.masiha.estimates.run"),  # P-02C: rate build-up on the hospital tender
+	("pricing", "a3_constructa.demo.masiha.pricing.run"),  # P-02D: preliminaries, markups, contingency
+	("quotations", "a3_constructa.demo.masiha.quotations.run"),  # P-02E: revisions, margin approval, win / loss
+	("crm_overview", "a3_constructa.demo.masiha.crm_overview.run"),  # D-02: a case for every overview check
+	("bid_decisions", "a3_constructa.demo.masiha.bid_decisions.run"),  # P-02F: bid scores, Go / No-go decisions, one waiting for the MD
+	("tender_register", "a3_constructa.demo.masiha.tender_register.run"),  # P-02G: tender documents by revision, clarifications open and answered
+	("change_events", "a3_constructa.demo.masiha.change_events.run"),  # P-03A: change events in every status
+	("variations", "a3_constructa.demo.masiha.variations.run"),  # P-03B: variation orders in every status, budget moves
+	("handover", "a3_constructa.demo.masiha.handover.run"),  # P-03C: the hospital is won and handed over in one step
+	("contracts_overview", "a3_constructa.demo.masiha.contracts_overview.run"),  # D-03: a case for every overview check
+	("contract_terms", "a3_constructa.demo.masiha.contract_terms.run"),  # P-04A: terms on awards and the hospital's order
+	("milestone_billing", "a3_constructa.demo.masiha.milestone_billing.run"),  # P-04B: the hospital billed by milestones
+	("client_ipc", "a3_constructa.demo.masiha.client_ipc.run"),  # P-04C: advance, IPCs, retention on the Administrative Centre
+	("final_account", "a3_constructa.demo.masiha.final_account.run"),  # P-04D: a small school job closed out to its final account
+	("subcontract_compliance", "a3_constructa.demo.masiha.subcontract_compliance.run"),  # P-09B: back-charges, the compliance gate
+	("billing_overview", "a3_constructa.demo.masiha.billing_overview.run"),  # D-04: a case for every Sales & Billing check
+	("crews", "a3_constructa.demo.masiha.crews.run"),  # P-07A: site workers, wages and crews in every state
+	("equipment", "a3_constructa.demo.masiha.equipment.run"),  # P-08A: plant logs, owned at an internal rate and hired
+	("operations", "a3_constructa.demo.masiha.operations.run"),  # W-06: the jobs' programmes as tasks
+	("schedule", "a3_constructa.demo.masiha.schedule.run"),  # P-06A: tasks on the WBS, typed links, milestones, critical path
+	("resources", "a3_constructa.demo.masiha.resources.run"),  # P-06B: crews, plant and materials on the tasks; fill from estimate
+	("baselines", "a3_constructa.demo.masiha.baselines.run"),  # P-06C: the programme at award, the slips since, a draft recovery revision
+	("progress", "a3_constructa.demo.masiha.progress.run"),  # P-06D: measured quantities, forecasts, WBS roll-up
+	("lookahead", "a3_constructa.demo.masiha.lookahead.run"),  # P-06E: constraints on the next three weeks; weekly commitments and PPC
+	("site_reports", "a3_constructa.demo.masiha.site_reports.run"),  # P-06F: three days filed by the site engineer; timesheets, plant logs, progress and issues booked
+	("quality", "a3_constructa.demo.masiha.quality.run"),  # P-06G: checklists on task types, inspections, NCRs open, actioned and closed
+	("snagging", "a3_constructa.demo.masiha.snagging.run"),  # P-06H: snag lists, practical completion, defects in the DLP, surplus to return
+	("hse", "a3_constructa.demo.masiha.hse.run"),  # P-06I: toolbox talks, permits open, expired, closed and cancelled, incidents of every type
+	("rfis", "a3_constructa.demo.masiha.rfis.run"),  # P-06J: drawing revisions and transmittals, RFIs open, overdue, answered and closed
+	("procurement_schedule", "a3_constructa.demo.masiha.procurement_schedule.run"),  # P-05A: plans refreshed from the programme; late PRs flagged
+	("equipment_fuel", "a3_constructa.demo.masiha.equipment_fuel.run"),  # P-08B: diesel issued per machine; the programme's machines and a double booking
+	("certificates", "a3_constructa.demo.masiha.certificates.run"),  # P-07B: certificates and their expiry reminders, skills, a new hire's onboarding
+	("operations_overview", "a3_constructa.demo.masiha.operations_overview.run"),  # D-06: the committee wing's site and critical path, for the overview's checks
 	("requests", "a3_constructa.demo.masiha.requests.run"),  # steps 5-7
 	("purchasing", "a3_constructa.demo.masiha.purchasing.run"),  # steps 8, 14, 15, 19
 	("logistics", "a3_constructa.demo.masiha.logistics.run"),  # steps 9-13
@@ -23,6 +64,11 @@ STAGES = [
 	("assets", "a3_constructa.demo.masiha.assets.run"),  # step 19
 	("finance", "a3_constructa.demo.masiha.finance.run"),  # step 20
 	("closure", "a3_constructa.demo.masiha.closure.run"),  # step 21
+	("quantity_chain", "a3_constructa.demo.masiha.quantity_chain.run"),  # P-13B: wastage on the budget lines; over-use past it, and material never in the BOQ
+	("earned_value", "a3_constructa.demo.masiha.earned_value.run"),  # P-13C: the frame's monthly concrete and formwork invoices, so its actual cost is on the books
+	("labour_productivity", "a3_constructa.demo.masiha.labour_productivity.run"),  # P-13E: the gangs' September timesheets and attendance behind their progress
+	("alerts", "a3_constructa.demo.masiha.alerts.run"),  # P-13F: an alert rule per condition, run once (nothing re-sent within 7 days)
+	("overview_refresh", "a3_constructa.demo.masiha.overview_refresh.run"),  # D-R: idle crane, draft log, undated plan line, unpriced crew member, alert nobody gets, unfinished estimate
 	("timeline", "a3_constructa.demo.masiha.timeline.run"),  # dates everything on the story calendar
 ]
 

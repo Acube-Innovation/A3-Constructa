@@ -16,9 +16,12 @@
   "cb_1",
   "vo_date",
   "client_reference",
+  "change_event",
   "variation_type",
   "status",
+  "submitted_date",
   "approved_date",
+  "approved_by",
   "sb_items",
   "items",
   "sb_totals",
@@ -104,20 +107,22 @@
   },
   {
    "default": "Draft",
+   "description": "Draft → Submitted to Client → Approved or Rejected. Approving puts the lines on the WBS budget; rejecting or cancelling an approved order takes them off again.",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "Draft\nSubmitted to Client\nApproved\nRejected"
+   "options": "Draft\nSubmitted to Client\nApproved\nRejected\nCancelled"
   },
   {
    "depends_on": "eval:doc.status=='Approved'",
    "fieldname": "approved_date",
    "fieldtype": "Date",
    "label": "Approved On",
-   "no_copy": 1
+   "no_copy": 1,
+   "read_only": 0
   },
   {
    "fieldname": "sb_items",
@@ -163,12 +168,41 @@
    "fieldname": "reason",
    "fieldtype": "Small Text",
    "label": "Reason"
+  },
+  {
+   "fieldname": "change_event",
+   "fieldtype": "Link",
+   "label": "Change Event",
+   "no_copy": 1,
+   "options": "Change Event",
+   "read_only": 1
+  },
+  {
+   "fieldname": "submitted_date",
+   "fieldtype": "Date",
+   "label": "Submitted Date",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Approved By",
+   "no_copy": 1,
+   "options": "User",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-09-22 13:10:01.077360",
+ "links": [
+  {
+   "link_doctype": "Change Event",
+   "link_fieldname": "variation_order"
+  }
+ ],
+ "modified": "2026-10-06 16:15:39.725073",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Variation Order",

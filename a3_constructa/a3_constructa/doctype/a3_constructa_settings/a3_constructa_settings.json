@@ -1,0 +1,155 @@
+{
+ "actions": [],
+ "creation": "2026-10-06 12:41:54.786832",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sb_budget",
+  "budget_check_action",
+  "budget_tolerance_percent",
+  "sb_quotation",
+  "min_margin_percent",
+  "sb_bid",
+  "bid_threshold_score",
+  "sb_handover",
+  "default_contract_item",
+  "contract_payment_terms",
+  "contract_taxes",
+  "sb_procurement",
+  "site_buffer_days"
+ ],
+ "fields": [
+  {
+   "description": "When a Material Request or Purchase Order is submitted, each WBS and cost code on it is checked: this document plus open orders plus actual cost against the WBS budget.",
+   "fieldname": "sb_budget",
+   "fieldtype": "Section Break",
+   "label": "Budget check on requests and orders"
+  },
+  {
+   "default": "Warn",
+   "description": "Warn: submit and show the overrun. Stop: refuse the submit. Off: no check.",
+   "fieldname": "budget_check_action",
+   "fieldtype": "Select",
+   "label": "When Over Budget",
+   "options": "Warn\nStop\nOff"
+  },
+  {
+   "default": "0",
+   "description": "How far over the budget a document may go before the check acts, e.g. 5 allows 5% over.",
+   "fieldname": "budget_tolerance_percent",
+   "fieldtype": "Percent",
+   "label": "Tolerance (%)"
+  },
+  {
+   "fieldname": "sb_quotation",
+   "fieldtype": "Section Break",
+   "label": "Quotations"
+  },
+  {
+   "default": "10",
+   "description": "A tender quotation whose margin is below this goes to Pending Management Approval before it can be submitted.",
+   "fieldname": "min_margin_percent",
+   "fieldtype": "Percent",
+   "label": "Minimum Quotation Margin %"
+  },
+  {
+   "fieldname": "sb_bid",
+   "fieldtype": "Section Break",
+   "label": "Bid / No-bid"
+  },
+  {
+   "default": "60",
+   "description": "An opportunity whose bid score (out of 100) is at or above this suggests Go; below it, No-go. A sales manager confirms the decision either way.",
+   "fieldname": "bid_threshold_score",
+   "fieldtype": "Float",
+   "label": "Bid Threshold Score",
+   "non_negative": 1,
+   "precision": "1"
+  },
+  {
+   "fieldname": "sb_handover",
+   "fieldtype": "Section Break",
+   "label": "Award Handover"
+  },
+  {
+   "description": "Sales Order lines for work whose cost head names no contract works item use this item.",
+   "fieldname": "default_contract_item",
+   "fieldtype": "Link",
+   "label": "Default Contract Works Item",
+   "options": "Item"
+  },
+  {
+   "description": "Payment terms an awarded Sales Order takes when it has none.",
+   "fieldname": "contract_payment_terms",
+   "fieldtype": "Link",
+   "label": "Contract Payment Terms",
+   "options": "Payment Terms Template"
+  },
+  {
+   "description": "Sales taxes (VAT) an awarded Sales Order takes when it has none.",
+   "fieldname": "contract_taxes",
+   "fieldtype": "Link",
+   "label": "Contract Taxes",
+   "options": "Sales Taxes and Charges Template"
+  },
+  {
+   "fieldname": "sb_procurement",
+   "fieldtype": "Section Break",
+   "label": "Procurement Planning"
+  },
+  {
+   "default": "7",
+   "description": "Material is wanted on site this many days before the task that uses it starts.",
+   "fieldname": "site_buffer_days",
+   "fieldtype": "Int",
+   "label": "Site Buffer (days)",
+   "non_negative": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-08 18:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "A3 Constructa Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Purchase Manager"
+  },
+  {
+   "read": 1,
+   "role": "Constructa Project Manager"
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

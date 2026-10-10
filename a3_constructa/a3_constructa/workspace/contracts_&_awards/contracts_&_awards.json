@@ -1,0 +1,265 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"ca_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Contracts & Awards Overview\", \"col\": 12}}, {\"id\": \"ca_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Contracts &amp; Awards</b></span>\", \"col\": 12}}, {\"id\": \"card_contract_register\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Register\", \"col\": 4}}, {\"id\": \"card_components_boqs\", \"type\": \"card\", \"data\": {\"card_name\": \"Components & BOQs\", \"col\": 4}}, {\"id\": \"card_programme_milestones\", \"type\": \"card\", \"data\": {\"card_name\": \"Programme Milestones\", \"col\": 4}}, {\"id\": \"card_change_variations\", \"type\": \"card\", \"data\": {\"card_name\": \"Change & Variations\", \"col\": 4}}, {\"id\": \"card_deliverables_submittals\", \"type\": \"card\", \"data\": {\"card_name\": \"Deliverables & Submittals\", \"col\": 4}}, {\"id\": \"card_handover_to_project\", \"type\": \"card\", \"data\": {\"card_name\": \"Handover to Project\", \"col\": 4}}]",
+ "creation": "2026-10-06 15:39:14.521418",
+ "custom_blocks": [
+  {
+   "custom_block_name": "Contracts & Awards Overview",
+   "label": "Contracts & Awards Overview"
+  }
+ ],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "file",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Contracts & Awards",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contract Register",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Awarded Quotation",
+   "link_count": 0,
+   "link_to": "Awarded Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Awards In Progress",
+   "link_count": 0,
+   "link_to": "Awards In Progress",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Awarded Quotation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Customer",
+   "link_count": 0,
+   "link_to": "Customer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quotation",
+   "link_count": 0,
+   "link_to": "Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Components & BOQs",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "BOQ",
+   "link_count": 0,
+   "link_to": "BOQ",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "BOQ - Approved",
+   "link_count": 0,
+   "link_to": "BOQ - Approved",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "BOQ",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Programme Milestones",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Award Milestones",
+   "link_count": 0,
+   "link_to": "Award Milestones",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Awarded Quotation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Change & Variations",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Change Event",
+   "link_count": 0,
+   "link_to": "Change Event",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Variation Order",
+   "link_count": 0,
+   "link_to": "Variation Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pending Variation Orders",
+   "link_count": 0,
+   "link_to": "Pending Variation Orders",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Variation Order",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Variation Register",
+   "link_count": 0,
+   "link_to": "Variation Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Variation Order",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Change Event Register",
+   "link_count": 0,
+   "link_to": "Change Event Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Change Event",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Deliverables & Submittals",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Deliverable",
+   "link_count": 0,
+   "link_to": "Deliverable",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Deliverables Awaiting Approval",
+   "link_count": 0,
+   "link_to": "Deliverables Awaiting Approval",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Deliverable",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Document Type",
+   "link_count": 0,
+   "link_to": "Document Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Handover to Project",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sales Order",
+   "link_count": 0,
+   "link_to": "Sales Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Project",
+   "link_count": 0,
+   "link_to": "Project",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-10-06 17:02:01.145018",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Contracts & Awards",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "A3 Constructa",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 3.0,
+ "shortcuts": [],
+ "title": "Contracts & Awards"
+}

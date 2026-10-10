@@ -25,9 +25,21 @@ import frappe
 
 # Record name -> folder under a3_constructa/a3_constructa/custom_html_block/
 CUSTOM_HTML_BLOCKS = {
+	"WBS & Cost Structure Overview": "wbs_cost_structure_overview",
+	"CRM & Estimating Overview": "crm_estimating_overview",
+	"Contracts & Awards Overview": "contracts_awards_overview",
+	"Sales & Billing Overview": "sales_billing_overview",
+	"Project Operations Overview": "project_operations_overview",
 	"Master Data Overview": "master_data_overview",
 	"Planning & Budgeting Overview": "planning_overview",
 	"Procurement Overview": "procurement_overview",
+	"Delivery & Logistics Overview": "delivery_logistics_overview",
+	"Inventory Movement Overview": "inventory_movement_overview",
+	"Asset & Equipment Overview": "asset_equipment_overview",
+	"HR & Time Overview": "hr_time_overview",
+	"Finance & Accounting Overview": "finance_accounting_overview",
+	"WBS Analysis & Reporting Overview": "wbs_analysis_overview",
+	"A3 Constructa Overview": "home_overview",
 	# Drawn by the Award Procurement page, not by a workspace.
 	"Award Procurement View": "award_procurement_view",
 }

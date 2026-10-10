@@ -52,8 +52,9 @@ class AwardedQuotation(Document):
 		for row in self.components:
 			if not row.boq:
 				continue
-			boq_project, boq_award = frappe.db.get_value("BOQ", row.boq, ["project", "awarded_quotation"])
-			if self.project and boq_project != self.project:
+			boq_project, boq_award, stage = frappe.db.get_value("BOQ", row.boq, ["project", "awarded_quotation", "boq_stage"])
+			# A tender BOQ priced the bid before there was a project (P-03C).
+			if self.project and stage != "Tender" and boq_project != self.project:
 				frappe.throw(
 					_("Row {0}: BOQ {1} is for project {2}, not {3}.").format(
 						row.idx, row.boq, boq_project, self.project
@@ -64,6 +65,10 @@ class AwardedQuotation(Document):
 
 	def on_update(self):
 		self.link_component_boqs()
+		# The programme sets the payment schedule of the award's submitted orders.
+		from a3_constructa.api.milestone_billing import sync_orders_of
+
+		sync_orders_of(self)
 
 	def link_component_boqs(self):
 		"""Point each component's BOQ back at this award.
@@ -107,6 +112,15 @@ class AwardedQuotation(Document):
 			if row.status == "Completed":
 				completed += 1
 				completed_weight += flt(row.weightage)
+
+		# Catalogue 4.2: a completed milestone's billing % falls due on an award billed by milestones.
+		from a3_constructa.api.milestone_billing import is_due
+
+		components = {c.component for c in self.components}
+		for row in self.milestones:
+			if row.component and row.component not in components:
+				frappe.throw(_("Row {0}: {1} is not a component of this award.").format(row.idx, frappe.bold(row.component)))
+			row.billing_due = int(is_due(self, row))
 
 		if total_weight > 100:
 			frappe.throw(_("Milestone weightage adds up to {0}%. It cannot be more than 100%.").format(total_weight))

@@ -1,0 +1,263 @@
+{
+ "actions": [],
+ "creation": "2026-10-08 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "project",
+  "company",
+  "site",
+  "wbs",
+  "cb_1",
+  "permit_type",
+  "status",
+  "work_description",
+  "sb_valid",
+  "valid_from",
+  "valid_to",
+  "cb_2",
+  "issued_to",
+  "issued_to_name",
+  "issued_by",
+  "sb_prec",
+  "precautions",
+  "sb_close",
+  "closed_by",
+  "closed_on",
+  "cb_3",
+  "closing_note"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "PTW-.YYYY.-.####",
+   "default": "PTW-.YYYY.-.####",
+   "hidden": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "fetch_from": "project.company",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "site",
+   "fieldtype": "Link",
+   "label": "Site",
+   "options": "Location",
+   "in_standard_filter": 1,
+   "description": "Defaults to the project's site."
+  },
+  {
+   "fieldname": "wbs",
+   "fieldtype": "Link",
+   "label": "WBS",
+   "options": "WBS"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "permit_type",
+   "fieldtype": "Select",
+   "label": "Permit Type",
+   "options": "Hot work\nWork at height\nExcavation\nConfined space\nElectrical isolation\nLifting",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nClosed\nCancelled",
+   "default": "Open",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "work_description",
+   "fieldtype": "Small Text",
+   "label": "Work",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sb_valid",
+   "fieldtype": "Section Break",
+   "label": "Validity"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Datetime",
+   "label": "Valid From",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "valid_to",
+   "fieldtype": "Datetime",
+   "label": "Valid To",
+   "reqd": 1,
+   "description": "A permit runs for one shift or one day at most: 24 hours."
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "issued_to",
+   "fieldtype": "Link",
+   "label": "Issued To",
+   "reqd": 1,
+   "description": "The person in charge of the work.",
+   "options": "Employee",
+   "ignore_user_permissions": 1
+  },
+  {
+   "fieldname": "issued_to_name",
+   "fieldtype": "Data",
+   "label": "Issued To (Name)",
+   "fetch_from": "issued_to.employee_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "issued_by",
+   "fieldtype": "Link",
+   "label": "Issued By",
+   "options": "User",
+   "read_only": 1,
+   "no_copy": 1,
+   "description": "Whoever issued it; only they (or a project manager) can close it."
+  },
+  {
+   "fieldname": "sb_prec",
+   "fieldtype": "Section Break",
+   "label": "Precautions"
+  },
+  {
+   "fieldname": "precautions",
+   "fieldtype": "Table",
+   "label": "Precautions",
+   "options": "Permit Precaution",
+   "description": "Every precaution must be in place before the permit is issued."
+  },
+  {
+   "fieldname": "sb_close",
+   "fieldtype": "Section Break",
+   "label": "Closing",
+   "collapsible": 0
+  },
+  {
+   "fieldname": "closed_by",
+   "fieldtype": "Link",
+   "label": "Closed By",
+   "options": "User",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "closed_on",
+   "fieldtype": "Datetime",
+   "label": "Closed On",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "closing_note",
+   "fieldtype": "Small Text",
+   "label": "Closing Note",
+   "no_copy": 1,
+   "description": "Area left safe, isolations removed, fire watch done."
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-08 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Permit to Work",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "valid_from",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "index_web_pages_for_search": 0,
+ "title_field": "work_description",
+ "show_title_field_in_link": 0,
+ "search_fields": "project,permit_type,status"
+}

@@ -1,0 +1,191 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:rule_name",
+ "creation": "2026-10-09 15:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "rule_name",
+  "condition",
+  "threshold",
+  "threshold_unit",
+  "cb_1",
+  "is_active",
+  "frequency",
+  "channel",
+  "last_run",
+  "last_result",
+  "sb_recipients",
+  "recipients",
+  "sb_log",
+  "log"
+ ],
+ "fields": [
+  {
+   "fieldname": "rule_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Rule Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "condition",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Condition",
+   "options": "WBS over budget\nTask slipped\nIPC overdue\nCertificate expiring\nPurchase order late\nShipment late\nApproval waiting",
+   "reqd": 1
+  },
+  {
+   "description": "Alert only when the item is past this: days late or waiting, days to expiry, or % over budget. 0 sends everything the overview tab lists.",
+   "fieldname": "threshold",
+   "fieldtype": "Float",
+   "label": "Threshold"
+  },
+  {
+   "description": "Set by the condition: % for WBS over budget, days for the rest.",
+   "fieldname": "threshold_unit",
+   "fieldtype": "Select",
+   "label": "Threshold Unit",
+   "options": "%\ndays",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Active"
+  },
+  {
+   "default": "Daily",
+   "fieldname": "frequency",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Frequency",
+   "options": "Daily\nWeekly",
+   "reqd": 1
+  },
+  {
+   "default": "Both",
+   "fieldname": "channel",
+   "fieldtype": "Select",
+   "label": "Channel",
+   "options": "In-app\nEmail\nBoth",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_run",
+   "fieldtype": "Datetime",
+   "label": "Last Run",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_result",
+   "fieldtype": "Small Text",
+   "label": "Last Result",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_recipients",
+   "fieldtype": "Section Break",
+   "label": "Recipients"
+  },
+  {
+   "fieldname": "recipients",
+   "fieldtype": "Table",
+   "label": "Recipients",
+   "options": "Alert Rule Recipient",
+   "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sb_log",
+   "fieldtype": "Section Break",
+   "label": "Sent"
+  },
+  {
+   "description": "Each item alerted, and when. An item is not sent again within 7 days.",
+   "fieldname": "log",
+   "fieldtype": "Table",
+   "label": "Log",
+   "no_copy": 1,
+   "options": "Alert Log",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-09 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Alert Rule",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase Manager"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "rule_name",
+ "track_changes": 1
+}

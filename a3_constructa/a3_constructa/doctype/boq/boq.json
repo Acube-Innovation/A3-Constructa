@@ -8,19 +8,41 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "boq_stage",
   "project",
   "cost_head",
   "awarded_quotation",
   "cb_1",
   "boq_date",
   "revision_no",
+  "revision_reason",
   "currency",
+  "measurement_method",
   "status",
+  "sb_tender",
+  "opportunity",
+  "client_name",
+  "cb_tender",
+  "customer",
   "sb_1",
   "items",
+  "sb_pricing",
+  "overhead_percent",
+  "profit_percent",
+  "risk_percent",
+  "contingency_amount",
+  "cb_pricing",
+  "cost_total",
+  "preliminaries_total",
+  "unpriced_lines",
+  "cb_pricing_2",
+  "overhead_amount",
+  "profit_amount",
+  "risk_amount",
+  "selling_total",
+  "margin_percent",
   "sb_2",
   "total_amount",
-  "amended_from",
   "amended_from"
  ],
  "fields": [
@@ -33,12 +55,25 @@
    "reqd": 1
   },
   {
+   "bold": 1,
+   "default": "Budget",
+   "description": "Tender: the client's bill priced for a bid. Contract: the bill the client signed. Budget: our internal cost budget.",
+   "fieldname": "boq_stage",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "BOQ Stage",
+   "options": "Tender\nContract\nBudget",
+   "reqd": 1
+  },
+  {
+   "description": "Needed on a Contract or Budget BOQ. A Tender BOQ has no project yet.",
    "fieldname": "project",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Project",
-   "options": "Project",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.boq_stage != 'Tender'",
+   "options": "Project"
   },
   {
    "fieldname": "cost_head",
@@ -68,15 +103,31 @@
   },
   {
    "default": "0",
+   "description": "0 for the first BOQ; each amendment counts up by one.",
    "fieldname": "revision_no",
    "fieldtype": "Int",
-   "label": "Revision No"
+   "label": "Revision No",
+   "read_only": 1
+  },
+  {
+   "depends_on": "amended_from",
+   "description": "Why this revision was made. Needed on every amended BOQ.",
+   "fieldname": "revision_reason",
+   "fieldtype": "Small Text",
+   "label": "Revision Reason",
+   "mandatory_depends_on": "amended_from"
   },
   {
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
    "options": "Currency"
+  },
+  {
+   "fieldname": "measurement_method",
+   "fieldtype": "Select",
+   "label": "Measurement Method",
+   "options": "\nNRM2\nPOMI\nCESMM4\nSMM7\nOther"
   },
   {
    "allow_on_submit": 1,
@@ -87,6 +138,37 @@
    "label": "Status",
    "no_copy": 1,
    "options": "Draft\nPending Approval\nApproved\nRejected"
+  },
+  {
+   "depends_on": "eval:doc.boq_stage == 'Tender' || doc.opportunity",
+   "fieldname": "sb_tender",
+   "fieldtype": "Section Break",
+   "label": "Tender"
+  },
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Opportunity",
+   "options": "Opportunity"
+  },
+  {
+   "fetch_from": "opportunity.customer_name",
+   "fieldname": "client_name",
+   "fieldtype": "Data",
+   "label": "Client",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_tender",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Set when the client is already a customer.",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
   },
   {
    "fieldname": "sb_1",
@@ -101,23 +183,112 @@
    "reqd": 1
   },
   {
+   "collapsible": 0,
+   "depends_on": "eval:doc.boq_stage == 'Tender'",
+   "description": "Selling rate = cost rate × (1 + overhead + profit + risk). Contingency is added on top at face value.",
+   "fieldname": "sb_pricing",
+   "fieldtype": "Section Break",
+   "label": "Pricing"
+  },
+  {
+   "fieldname": "overhead_percent",
+   "fieldtype": "Percent",
+   "label": "Overhead %"
+  },
+  {
+   "fieldname": "profit_percent",
+   "fieldtype": "Percent",
+   "label": "Profit %"
+  },
+  {
+   "fieldname": "risk_percent",
+   "fieldtype": "Percent",
+   "label": "Risk %"
+  },
+  {
+   "description": "Kept as an allowance line that is never allocated to a WBS node.",
+   "fieldname": "contingency_amount",
+   "fieldtype": "Currency",
+   "label": "Contingency",
+   "options": "currency"
+  },
+  {
+   "fieldname": "cb_pricing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Priced lines at cost rate, plus preliminaries and other allowances.",
+   "fieldname": "cost_total",
+   "fieldtype": "Currency",
+   "label": "Cost Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "preliminaries_total",
+   "fieldtype": "Currency",
+   "label": "Preliminaries",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "unpriced_lines",
+   "fieldtype": "Int",
+   "label": "Lines Without a Cost Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_pricing_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overhead_amount",
+   "fieldtype": "Currency",
+   "label": "Overhead",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "profit_amount",
+   "fieldtype": "Currency",
+   "label": "Profit",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "risk_amount",
+   "fieldtype": "Currency",
+   "label": "Risk",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "selling_total",
+   "fieldtype": "Currency",
+   "in_list_view": 0,
+   "label": "Selling Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "description": "(Selling − cost − contingency) ÷ selling: overhead, profit and risk as a share of the price.",
+   "fieldname": "margin_percent",
+   "fieldtype": "Percent",
+   "label": "Margin %",
+   "read_only": 1
+  },
+  {
    "fieldname": "sb_2",
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.boq_stage != 'Tender'",
+   "description": "Qty × estimate rate, allowances in full. A tender is valued by its Selling Total instead.",
    "fieldname": "total_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Total Amount",
-   "read_only": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "BOQ",
-   "print_hide": 1,
    "read_only": 1
   },
   {
@@ -134,8 +305,19 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2026-09-22 13:11:56.682225",
+ "links": [
+  {
+   "group": "Tender",
+   "link_doctype": "Quotation",
+   "link_fieldname": "boq"
+  },
+  {
+   "group": "Tender",
+   "link_doctype": "Estimate Sheet",
+   "link_fieldname": "boq"
+  }
+ ],
+ "modified": "2026-10-06 16:54:51.778827",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "BOQ",

@@ -1,0 +1,197 @@
+/* CRM & Estimating Overview: the parts only this dashboard draws. The
+   shared stylesheet (_shared/overview.css) is placed in front of this one. */
+
+/* ---------- Hero: weighted share of the pipeline ---------- */
+
+.ov-weight-track {
+	position: relative;
+	height: 10px;
+	border-radius: var(--ms-r-pill);
+	background: var(--ms-track);
+	overflow: hidden;
+}
+
+.ov-weight-fill {
+	display: block;
+	height: 100%;
+	min-width: 4px;
+	border-radius: var(--ms-r-pill);
+	background: linear-gradient(90deg, var(--ms-green-400), var(--ms-green-600));
+}
+
+/* A money headline is wider than a percentage: let it shrink with the card. */
+.ov-hero-value {
+	font-size: clamp(34px, 9vw, 58px);
+	overflow-wrap: anywhere;
+}
+
+.ov-hero-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	width: fit-content;
+	color: var(--ms-green-600);
+	font-size: var(--text-sm, 13px);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ov-hero-link:hover,
+.ov-hero-link:focus-visible {
+	color: var(--ms-green-800);
+	text-decoration: underline;
+}
+
+/* ---------- Column chart (won and lost per month) ---------- */
+
+.ov-chart {
+	position: relative;
+	margin: 0;
+	padding: 20px 24px 16px;
+}
+
+.ov-chart-legend {
+	margin-bottom: 26px;
+}
+
+.ov-swatch.is-won {
+	background: var(--ms-green-600);
+}
+
+.ov-swatch.is-lost {
+	background: var(--ov-critical);
+}
+
+.ov-plot {
+	position: relative;
+	height: 190px;
+	margin-left: 40px;
+}
+
+.ov-gridline {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: var(--ms-rule);
+}
+
+.ov-gridline.is-base {
+	background: var(--ms-border);
+}
+
+.ov-tick {
+	position: absolute;
+	right: calc(100% + 8px);
+	transform: translateY(-50%);
+	color: var(--ms-muted);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.ov-columns {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+}
+
+.ov-col {
+	position: relative;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	height: 100%;
+	cursor: default;
+}
+
+.ov-col:focus-visible {
+	outline-offset: -2px;
+	border-radius: var(--ms-r-chip);
+}
+
+.ov-col-pair {
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	gap: 3px;
+	width: 100%;
+	max-width: 60px;
+	height: 100%;
+}
+
+.ov-col-bar {
+	position: relative;
+	flex: 1;
+	border-radius: 5px 5px 0 0;
+}
+
+.ov-col-bar.is-won {
+	background: linear-gradient(180deg, var(--ms-green-400), var(--ms-green-600));
+}
+
+.ov-col-bar.is-lost {
+	background: linear-gradient(180deg, color-mix(in srgb, var(--ov-critical) 70%, white), var(--ov-critical));
+}
+
+.ov-col:hover .ov-col-bar,
+.ov-col:focus-visible .ov-col-bar {
+	filter: brightness(0.88);
+}
+
+.ov[data-theme="dark"] .ov-col:hover .ov-col-bar,
+.ov[data-theme="dark"] .ov-col:focus-visible .ov-col-bar {
+	filter: brightness(1.15);
+}
+
+/* A month with no movement: a stub on the baseline, not a gap. */
+.ov-col .ov-col-bar.is-zero {
+	min-height: 3px;
+	border-radius: 0;
+	background: var(--ms-border-quiet);
+}
+
+.ov-xlabels {
+	display: grid;
+	grid-template-columns: repeat(var(--ov-count, 12), minmax(0, 1fr));
+	gap: 10px;
+	margin: 10px 0 0 40px;
+	color: var(--ms-muted);
+	font-size: 11px;
+	text-align: center;
+}
+
+.ov-xlabels span:nth-child(odd) {
+	visibility: var(--ov-odd-labels, visible);
+}
+
+@media (max-width: 560px) {
+	.ov-chart {
+		--ov-odd-labels: hidden;
+		padding: 16px 14px 14px;
+	}
+
+	.ov-columns,
+	.ov-xlabels {
+		gap: 4px;
+	}
+
+	.ov-col-pair {
+		gap: 1px;
+	}
+}
+
+/* The chart/table toggle keeps to one line beside a wrapping caption. */
+.ov-section-head > .ov-button {
+	flex: none;
+	white-space: nowrap;
+}
+
+/* Every money column of the table lines up on the right. */
+.ov-trend-table .ov-table th:not(:first-child),
+.ov-trend-table .ov-table td:not(:first-child) {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}

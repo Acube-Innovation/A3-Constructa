@@ -46,5 +46,101 @@
   "name": "Delivery Order",
   "retention_days": 0,
   "tags": null
+ },
+ {
+  "applicable_for": "Work Certificate",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "HSE",
+  "document_type_name": "Insurance Certificate",
+  "is_mandatory": 1,
+  "modified": "2026-10-06 22:00:00.000000",
+  "name": "Insurance Certificate",
+  "retention_days": 0,
+  "tags": "Contractor's all-risks and third-party liability cover"
+ },
+ {
+  "applicable_for": "Work Certificate",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Statutory",
+  "document_type_name": "Labour Compliance Certificate",
+  "is_mandatory": 1,
+  "modified": "2026-10-06 22:00:00.000000",
+  "name": "Labour Compliance Certificate",
+  "retention_days": 0,
+  "tags": "Social security (CNSS) and labour inspectorate attestation"
+ },
+ {
+  "applicable_for": "Work Certificate",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Financial",
+  "document_type_name": "Tax Clearance Certificate",
+  "is_mandatory": 1,
+  "modified": "2026-10-06 22:00:00.000000",
+  "name": "Tax Clearance Certificate",
+  "retention_days": 0,
+  "tags": "Attestation de situation fiscale from the tax authority"
+ },
+ {
+  "applicable_for": "Opportunity",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Commercial",
+  "document_type_name": "Invitation to Tender",
+  "is_mandatory": 0,
+  "modified": "2026-10-08 19:00:00.000000",
+  "name": "Invitation to Tender",
+  "retention_days": 0,
+  "tags": "Instructions to tenderers, form of tender, conditions of contract"
+ },
+ {
+  "applicable_for": "Opportunity",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Technical",
+  "document_type_name": "Tender Drawings",
+  "is_mandatory": 0,
+  "modified": "2026-10-08 19:00:00.000000",
+  "name": "Tender Drawings",
+  "retention_days": 0,
+  "tags": "Architectural, structural and MEP drawings issued with the tender"
+ },
+ {
+  "applicable_for": "Opportunity",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Technical",
+  "document_type_name": "Specification",
+  "is_mandatory": 0,
+  "modified": "2026-10-08 19:00:00.000000",
+  "name": "Specification",
+  "retention_days": 0,
+  "tags": "Technical specification and preliminaries"
+ },
+ {
+  "applicable_for": "Opportunity",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Commercial",
+  "document_type_name": "Bill of Quantities",
+  "is_mandatory": 0,
+  "modified": "2026-10-08 19:00:00.000000",
+  "name": "Bill of Quantities",
+  "retention_days": 0,
+  "tags": "The client's bill to price"
+ },
+ {
+  "applicable_for": "Opportunity",
+  "docstatus": 0,
+  "doctype": "Document Type",
+  "document_category": "Commercial",
+  "document_type_name": "Tender Addendum",
+  "is_mandatory": 0,
+  "modified": "2026-10-08 19:00:00.000000",
+  "name": "Tender Addendum",
+  "retention_days": 0,
+  "tags": "Changes the client issues during the tender period"
  }
 ]

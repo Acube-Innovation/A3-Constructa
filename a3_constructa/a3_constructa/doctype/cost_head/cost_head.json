@@ -3,6 +3,7 @@
  "allow_rename": 1,
  "autoname": "field:cost_head_code",
  "creation": "2026-09-15 11:07:45.694537",
+ "default_view": "Tree",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -19,7 +20,9 @@
   "rgt",
   "old_parent",
   "sb_2",
-  "status"
+  "status",
+  "is_preliminaries",
+  "sales_item"
  ],
  "fields": [
   {
@@ -114,13 +117,27 @@
    "in_list_view": 1,
    "label": "Status",
    "options": "Draft\nActive\nOn Hold\nCompleted"
+  },
+  {
+   "default": "0",
+   "description": "Allowance lines under this cost head are the job's preliminaries: site set-up, supervision, insurance, temporary works.",
+   "fieldname": "is_preliminaries",
+   "fieldtype": "Check",
+   "label": "Preliminaries"
+  },
+  {
+   "description": "The sales item the client is billed for under this head. A head without one uses its parent's, then the default in A3 Constructa Settings.",
+   "fieldname": "sales_item",
+   "fieldtype": "Link",
+   "label": "Contract Works Item",
+   "options": "Item"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-09-15 11:07:45.694537",
+ "modified": "2026-10-06 16:45:18.320400",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Cost Head",

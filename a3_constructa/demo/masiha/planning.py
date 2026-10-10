@@ -70,10 +70,10 @@ def run():
 
 
 # ------------------------------------------------------------------- BOQs
-def _boq(head, lines, when, revision=0, amended_from=None):
+def _boq(head, lines, when, revision=0, amended_from=None, reason=None):
 	return insert({
 		"doctype": "BOQ", "project": project(), "cost_head": head, "boq_date": day(when),
-		"revision_no": revision, "currency": "USD", "amended_from": amended_from,
+		"revision_no": revision, "currency": "USD", "amended_from": amended_from, "revision_reason": reason,
 		"items": [{"item_code": i, "wbs": w, "cost_code": c, "boq_qty": q, "rate": r,
 		           "approved_qty": aq, "approved_rate": ar} for i, w, c, q, r, aq, ar in lines],
 	})
@@ -103,7 +103,7 @@ def create_boqs() -> dict:
 	rev0 = frappe.get_doc("BOQ", rev0.name)
 	rev0.flags.ignore_permissions = True
 	rev0.cancel()
-	rev1 = _approve(_boq("MSS-AR-FL", FLOORING_REV1, -121, revision=1, amended_from=rev0.name), -120,
+	rev1 = _approve(_boq("MSS-AR-FL", FLOORING_REV1, -121, revision=1, amended_from=rev0.name, reason=with_note), -120,
 	                "Revision 1 approved. Flooring budget $29,124 for 1,000 m2 ($29.12/m2).")
 	boqs["MSS-AR-FL"] = rev1.name
 	log(f"BOQs approved: {', '.join(boqs.values())}; flooring revised {rev0.name} -> {rev1.name}")
@@ -183,7 +183,7 @@ def create_allocations(boq):
 			"doctype": "WBS Allocation", "project": project(), "boq": boq, "wbs": wbs, "cost_head": "MSS-AR-FL",
 			"items": [{"boq_item": lines[item].name, "item_code": item, "cost_code": lines[item].cost_code,
 			           "allocated_qty": qty, "rate": lines[item].approved_rate} for item, qty in quantities.items()],
-		})
+		}, submit=True)
 	log("WBS allocations: porcelain 600 m2 to WBS A, 400 m2 to WBS B (same item, cost code and rate)")
 
 
@@ -226,7 +226,8 @@ def create_variations(award):
 		return
 	insert({"doctype": "Variation Order", "subject": "Entrance ramp and canopy, additional porcelain tiling",
 	        "awarded_quotation": award, "vo_date": day(-60), "client_reference": "GPE/VO/004",
-	        "variation_type": "Addition", "status": "Approved", "approved_date": day(-52), "time_extension_days": 10,
+	        # Approved by the variations stage (P-03B), once the lines are on the WBS.
+	        "variation_type": "Addition", "status": "Submitted to Client", "time_extension_days": 10,
 	        "items": [{"description": "Porcelain tiling, entrance ramp", "cost_head": "MSS-AR-FL", "qty": 85,
 	                   "uom": "Square Meter", "rate": 46.00},
 	                  {"description": "Steel canopy, supply and fix", "cost_head": "MSS-ES", "qty": 1,
@@ -236,4 +237,4 @@ def create_variations(award):
 	        "status": "Submitted to Client",
 	        "items": [{"description": "Upgrade wet-area floors to R11 anti-slip", "cost_head": "MSS-AR-FL",
 	                   "qty": 120, "uom": "Square Meter", "rate": 6.50}]})
-	log("variation orders: 1 approved (+$12,110, 10 days), 1 with the client")
+	log("variation orders: 2 with the client (the first is approved in the variations stage)")

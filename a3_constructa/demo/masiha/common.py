@@ -38,14 +38,19 @@ PEOPLE = {
 	           ["Stock User", "Stock Manager", "Constructa Store Keeper", "Purchase User"]),
 	"pm": ("Didier", "Kasongo", "Project Manager",
 	       ["Constructa Project Manager", "Projects Manager", "A3 Constructa Admin", "Stock User", "Purchase User"]),
+	# Sales User from P-02B: the QS prices the tenders, so she reads the opportunities.
 	"qs": ("Esther", "Ngalula", "Quantity Surveyor",
-	       ["Constructa Quantity Surveyor", "Projects User"]),
+	       ["Constructa Quantity Surveyor", "Projects User", "Sales User"]),
 	"buyer": ("Olivier", "Tshibanda", "Buyer", ["Purchase User", "Stock User"]),
 	"procurement": ("Marie", "Kalala", "Procurement Manager", ["Purchase Manager", "Purchase User", "Stock User"]),
 	"logistics": ("Samuel", "Ilunga", "Logistics & C&F Officer",
 	              ["Stock User", "Stock Manager", "Constructa Store Keeper", "Purchase User"]),
 	# Purchase User so finance can read the orders it pays and invoices against.
 	"finance": ("Grace", "Mwamba", "Finance Officer", ["Accounts User", "Accounts Manager", "Purchase User"]),
+	# P-02A: who chases tenders, from enquiry to quotation.
+	"sales": ("Bernadette", "Mbo", "Business Development Manager", ["Sales User", "Sales Manager", "Projects User"]),
+	# P-02E: approves a quotation priced below the minimum margin.
+	"md": ("Albert", "Nzuzi", "Managing Director", ["A3 Constructa Admin", "Sales Manager", "Sales User", "Projects Manager"]),
 }
 
 
@@ -128,9 +133,17 @@ def transition(doctype: str, name: str, action: str, by: str, when, note: str | 
 
 	The workflow writes its own timeline entry ("Approved", "Rejected"...); that
 	entry is moved to the story day, and the person's reason follows it.
+
+	A request or order is approved level by level first (P-09A); the last level
+	may already take the workflow's approving step, in which case it is not taken
+	twice.
 	"""
-	with as_user(by):
-		doc = apply_workflow(frappe.get_doc(doctype, name), action)
+	doc = None
+	if action == "Approve" and doctype in ("Material Request", "Purchase Order"):
+		doc = approve_levels(doctype, name, when, exclude=by)
+	if not (doc and doc.docstatus == 1):
+		with as_user(by):
+			doc = apply_workflow(frappe.get_doc(doctype, name), action)
 	latest = frappe.get_all(
 		"Comment",
 		filters={"reference_doctype": doctype, "reference_name": name, "comment_type": "Workflow"},
@@ -156,3 +169,43 @@ def assign(doctype: str, name: str, to: str, by: str, when, description: str):
 	                                       "allocated_to": user(to)}, order_by="creation desc", limit=1, pluck="name")
 	if todo:
 		frappe.db.set_value("ToDo", todo[0], {"creation": when, "modified": when}, update_modified=False)
+
+
+def approver_for(approvers, owner, exclude=None):
+	"""The story's person who gives an approval level: its named user, or someone
+	holding its role, never the person who raised the document."""
+	for a in approvers:
+		if a.approver_user and a.approver_user != owner:
+			return next((k for k in PEOPLE if user(k) == a.approver_user), None)
+	candidates = [k for k, (_f, _l, _t, roles) in PEOPLE.items() if user(k) != owner]
+	if exclude in candidates:  # prefer the person taking the workflow step
+		candidates.insert(0, candidates.pop(candidates.index(exclude)))
+	for a in approvers:
+		for key in candidates:
+			if a.approver_role in PEOPLE[key][3]:
+				return key
+	return None
+
+
+def approve_levels(doctype: str, name: str, when, exclude=None, upto=None, note=None):
+	"""Approve a request or order level by level through the Approval Matrix, as the
+	story's people, dated on the story day. Stops at `upto` if given."""
+	from a3_constructa.overrides.approvals import approve, matrix_rows, next_level
+
+	doc = frappe.get_doc(doctype, name)
+	while doc.docstatus == 0:
+		doc.approval_level_required = doc.approval_level_required or 0
+		level, approvers = next_level(doc, matrix_rows(doc))
+		if not level or (upto and level > upto):
+			break
+		key = approver_for(approvers, doc.owner, exclude)
+		if not key:
+			break
+		with as_user(key):
+			approve(doctype, name, note)
+		row = frappe.get_all("Approval Log", filters={"parent": name, "parenttype": doctype, "level": level},
+		                     order_by="idx desc", limit=1, pluck="name")
+		if row:
+			frappe.db.set_value("Approval Log", row[0], "on", when, update_modified=False)
+		doc = frappe.get_doc(doctype, name)
+	return doc

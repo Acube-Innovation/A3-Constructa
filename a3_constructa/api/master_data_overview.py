@@ -16,9 +16,9 @@ underneath it as `facts`.
 
 import frappe
 from frappe import _
-from frappe.utils import add_days, add_months, get_first_day, get_fullname, getdate, now_datetime, today
+from frappe.utils import add_days, add_months, flt, get_first_day, get_fullname, getdate, now_datetime, today
 
-from a3_constructa.api.utils import company_filter, default_company
+from a3_constructa.api.utils import company_filter, company_projects, default_company
 
 AREAS = (
 	{
@@ -264,7 +264,7 @@ BREAKDOWN_ROWS = 5
 @frappe.whitelist()
 def get_overview() -> dict:
 	readable = {doctype for doctype in _all_doctypes() if _can_read(doctype)}
-	checks = [_health_check(check, readable) for check in HEALTH_CHECKS]
+	checks = [_health_check(check, readable) for check in HEALTH_CHECKS] + _new_master_checks()
 	activity = [doctype for doctype in ACTIVITY_DOCTYPES if doctype in readable]
 
 	return {
@@ -370,6 +370,109 @@ def _health_check(check: dict, readable: set) -> dict:
 		"severity": check["severity"],
 		"count": _count(check["doctype"], filters) if check["doctype"] in readable else None,
 	}
+
+
+# ---------------------------------------------------------------- newer masters
+# Crews (P-07A), alert rules (P-13F) and estimate prices (P-02C) live on other
+# workspaces' cards, but bad data in them is a master-data problem: a crew with
+# no foreman, an alert nobody receives, an estimate line with no price. A child
+# table cannot be filtered from a list URL, so these name the records they found.
+
+
+def _named(label, doctype, names, readable, meta=None) -> dict:
+	names = sorted(set(names or []))
+	return {
+		"label": _(label),
+		"doctype": doctype,
+		"filters": {"name": ["in", names]},
+		"severity": "warning",
+		"count": len(names) if readable else None,
+		"meta": meta,
+	}
+
+
+def _new_master_checks() -> list[dict]:
+	return _crew_checks() + _alert_rule_checks() + _estimate_checks()
+
+
+def _crew_checks() -> list[dict]:
+	readable = _can_read("Crew")
+	no_foreman, unpriced, workers = [], [], []
+	if readable:
+		active = _scoped("Crew", {"is_active": 1})
+		no_foreman = frappe.get_list("Crew", filters={**active, "foreman": ["is", "not set"]}, pluck="name", limit_page_length=0)
+		members = frappe.get_list(
+			"Crew",
+			filters=[["Crew", field, *(v if isinstance(v, list) else ["=", v])] for field, v in active.items()]
+			+ [["Crew Member", "is_active", "=", 1]],
+			fields=["name", "`tabCrew Member`.employee as employee", "`tabCrew Member`.daily_rate as daily_rate"],
+			limit_page_length=0,
+		)
+		unpriced = [m.name for m in members if not flt(m.daily_rate)]
+		crews_of = {}
+		for m in members:
+			crews_of.setdefault(m.employee, set()).add(m.name)
+		workers = [employee for employee, crews in crews_of.items() if len(crews) > 1]
+	employees = _can_read("Employee")
+	return [
+		_named("Active crews with no foreman", "Crew", no_foreman, readable),
+		_named("Active crews with members on no daily rate", "Crew", unpriced, readable,
+		       _("The crew's daily cost leaves them out")),
+		_named("Workers active in more than one crew", "Employee" if employees else "Crew",
+		       workers if employees else [], readable and employees, _("Their hours split between the crews")),
+	]
+
+
+def _alert_rule_checks() -> list[dict]:
+	from a3_constructa.api.alerts import recipients
+
+	readable = _can_read("Alert Rule")
+	nobody, never = [], []
+	if readable:
+		for rule in frappe.get_list("Alert Rule", filters={"is_active": 1}, fields=["name", "last_run"], limit_page_length=0):
+			if not rule.last_run:
+				never.append(rule.name)
+			if not recipients(frappe.get_doc("Alert Rule", rule.name)):
+				nobody.append(rule.name)
+	return [
+		_named("Active alert rules nobody receives", "Alert Rule", nobody, readable,
+		       _("Every recipient disabled, or a role with no users")),
+		_named("Active alert rules that have never run", "Alert Rule", never, readable,
+		       _("The scheduler runs them daily or weekly")),
+	]
+
+
+def _estimate_checks() -> list[dict]:
+	readable = _can_read("Estimate Sheet")
+	unpriced, no_output = [], []
+	if readable:
+		# Sheets carry neither company nor project: they are the company's through
+		# their BOQ's project, and a tender BOQ (no project yet) counts for everyone.
+		company = default_company()
+		boqs = None
+		if company:
+			boqs = frappe.get_all("BOQ", filters={"project": ["in", company_projects(company) or [""]]}, pluck="name")
+			boqs += frappe.get_all("BOQ", filters={"project": ["is", "not set"]}, pluck="name")
+		filters = [["Estimate Sheet", "docstatus", "<", 2], ["Estimate Resource", "resource_type", "is", "set"]]
+		if boqs is not None:
+			filters.append(["Estimate Sheet", "boq", "in", boqs or [""]])
+		for line in frappe.get_list(
+			"Estimate Sheet",
+			filters=filters,
+			fields=["name", "`tabEstimate Resource`.resource_type as kind", "`tabEstimate Resource`.rate as rate",
+			        "`tabEstimate Resource`.output_per_day as output_per_day"],
+			limit_page_length=0,
+		):
+			if not flt(line.rate):
+				unpriced.append(line.name)
+			if line.kind in ("Labour", "Equipment") and not flt(line.output_per_day):
+				no_output.append(line.name)
+	return [
+		_named("Estimate sheets with resource lines at no rate", "Estimate Sheet", unpriced, readable,
+		       _("Fetch prices, or type a rate")),
+		_named("Estimate sheets with labour or plant lines at no output per day", "Estimate Sheet", no_output, readable,
+		       _("Their cost per unit works out at zero")),
+	]
 
 
 def _resolve_dates(filters: dict) -> dict:

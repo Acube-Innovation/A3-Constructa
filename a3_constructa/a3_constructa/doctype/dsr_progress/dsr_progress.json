@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-10-08 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "task",
+  "subject",
+  "wbs",
+  "qty_done",
+  "uom",
+  "progress_log"
+ ],
+ "fields": [
+  {
+   "columns": 4,
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Task",
+   "options": "Task",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "task.subject",
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "label": "Subject",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "task.wbs",
+   "fieldname": "wbs",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "WBS",
+   "options": "WBS",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "description": "Done on this day.",
+   "fieldname": "qty_done",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity Done",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "task.uom",
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "UOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "progress_log",
+   "fieldtype": "Data",
+   "label": "Progress Log Row",
+   "no_copy": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-08 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "DSR Progress",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

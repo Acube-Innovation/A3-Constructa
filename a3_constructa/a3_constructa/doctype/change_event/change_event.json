@@ -1,0 +1,297 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-10-06 15:50:28.932490",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "title",
+  "awarded_quotation",
+  "project",
+  "customer",
+  "company",
+  "currency",
+  "cb_1",
+  "raised_on",
+  "raised_by",
+  "raised_by_name",
+  "source",
+  "status",
+  "sb_scope",
+  "description",
+  "cb_2",
+  "wbs",
+  "cost_head",
+  "sb_exposure",
+  "rough_cost",
+  "cb_3",
+  "rough_days",
+  "sb_decision",
+  "variation_order",
+  "cb_4",
+  "decision_note"
+ ],
+ "fields": [
+  {
+   "default": "CE-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "CE-.YYYY.-.####",
+   "reqd": 1
+  },
+  {
+   "description": "A short name for the change, as the site calls it.",
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "awarded_quotation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Awarded Quotation",
+   "options": "Awarded Quotation",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.project",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "awarded_quotation.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "raised_on",
+   "fieldtype": "Date",
+   "label": "Raised On",
+   "reqd": 1
+  },
+  {
+   "description": "Who saw the change.",
+   "fieldname": "raised_by",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Raised By",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "raised_by.employee_name",
+   "fieldname": "raised_by_name",
+   "fieldtype": "Data",
+   "label": "Raised By Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Source",
+   "options": "Client instruction\nDesign change\nSite condition\nRFI answer\nOther",
+   "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Open\nPriced\nBecame VO\nAbsorbed\nClaim\nClosed"
+  },
+  {
+   "fieldname": "sb_scope",
+   "fieldtype": "Section Break",
+   "label": "What changed"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Where on the works; a node of the award's project.",
+   "fieldname": "wbs",
+   "fieldtype": "Link",
+   "label": "WBS",
+   "options": "WBS"
+  },
+  {
+   "fetch_from": "wbs.cost_head",
+   "fieldname": "cost_head",
+   "fieldtype": "Link",
+   "label": "Cost Head",
+   "options": "Cost Head",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_exposure",
+   "fieldtype": "Section Break",
+   "label": "Rough exposure"
+  },
+  {
+   "description": "A first estimate of the cost; negative for a saving. Becomes the starting amount of the variation order.",
+   "fieldname": "rough_cost",
+   "fieldtype": "Currency",
+   "label": "Rough Cost",
+   "options": "currency"
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Days the change could add to the programme.",
+   "fieldname": "rough_days",
+   "fieldtype": "Int",
+   "label": "Rough Days"
+  },
+  {
+   "fieldname": "sb_decision",
+   "fieldtype": "Section Break",
+   "label": "Decision"
+  },
+  {
+   "fieldname": "variation_order",
+   "fieldtype": "Link",
+   "label": "Variation Order",
+   "no_copy": 1,
+   "options": "Variation Order",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Why it was absorbed, claimed or closed. Required for those three.",
+   "fieldname": "decision_note",
+   "fieldtype": "Small Text",
+   "label": "Decision Note",
+   "mandatory_depends_on": "eval:['Absorbed', 'Claim', 'Closed'].includes(doc.status)"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-06 15:56:18.565061",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Change Event",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "awarded_quotation,project,status",
+ "show_title_field_in_link": 1,
+ "sort_field": "raised_on",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}

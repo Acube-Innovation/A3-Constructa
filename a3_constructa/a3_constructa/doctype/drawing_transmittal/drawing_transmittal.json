@@ -1,0 +1,51 @@
+{
+ "actions": [],
+ "creation": "2026-10-09 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "issued_to",
+  "issued_on",
+  "acknowledged"
+ ],
+ "fields": [
+  {
+   "fieldname": "issued_to",
+   "fieldtype": "Data",
+   "label": "Issued To",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 4,
+   "description": "Who received it: a subcontractor, the client, site."
+  },
+  {
+   "fieldname": "issued_on",
+   "fieldtype": "Date",
+   "label": "Issued On",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2,
+   "default": "Today"
+  },
+  {
+   "fieldname": "acknowledged",
+   "fieldtype": "Check",
+   "label": "Acknowledged",
+   "in_list_view": 1,
+   "columns": 2,
+   "default": "0"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-09 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Drawing Transmittal",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1
+}

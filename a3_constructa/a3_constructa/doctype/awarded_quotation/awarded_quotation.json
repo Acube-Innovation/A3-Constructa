@@ -27,10 +27,17 @@
   "end_date",
   "time_extension_days",
   "revised_end_date",
+  "practical_completion_date",
   "cb_3",
   "retention_percent",
+  "contract_type",
+  "billing_basis",
+  "retention_cap_percent",
   "advance_percent",
+  "advance_recovery_percent",
   "defects_liability_months",
+  "retention_release_1",
+  "retention_release_2",
   "sb_components",
   "components",
   "sb_timeline",
@@ -238,12 +245,62 @@
    "fieldname": "scope",
    "fieldtype": "Text Editor",
    "label": "Scope and Terms"
+  },
+  {
+   "default": "Lump Sum",
+   "description": "Lump Sum: a fixed price. Re-measured: paid on quantities actually done. Cost Plus: cost plus a fee.",
+   "fieldname": "contract_type",
+   "fieldtype": "Select",
+   "label": "Contract Type",
+   "options": "Lump Sum\nRe-measured\nCost Plus"
+  },
+  {
+   "description": "Retention stops once it reaches this share of the contract value.",
+   "fieldname": "retention_cap_percent",
+   "fieldtype": "Percent",
+   "label": "Retention Cap %"
+  },
+  {
+   "description": "Share of each interim certificate deducted to repay the advance.",
+   "fieldname": "advance_recovery_percent",
+   "fieldtype": "Percent",
+   "label": "Advance Recovery %"
+  },
+  {
+   "default": "Milestones",
+   "description": "Milestones: each completed milestone bills its billing %. Progress claims: billed by interim certificates; milestones only plan.",
+   "fieldname": "billing_basis",
+   "fieldtype": "Select",
+   "label": "Billing Basis",
+   "options": "Milestones\nProgress claims"
+  },
+  {
+   "description": "Releases the first half of the retention; the defects liability period runs from here.",
+   "fieldname": "practical_completion_date",
+   "fieldtype": "Date",
+   "label": "Practical Completion"
+  },
+  {
+   "fieldname": "retention_release_1",
+   "fieldtype": "Link",
+   "label": "Retention Release (1st half)",
+   "no_copy": 1,
+   "options": "Sales Invoice",
+   "read_only": 1
+  },
+  {
+   "fieldname": "retention_release_2",
+   "fieldtype": "Link",
+   "label": "Retention Release (2nd half)",
+   "no_copy": 1,
+   "options": "Sales Invoice",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-22 13:10:01.077360",
+ "modified": "2026-10-06 18:16:21.909072",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Awarded Quotation",
@@ -297,6 +354,22 @@
    "role": "Constructa Quantity Surveyor",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
   }
  ],
  "row_format": "Dynamic",

@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "creation": "2026-10-06 22:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "document_type",
+  "reference",
+  "valid_until",
+  "attachment"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "document_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Document Type",
+   "options": "Document Type",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "description": "Policy, certificate or receipt number.",
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Reference"
+  },
+  {
+   "columns": 2,
+   "description": "Leave empty for a document that does not expire.",
+   "fieldname": "valid_until",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Valid Until"
+  },
+  {
+   "columns": 3,
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Attachment"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-06 22:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Compliance Document",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

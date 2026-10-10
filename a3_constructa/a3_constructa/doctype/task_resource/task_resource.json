@@ -1,0 +1,140 @@
+{
+ "actions": [],
+ "creation": "2026-10-07 15:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "resource_type",
+  "description",
+  "crew",
+  "trade",
+  "asset_category",
+  "asset",
+  "item_code",
+  "cb_1",
+  "qty_per_day",
+  "uom",
+  "days",
+  "total_qty",
+  "need_by_date",
+  "estimate_sheet"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "fieldname": "resource_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "Labour\nEquipment\nMaterial",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description"
+  },
+  {
+   "depends_on": "eval:doc.resource_type=='Labour'",
+   "fieldname": "crew",
+   "fieldtype": "Link",
+   "label": "Crew",
+   "options": "Crew"
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:doc.resource_type=='Labour'",
+   "fieldname": "trade",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Trade",
+   "options": "\nTiling\nMasonry\nConcrete\nSteel fixing\nFormwork\nCarpentry\nElectrical\nPlumbing\nPainting\nPlant operators\nGeneral labour"
+  },
+  {
+   "depends_on": "eval:doc.resource_type=='Equipment'",
+   "fieldname": "asset_category",
+   "fieldtype": "Link",
+   "label": "Asset Category",
+   "options": "Asset Category"
+  },
+  {
+   "depends_on": "eval:doc.resource_type=='Equipment'",
+   "fieldname": "asset",
+   "fieldtype": "Link",
+   "label": "Asset",
+   "options": "Asset"
+  },
+  {
+   "depends_on": "eval:doc.resource_type=='Material'",
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "description": "People, machines or material a day.",
+   "fieldname": "qty_per_day",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty per Day"
+  },
+  {
+   "columns": 1,
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "columns": 1,
+   "description": "Defaults to the task's duration.",
+   "fieldname": "days",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Days"
+  },
+  {
+   "columns": 1,
+   "description": "Qty per day × days: man-days, machine-days or material.",
+   "fieldname": "total_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Total",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.resource_type=='Material'",
+   "description": "Defaults to the task's start.",
+   "fieldname": "need_by_date",
+   "fieldtype": "Date",
+   "label": "Need By"
+  },
+  {
+   "fieldname": "estimate_sheet",
+   "fieldtype": "Link",
+   "label": "From Estimate",
+   "options": "Estimate Sheet",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-07 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Task Resource",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

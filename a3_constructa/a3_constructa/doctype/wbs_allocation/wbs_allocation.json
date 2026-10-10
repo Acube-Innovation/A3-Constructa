@@ -14,7 +14,9 @@
   "wbs",
   "cost_head",
   "sb_1",
-  "items"
+  "items",
+  "total_allocated",
+  "amended_from"
  ],
  "fields": [
   {
@@ -67,12 +69,30 @@
    "fieldtype": "Table",
    "label": "Items",
    "options": "WBS Allocation Item"
+  },
+  {
+   "fieldname": "total_allocated",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Allocated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "WBS Allocation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2026-09-15 11:42:20.771986",
+ "modified": "2026-10-06 11:50:27.912540",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "WBS Allocation",
@@ -80,6 +100,8 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -89,9 +111,12 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -101,9 +126,11 @@
    "report": 1,
    "role": "A3 Constructa Admin",
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {
+   "amend": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -113,9 +140,11 @@
    "report": 1,
    "role": "Constructa Project Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {
+   "amend": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -125,6 +154,7 @@
    "report": 1,
    "role": "Constructa Quantity Surveyor",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

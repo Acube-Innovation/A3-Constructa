@@ -205,7 +205,7 @@ def create_employees():
 		if exists("Employee", {"first_name": first, "last_name": last, "company": COMPANY}):
 			continue
 		insert({"doctype": "Employee", "first_name": first, "last_name": last, "company": COMPANY,
-		        "gender": "Female" if first in ("Chantal", "Esther", "Marie", "Grace") else "Male",
+		        "gender": "Female" if first in ("Chantal", "Esther", "Marie", "Grace", "Bernadette") else "Male",
 		        "date_of_birth": "1986-05-14", "date_of_joining": "2021-02-01", "status": "Active",
 		        "user_id": user(key) if key in PEOPLE else None})
 	log("employees for every person in the story, plus a plant operator")
@@ -256,6 +256,8 @@ def create_dispatch_entry_type():
 # manager, and purchase orders are approved before they are released.
 PR_WORKFLOW = "Masiha PR Approval"
 PO_WORKFLOW = "Masiha PO Approval"
+# P-09A: the approving step shows only once every Approval Matrix level has approved.
+LEVELS_DONE = "(doc.approval_level_reached or 0) >= (doc.approval_level_required or 0)"
 
 
 def create_workflows():
@@ -287,7 +289,7 @@ def create_workflows():
 				{"state": "Stores Verification", "action": "Return for Correction", "next_state": "Draft",
 				 "allowed": "Constructa Store Keeper", "allow_self_approval": 1},
 				{"state": "Pending Approval", "action": "Approve", "next_state": "Approved",
-				 "allowed": "Constructa Project Manager", "allow_self_approval": 1},
+				 "allowed": "Constructa Project Manager", "allow_self_approval": 1, "condition": LEVELS_DONE},
 				{"state": "Pending Approval", "action": "Reject", "next_state": "Rejected",
 				 "allowed": "Constructa Project Manager", "allow_self_approval": 1},
 				{"state": "Pending Approval", "action": "Return for Correction", "next_state": "Draft",
@@ -309,11 +311,23 @@ def create_workflows():
 				{"state": "Draft", "action": "Submit for Approval", "next_state": "Pending Approval",
 				 "allowed": "Purchase User", "allow_self_approval": 1},
 				{"state": "Pending Approval", "action": "Approve", "next_state": "Approved",
-				 "allowed": "Purchase Manager", "allow_self_approval": 1},
+				 "allowed": "Purchase Manager", "allow_self_approval": 1, "condition": LEVELS_DONE},
 				{"state": "Pending Approval", "action": "Reject", "next_state": "Rejected",
 				 "allowed": "Purchase Manager", "allow_self_approval": 1},
 				{"state": "Approved", "action": "Release to Supplier", "next_state": "Released to Supplier",
 				 "allowed": "Purchase User", "allow_self_approval": 1},
 			],
 		})
+	require_approval_levels()
 	log("workflows: PR verify/approve/reject/return; PO approve then release")
+
+
+def require_approval_levels():
+	"""On a site whose workflows predate P-09A, add the condition to their approving steps."""
+	for name in (PR_WORKFLOW, PO_WORKFLOW):
+		if not frappe.db.exists("Workflow", name):
+			continue
+		for t in frappe.get_all("Workflow Transition", filters={"parent": name, "action": "Approve"}, fields=["name", "condition"]):
+			if t.condition != LEVELS_DONE:
+				frappe.db.set_value("Workflow Transition", t.name, "condition", LEVELS_DONE, update_modified=False)
+		frappe.clear_cache(doctype=frappe.db.get_value("Workflow", name, "document_type"))

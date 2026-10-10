@@ -154,6 +154,9 @@ def create_work_certificate():
 		"contracted_qty": 18000, "previous_qty": 0, "this_period_qty": 6200,
 		"rate": 22.0, "retention_percent": 5,
 	})
+	# P-09B: the documents a subcontractor must hold before a certificate is submitted.
+	for document_type in ("Insurance Certificate", "Labour Compliance Certificate", "Tax Clearance Certificate"):
+		doc.append("compliance", {"document_type": document_type, "reference": "MBK-%s" % document_type[:3].upper(), "valid_until": day(180)})
 	doc.flags.ignore_permissions = True
 	doc.insert()
 	doc.submit()

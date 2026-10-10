@@ -1,0 +1,200 @@
+{
+ "actions": [],
+ "creation": "2026-10-08 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "project",
+  "company",
+  "site",
+  "cb_1",
+  "talk_date",
+  "topic",
+  "conducted_by",
+  "conducted_by_name",
+  "sb_att",
+  "attendees",
+  "total_attendance",
+  "sb_notes",
+  "key_points",
+  "cb_2",
+  "photo"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "TBT-.YYYY.-.####",
+   "default": "TBT-.YYYY.-.####",
+   "hidden": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "fetch_from": "project.company",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "site",
+   "fieldtype": "Link",
+   "label": "Site",
+   "options": "Location",
+   "in_standard_filter": 1,
+   "description": "Defaults to the project's site."
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "talk_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "default": "Today",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "topic",
+   "fieldtype": "Data",
+   "label": "Topic",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "conducted_by",
+   "fieldtype": "Link",
+   "label": "Conducted By",
+   "reqd": 1,
+   "options": "Employee",
+   "ignore_user_permissions": 1
+  },
+  {
+   "fieldname": "conducted_by_name",
+   "fieldtype": "Data",
+   "label": "Conducted By (Name)",
+   "fetch_from": "conducted_by.employee_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_att",
+   "fieldtype": "Section Break",
+   "label": "Attendees"
+  },
+  {
+   "fieldname": "attendees",
+   "fieldtype": "Table",
+   "label": "Attendees",
+   "options": "Toolbox Talk Attendee",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_attendance",
+   "fieldtype": "Int",
+   "label": "People Present",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "sb_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "key_points",
+   "fieldtype": "Small Text",
+   "label": "Key Points"
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Photo"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-08 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Toolbox Talk",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "talk_date",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "index_web_pages_for_search": 0,
+ "title_field": "topic",
+ "show_title_field_in_link": 0,
+ "search_fields": "project,talk_date"
+}

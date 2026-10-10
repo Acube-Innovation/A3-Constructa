@@ -15,7 +15,8 @@
   "account",
   "cost_center",
   "uom",
-  "status"
+  "status",
+  "disabled"
  ],
  "fields": [
   {
@@ -36,7 +37,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Category",
-   "options": "\nMaterial\nService\nSubcontract\nSpare\nRental"
+   "options": "\nMaterial\nService\nSubcontract\nSpare\nRental\nEquipment"
   },
   {
    "fieldname": "cb_1",
@@ -73,12 +74,21 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Active\nInactive"
+  },
+  {
+   "default": "0",
+   "description": "Set from Status. ERPNext's accounting-dimension pickers leave out disabled records.",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Disabled",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-15 11:07:52.531039",
+ "modified": "2026-10-07 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "A3 Constructa",
  "name": "Cost Code",
@@ -120,6 +130,13 @@
    "role": "Constructa Project Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer"
   }
  ],
  "row_format": "Dynamic",

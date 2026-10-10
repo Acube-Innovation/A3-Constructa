@@ -1,0 +1,248 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-08 19:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "opportunity",
+  "opportunity_title",
+  "company",
+  "cb_1",
+  "query_no",
+  "status",
+  "sb_question",
+  "question",
+  "cb_2",
+  "raised_on",
+  "raised_by",
+  "sb_answer",
+  "answer",
+  "cb_3",
+  "answered_on",
+  "price_impact",
+  "impact_note"
+ ],
+ "fields": [
+  {
+   "default": "TQ-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "TQ-.YYYY.-.####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Opportunity",
+   "options": "Opportunity",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "opportunity.title",
+   "fieldname": "opportunity_title",
+   "fieldtype": "Data",
+   "label": "Tender",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "opportunity.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Numbered per tender, 1, 2, 3, as the client's clarification log numbers them.",
+   "fieldname": "query_no",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Query No",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Open\nAnswered",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sb_question",
+   "fieldtype": "Section Break",
+   "label": "Question"
+  },
+  {
+   "fieldname": "question",
+   "fieldtype": "Small Text",
+   "label": "Question",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "raised_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Raised On",
+   "reqd": 1
+  },
+  {
+   "fieldname": "raised_by",
+   "fieldtype": "Link",
+   "label": "Raised By",
+   "options": "User",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sb_answer",
+   "fieldtype": "Section Break",
+   "label": "Client's Answer"
+  },
+  {
+   "description": "Entering the client's answer marks the query Answered.",
+   "fieldname": "answer",
+   "fieldtype": "Text",
+   "label": "Answer",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "answered_on",
+   "fieldtype": "Date",
+   "label": "Answered On",
+   "no_copy": 1
+  },
+  {
+   "default": "0",
+   "description": "Tick when the answer changes what the tender costs: the estimate needs revisiting.",
+   "fieldname": "price_impact",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Price Impact",
+   "no_copy": 1
+  },
+  {
+   "depends_on": "price_impact",
+   "mandatory_depends_on": "price_impact",
+   "fieldname": "impact_note",
+   "fieldtype": "Small Text",
+   "label": "Impact Note",
+   "no_copy": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-08 19:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Tender Clarification",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "share": 1,
+   "write": 0
+  }
+ ],
+ "search_fields": "opportunity,status",
+ "show_title_field_in_link": 0,
+ "sort_field": "raised_on",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "opportunity_title",
+ "track_changes": 1
+}

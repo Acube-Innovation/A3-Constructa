@@ -1,0 +1,296 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"sb_overview\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Sales & Billing Overview\", \"col\": 12}}, {\"id\": \"sb_header\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Sales &amp; Billing</b></span>\", \"col\": 12}}, {\"id\": \"card_contract_terms\", \"type\": \"card\", \"data\": {\"card_name\": \"Contract Terms\", \"col\": 4}}, {\"id\": \"card_milestone_billing\", \"type\": \"card\", \"data\": {\"card_name\": \"Milestone Billing\", \"col\": 4}}, {\"id\": \"card_advances\", \"type\": \"card\", \"data\": {\"card_name\": \"Advances\", \"col\": 4}}, {\"id\": \"card_interim_payment_certificates\", \"type\": \"card\", \"data\": {\"card_name\": \"Interim Payment Certificates\", \"col\": 4}}, {\"id\": \"card_retention\", \"type\": \"card\", \"data\": {\"card_name\": \"Retention\", \"col\": 4}}, {\"id\": \"card_invoicing_collections\", \"type\": \"card\", \"data\": {\"card_name\": \"Invoicing & Collections\", \"col\": 4}}, {\"id\": \"card_final_account\", \"type\": \"card\", \"data\": {\"card_name\": \"Final Account\", \"col\": 4}}]",
+ "creation": "2026-10-06 17:32:26.653589",
+ "custom_blocks": [
+  {
+   "custom_block_name": "Sales & Billing Overview",
+   "label": "Sales & Billing Overview"
+  }
+ ],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "sell",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Sales & Billing",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contract Terms",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sales Order",
+   "link_count": 0,
+   "link_to": "Sales Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payment Terms Template",
+   "link_count": 0,
+   "link_to": "Payment Terms Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tax Withholding Category",
+   "link_count": 0,
+   "link_to": "Tax Withholding Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Guarantee",
+   "link_count": 0,
+   "link_to": "Bank Guarantee",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Milestone Billing",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Billing Schedule",
+   "link_count": 0,
+   "link_to": "Billing Schedule",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Awarded Quotation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Awarded Quotation",
+   "link_count": 0,
+   "link_to": "Awarded Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Advances",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Advance invoices (Sales Invoice)",
+   "link_count": 0,
+   "link_to": "Sales Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Advance Recovery",
+   "link_count": 0,
+   "link_to": "Advance Recovery",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Awarded Quotation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Interim Payment Certificates",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Client IPC",
+   "link_count": 0,
+   "link_to": "Client IPC",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "IPC Register",
+   "link_count": 0,
+   "link_to": "IPC Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Client IPC",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Retention",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Retention Ledger",
+   "link_count": 0,
+   "link_to": "Retention Ledger",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Awarded Quotation",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Retention accounts (Account)",
+   "link_count": 0,
+   "link_to": "Account",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Invoicing & Collections",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Progress claims (Sales Invoice)",
+   "link_count": 0,
+   "link_to": "Sales Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payment Entry",
+   "link_count": 0,
+   "link_to": "Payment Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Customer Receipts",
+   "link_count": 0,
+   "link_to": "Customer Receipts",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Payment Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Credit Notes",
+   "link_count": 0,
+   "link_to": "Credit Notes",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Sales Invoice",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Dunning",
+   "link_count": 0,
+   "link_to": "Dunning",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Accounts Receivable",
+   "link_count": 0,
+   "link_to": "Accounts Receivable",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Sales Invoice",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Final Account",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "description": null,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Final Account",
+   "link_count": 0,
+   "link_to": "Final Account",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-10-06 23:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Sales & Billing",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "A3 Constructa",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 4.0,
+ "shortcuts": [],
+ "title": "Sales & Billing"
+}

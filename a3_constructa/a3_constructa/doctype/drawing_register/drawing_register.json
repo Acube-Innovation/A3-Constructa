@@ -1,0 +1,216 @@
+{
+ "actions": [],
+ "creation": "2026-10-09 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "project",
+  "company",
+  "drawing_no",
+  "title",
+  "drawing_ref",
+  "discipline",
+  "cb_1",
+  "revision",
+  "revision_date",
+  "status",
+  "superseded_by",
+  "attachment",
+  "sb_t",
+  "transmittals"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "DWG-.YYYY.-.####",
+   "default": "DWG-.YYYY.-.####",
+   "hidden": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "fetch_from": "project.company",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "drawing_no",
+   "fieldtype": "Data",
+   "label": "Drawing No",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "As the designer numbers it, e.g. A-101."
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "drawing_ref",
+   "fieldtype": "Data",
+   "label": "Reference",
+   "read_only": 1,
+   "no_copy": 1,
+   "in_list_view": 0,
+   "description": "Drawing number, revision and title, as links and lists show it."
+  },
+  {
+   "fieldname": "discipline",
+   "fieldtype": "Select",
+   "label": "Discipline",
+   "options": "Architectural\nStructural\nMechanical\nElectrical\nPlumbing\nCivil\nLandscape",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "revision",
+   "fieldtype": "Data",
+   "label": "Revision",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "revision_date",
+   "fieldtype": "Date",
+   "label": "Revision Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "For construction\nFor information\nSuperseded",
+   "default": "For construction",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "A newer revision of the same drawing number marks this one Superseded."
+  },
+  {
+   "fieldname": "superseded_by",
+   "fieldtype": "Link",
+   "label": "Superseded By",
+   "options": "Drawing Register",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "sb_t",
+   "fieldtype": "Section Break",
+   "label": "Transmittals"
+  },
+  {
+   "fieldname": "transmittals",
+   "fieldtype": "Table",
+   "label": "Transmittals",
+   "options": "Drawing Transmittal",
+   "description": "Who this revision was issued to, and whether they acknowledged it."
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-09 09:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "A3 Constructa",
+ "name": "Drawing Register",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "A3 Constructa Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Project Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Site Engineer",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Constructa Quantity Surveyor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "revision_date",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "index_web_pages_for_search": 0,
+ "title_field": "drawing_ref",
+ "show_title_field_in_link": 1,
+ "search_fields": "project,drawing_no,revision,status"
+}
