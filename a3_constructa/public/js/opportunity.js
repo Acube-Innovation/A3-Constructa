@@ -66,7 +66,7 @@ function update_points(frm, cdt, cdn) {
 }
 
 function show_bid(frm) {
-	if (frm.is_new() || frm.doc.total_score === null || frm.doc.total_score === undefined) return;
+	if (frm.is_new() || !(frm.doc.bid_scores || []).length) return;
 	const score = format_number(frm.doc.total_score, null, 1);
 	const threshold = format_number(frm.doc.bid_threshold, null, 1);
 	const decision = frm.doc.bid_decision;

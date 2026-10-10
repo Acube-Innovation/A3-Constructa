@@ -266,9 +266,13 @@ OPERATIONS_PERMISSIONS = {
 	# The masters those reports label their rows with; the QS follows the BOQ's procurement.
 	"WBS": {"Accounts User": ("read", "report"), "Accounts Manager": ("read", "report"), "Constructa Quantity Surveyor": ("read", "report"),
 	        # P-13A: the Job Cost Report is a report on the WBS.
-	        "Constructa Project Manager": ("read", "report")},
-	"Cost Code": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",)},
-	"Cost Head": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",)},
+	        "Constructa Project Manager": ("read", "report"),
+	        # Buyers and stores pick the WBS and cost code on orders, receipts and issues.
+	        "Purchase User": ("read",)},
+	"Cost Code": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",),
+	              "Purchase User": ("read",)},
+	"Cost Head": {"Accounts User": ("read",), "Accounts Manager": ("read",), "Constructa Quantity Surveyor": ("read",),
+	              "Purchase User": ("read",)},
 	"Material Request": {"Constructa Quantity Surveyor": ("read", "report")},
 	"Purchase Order": {"Constructa Quantity Surveyor": ("read", "report")},
 	"Purchase Receipt": {"Constructa Quantity Surveyor": ("read", "report")},
@@ -279,6 +283,14 @@ OPERATIONS_PERMISSIONS = {
 	"Warranty Claim": {"Constructa Project Manager": ("read", "write", "create", "report"),
 	                   "Constructa Site Engineer": ("read", "write", "create", "report"),
 	                   "Constructa Quantity Surveyor": ("read", "report")},
+	# Lead and Opportunity carry a Project Location, the project its site: sales, the QS and
+	# the PM pick it, so they read the Location master.
+	"Location": {"Sales User": ("read",), "Sales Manager": ("read",), "Constructa Quantity Surveyor": ("read",),
+	             "Constructa Project Manager": ("read",)},
+	# Tender documents (sales, the QS), subcontractor compliance and shipment papers (buying,
+	# logistics) are typed by a Document Type.
+	"Document Type": {"Sales User": ("read",), "Sales Manager": ("read",), "Constructa Quantity Surveyor": ("read",),
+	                  "Purchase User": ("read",)},
 }
 
 
