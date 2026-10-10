@@ -1,0 +1,799 @@
+<!--
+  Source for docs/A3-Constructa-Construction-WBS.pdf
+
+  Planning document: a Work Breakdown Structure for the whole construction
+  lifecycle (CRM / quotation, sales / billing, operations, procurement, WBS
+  analysis), with the practices of the standard construction packages, and a
+  mapping of every element to what A3 Constructa has today. Written for the
+  Masiha Services SARL "Design & Build | BOQ -> WBS -> Item Mapping"
+  requirement, and meant to be merged into the app in phases later.
+  Regenerate with:
+
+      bench --site <site> execute a3_constructa.demo.build_docs.build_wbs
+
+  Same layout rules as the other guides: wkhtmltopdf runs an old WebKit that
+  drops inline SVG and mishandles flexbox, so everything is built from tables.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+	@page { size: A4; margin: 16mm 14mm 18mm 14mm; }
+
+	body {
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 10pt;
+		line-height: 1.45;
+		color: #1f2933;
+		margin: 0;
+	}
+
+	h1 { font-size: 22pt; margin: 0 0 2px 0; color: #14304f; letter-spacing: -0.4px; }
+	h2 {
+		font-size: 14pt; color: #14304f; margin: 0 0 8px 0;
+		border-bottom: 2px solid #14304f; padding-bottom: 4px;
+	}
+	h3 { font-size: 11pt; color: #14304f; margin: 12px 0 5px 0; page-break-after: avoid; }
+	p  { margin: 0 0 8px 0; }
+
+	.page { page-break-after: always; }
+	.page.last { page-break-after: auto; }
+
+	.lead { font-size: 11pt; color: #3e4c59; }
+	.muted { color: #6b7785; }
+	.small { font-size: 9pt; }
+
+	.titleblock { border-top: 7px solid #14304f; padding-top: 12px; margin-bottom: 10px; }
+	.titleblock .sub { font-size: 12pt; color: #3e4c59; }
+
+	table.data { width: 100%; border-collapse: collapse; margin: 6px 0 10px 0; }
+	table.data th {
+		background: #14304f; color: #fff; text-align: left;
+		padding: 5px 6px; font-size: 8.3pt; font-weight: bold;
+	}
+	table.data td {
+		padding: 4px 6px; border-bottom: 1px solid #dfe3e8;
+		vertical-align: top; font-size: 8.4pt;
+	}
+	table.data thead { display: table-header-group; }
+	table.data tr { page-break-inside: avoid; }
+	table.data tr:nth-child(even) td { background: #f6f8fa; }
+	table.data tr.pkg td {
+		background: #e3ebf3; font-weight: bold; color: #14304f; font-size: 8.8pt;
+		border-bottom: 1px solid #b9c8d8;
+	}
+	td.term { font-weight: bold; color: #14304f; }
+	td.code { font-weight: bold; color: #9a5b00; white-space: nowrap; font-family: Courier, monospace; font-size: 8.4pt; }
+	table.data td ul { margin: 0; padding-left: 14px; }
+
+	.note {
+		background: #fff8e6; border-left: 4px solid #d99100;
+		padding: 7px 11px; margin: 10px 0; font-size: 9pt;
+	}
+	.note b { color: #8a5a00; }
+
+	.practice {
+		background: #eef4f9; border-left: 4px solid #14304f;
+		padding: 7px 11px; margin: 10px 0; font-size: 8.8pt;
+		page-break-inside: avoid;
+	}
+	.practice b.h { color: #14304f; display: block; margin-bottom: 3px; font-size: 9.5pt; }
+	.practice ul { margin: 0; padding-left: 15px; }
+	.practice li { margin-bottom: 2px; }
+
+	.chip {
+		font-size: 6.8pt; font-weight: bold; letter-spacing: 0.4px; padding: 1px 4px;
+		border-radius: 3px; white-space: nowrap;
+	}
+	.chip.ok   { background: #d9efe3; color: #1d6b43; }
+	.chip.part { background: #fdebc8; color: #8a5a00; }
+	.chip.std  { background: #e4e7eb; color: #3e4c59; }
+	.chip.cus  { background: #14304f; color: #fff; }
+
+	/* document chain: one row of boxes joined by arrows */
+	table.flow { border-collapse: separate; border-spacing: 0; margin: 6px 0 10px 0; width: 100%; page-break-inside: avoid; }
+	table.flow td.box {
+		border: 1px solid #5a7896; background: #e8eff7; border-radius: 4px;
+		padding: 4px 5px; font-size: 7.6pt; font-weight: bold; color: #14304f;
+		text-align: center; vertical-align: middle;
+	}
+	table.flow td.box.gold { background: #fff3d6; border-color: #b8862b; color: #6d4b00; }
+	table.flow td.box.teal { background: #dcefef; border-color: #2f8080; color: #1c5454; }
+	table.flow td.arr { text-align: center; color: #5a7896; font-size: 10pt; width: 12px; padding: 0 1px; }
+
+	/* the master tree: five columns, one per area */
+	table.tree { width: 100%; border-collapse: separate; border-spacing: 4px 0; margin: 6px -4px 10px -4px; }
+	table.tree td {
+		width: 20%; vertical-align: top; border: 1px solid #c9d3de; border-radius: 5px;
+		padding: 0; font-size: 8pt; background: #fff;
+	}
+	table.tree td .hd {
+		background: #14304f; color: #fff; font-weight: bold; padding: 5px 6px;
+		font-size: 8.8pt; border-radius: 4px 4px 0 0;
+	}
+	table.tree td .hd span { display: block; font-size: 7.4pt; color: #c3d0dd; font-weight: normal; }
+	table.tree td .it { padding: 3px 6px; border-bottom: 1px solid #edf0f3; }
+	table.tree td .it b { color: #9a5b00; font-family: Courier, monospace; font-size: 7.6pt; }
+
+	table.tiles { width: 100%; border-collapse: separate; border-spacing: 6px 0; margin: 8px -6px 12px -6px; }
+	table.tiles td {
+		width: 25%; vertical-align: top; border: 1px solid #dfe3e8; border-radius: 5px;
+		padding: 7px 9px; font-size: 8.6pt; background: #fff;
+	}
+
+	.strip {
+		background: #14304f; color: #fff; border-radius: 5px;
+		padding: 8px 12px; margin-top: 10px; page-break-inside: avoid;
+	}
+	.strip b { font-size: 10pt; }
+	.strip span { display: block; color: #c3d0dd; font-size: 9pt; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================ page 1: cover + how to read -->
+<div class="page">
+
+<div class="titleblock">
+	<h1>Construction WBS</h1>
+	<div class="sub">From quotation to report: one breakdown for the whole project lifecycle</div>
+	<div class="muted small">Masiha Services SARL &nbsp;&bull;&nbsp; ERPNext v15 + A3 Constructa &nbsp;&bull;&nbsp; Planning document &nbsp;&bull;&nbsp; September 2026</div>
+</div>
+
+<p class="lead">The client's Design &amp; Build requirement (BOQ &rarr; WBS &rarr; Item mapping) covers the
+budget side of a project. This document extends the same breakdown to everything that happens around
+it: how a job is quoted and won, how it is billed, how the work is planned and carried out with people
+and equipment, how materials are bought, and how all of it is reported back against the WBS.</p>
+
+<p>It is a planning document, not a description of the system as built. Every element is still
+mapped to what A3 Constructa and ERPNext have today, so it can be merged into the app phase by phase
+(section 8).</p>
+
+<h2>Contents</h2>
+<table class="data">
+	<thead><tr><th style="width:8%">No.</th><th style="width:36%">Section</th><th>What it answers</th></tr></thead>
+	<tr><td class="code">1</td><td class="term">How to read this document</td><td>Numbering, the 100% rule, and the status tags.</td></tr>
+	<tr><td class="code">2</td><td class="term">Master WBS</td><td>All five areas on one page, down to level 2.</td></tr>
+	<tr><td class="code">3</td><td class="term">1.0 CRM &ndash; Quotation management</td><td>Lead to award, and how the priced BOQ becomes the project budget.</td></tr>
+	<tr><td class="code">4</td><td class="term">2.0 Sales &ndash; Billing</td><td>Contract setup, progress claims, variations, retention, final account.</td></tr>
+	<tr><td class="code">5</td><td class="term">3.0 Operations</td><td>Planning, execution by trade, tasks and sub-tasks, schedules, equipment, labour and workforce, site control.</td></tr>
+	<tr><td class="code">6</td><td class="term">4.0 Procurement</td><td>Plan, request, approve, source, order, receive, issue, pay.</td></tr>
+	<tr><td class="code">7</td><td class="term">5.0 WBS analysis &ndash; Reports</td><td>Cost, quantity, earned value, productivity and margin, rolled up the tree.</td></tr>
+	<tr><td class="code">8</td><td class="term">Worked example, industry comparison, roadmap</td><td>The porcelain-tile example traced end to end; what the standard packages do; order of work.</td></tr>
+</table>
+
+<h2>1. How to read this document</h2>
+
+<table class="data">
+	<thead><tr><th style="width:26%">Rule</th><th>Meaning</th></tr></thead>
+	<tr>
+		<td class="term">Numbering</td>
+		<td><b>1.0</b> Area &rarr; <b>1.1</b> Package &rarr; <b>1.1.1</b> Work item &rarr; <b>1.1.1.1</b> Activity.
+		On a live project the Operations branch (3.2) is repeated per project and carries the project code
+		as a prefix, e.g. <b>PRJ-001.3.2.3.2-A</b> = project 001, Architectural, Flooring, WBS A.</td>
+	</tr>
+	<tr>
+		<td class="term">Two kinds of breakdown</td>
+		<td><b>Process WBS</b> (areas 1, 2, 4, 5): the business steps every project goes through, used to
+		organise the system and its documents. <b>Project (product) WBS</b> (area 3.2): the physical work of
+		one project &mdash; Cost Head &rarr; Work Package &rarr; WBS &rarr; resource lines &mdash; which is
+		the key every cost, bill and task is tagged with.</td>
+	</tr>
+	<tr>
+		<td class="term">100% rule</td>
+		<td>A parent holds exactly the sum of its children plus an unallocated balance. Levels are never
+		added together in a report: Architectural = Flooring + Doors &amp; Windows + Painting + unallocated.</td>
+	</tr>
+	<tr>
+		<td class="term">WBS vs cost code</td>
+		<td>The WBS says <i>where / what part of the work</i> (WBS A: ground-floor porcelain). The cost code
+		says <i>what kind of cost</i> (material, labour, equipment, subcontract, overhead). Every transaction line
+		carries both, as the client flow requires: Project + WBS + Cost Code + Item + Quantity.</td>
+	</tr>
+	<tr>
+		<td class="term">Lowest level = work package</td>
+		<td>A WBS stops where one responsible person can plan, buy for and measure it. Below that, work is
+		broken into schedule activities and tasks (3.3), not into further WBS levels.</td>
+	</tr>
+</table>
+
+<table class="tiles"><tr>
+	<td><span class="chip ok">EXISTS</span><br>A custom A3 Constructa doctype, field or report already covers it.</td>
+	<td><span class="chip std">STANDARD</span><br>ERPNext / HRMS covers it out of the box; set up and use.</td>
+	<td><span class="chip part">CONFIG</span><br>Needs configuration: workflow, custom field, dimension, print format.</td>
+	<td><span class="chip cus">CUSTOM</span><br>Needs new development: a doctype, controller logic or a report.</td>
+</tr></table>
+
+</div>
+
+<!-- ================================================================ page 2: master WBS -->
+<div class="page">
+
+<h2>2. Master WBS &mdash; all areas to level 2</h2>
+
+<p>Each column is one level-1 area. The Operations column is the one that repeats per project and holds
+the physical work breakdown from the client's flow chart.</p>
+
+<table class="tree"><tr>
+	<td>
+		<div class="hd">1.0 CRM<span>Quotation management</span></div>
+		<div class="it"><b>1.1</b> Lead &amp; opportunity</div>
+		<div class="it"><b>1.2</b> Bid / no-bid decision</div>
+		<div class="it"><b>1.3</b> Tender documents &amp; clarifications</div>
+		<div class="it"><b>1.4</b> Quantity take-off</div>
+		<div class="it"><b>1.5</b> Estimating &amp; rate build-up</div>
+		<div class="it"><b>1.6</b> Quotation &amp; revisions</div>
+		<div class="it"><b>1.7</b> Negotiation &amp; award</div>
+		<div class="it"><b>1.8</b> Handover to project</div>
+	</td>
+	<td>
+		<div class="hd">2.0 Sales<span>Billing</span></div>
+		<div class="it"><b>2.1</b> Contract setup</div>
+		<div class="it"><b>2.2</b> Billing schedule &amp; milestones</div>
+		<div class="it"><b>2.3</b> Advance payment</div>
+		<div class="it"><b>2.4</b> Progress measurement</div>
+		<div class="it"><b>2.5</b> Interim payment certificate (IPC)</div>
+		<div class="it"><b>2.6</b> Variations / change orders</div>
+		<div class="it"><b>2.7</b> Retention</div>
+		<div class="it"><b>2.8</b> Collections &amp; receivables</div>
+		<div class="it"><b>2.9</b> Final account &amp; close-out</div>
+	</td>
+	<td>
+		<div class="hd">3.0 Operations<span>Project execution</span></div>
+		<div class="it"><b>3.1</b> Planning &amp; baseline</div>
+		<div class="it"><b>3.2</b> Execution by trade (project WBS)</div>
+		<div class="it"><b>3.3</b> Tasks &amp; sub-tasks</div>
+		<div class="it"><b>3.4</b> Schedules &amp; progress</div>
+		<div class="it"><b>3.5</b> Equipment &amp; tools</div>
+		<div class="it"><b>3.6</b> Labour management</div>
+		<div class="it"><b>3.7</b> Workforce management</div>
+		<div class="it"><b>3.8</b> Site control: diary, QA/QC, HSE</div>
+		<div class="it"><b>3.9</b> Subcontractor management</div>
+		<div class="it"><b>3.10</b> Handover &amp; defects</div>
+	</td>
+	<td>
+		<div class="hd">4.0 Procurement<span>Supply chain</span></div>
+		<div class="it"><b>4.1</b> Procurement plan</div>
+		<div class="it"><b>4.2</b> Material request</div>
+		<div class="it"><b>4.3</b> Approval &amp; budget check</div>
+		<div class="it"><b>4.4</b> Sourcing: RFQ &amp; comparison</div>
+		<div class="it"><b>4.5</b> Purchase &amp; subcontract orders</div>
+		<div class="it"><b>4.6</b> Logistics &amp; import</div>
+		<div class="it"><b>4.7</b> Receipt &amp; inspection</div>
+		<div class="it"><b>4.8</b> Stores: transfer, issue, return</div>
+		<div class="it"><b>4.9</b> Invoice &amp; payment</div>
+	</td>
+	<td>
+		<div class="hd">5.0 WBS analysis<span>Reports</span></div>
+		<div class="it"><b>5.1</b> Budget &amp; revisions</div>
+		<div class="it"><b>5.2</b> Commitments vs budget</div>
+		<div class="it"><b>5.3</b> Actual cost &amp; roll-up</div>
+		<div class="it"><b>5.4</b> Quantity analysis</div>
+		<div class="it"><b>5.5</b> Forecast: cost to complete / EAC</div>
+		<div class="it"><b>5.6</b> Earned value (EVM)</div>
+		<div class="it"><b>5.7</b> Labour &amp; equipment productivity</div>
+		<div class="it"><b>5.8</b> Revenue, billing &amp; margin</div>
+		<div class="it"><b>5.9</b> Dashboards &amp; alerts</div>
+	</td>
+</tr></table>
+
+<h3>How the areas hand over to each other</h3>
+<table class="flow"><tr>
+	<td class="box">1.0 CRM<br><span style="font-weight:normal">priced BOQ, won quote</span></td><td class="arr">&rarr;</td>
+	<td class="box teal">3.1 Planning<br><span style="font-weight:normal">WBS, budget, baseline</span></td><td class="arr">&rarr;</td>
+	<td class="box gold">4.0 Procurement<br><span style="font-weight:normal">tagged Project + WBS + Cost Code</span></td><td class="arr">&rarr;</td>
+	<td class="box teal">3.2&ndash;3.8 Execution<br><span style="font-weight:normal">tasks, labour, equipment, consumption</span></td><td class="arr">&rarr;</td>
+	<td class="box">2.0 Billing<br><span style="font-weight:normal">measured progress</span></td><td class="arr">&rarr;</td>
+	<td class="box teal">5.0 Reports<br><span style="font-weight:normal">WBS &rarr; package &rarr; head &rarr; project</span></td>
+</tr></table>
+
+<h3>Project WBS (3.2) &mdash; the structure from the client flow</h3>
+<table class="data">
+	<thead><tr><th style="width:12%">Level</th><th style="width:20%">Node type</th><th style="width:30%">Example</th><th>What sits here</th></tr></thead>
+	<tr><td class="code">L1</td><td class="term">Project</td><td>PRJ-001 Design &amp; Build</td><td>Contract value (selling) and cost budget, held separately.</td></tr>
+	<tr><td class="code">L2</td><td class="term">Cost head</td><td>Earthworks / Structural, Architectural, MEP / Others / Misc.</td><td>Broad allowances from the initial BOQ. No item codes needed yet.</td></tr>
+	<tr><td class="code">L3</td><td class="term">Work package</td><td>Doors &amp; Windows, Flooring, Painting</td><td>Created as design develops. Keeps the original BOQ line reference.</td></tr>
+	<tr><td class="code">L4</td><td class="term">WBS (scope + location)</td><td>WBS A: ground-floor porcelain; WBS B: first-floor porcelain</td><td>The control account: budget, schedule activities, responsible person.</td></tr>
+	<tr><td class="code">L5</td><td class="term">Resource line</td><td>Porcelain tile 600 m&sup2; (A) / 400 m&sup2; (B); adhesive; grout; installation labour</td><td>One item code can appear under many WBS; one WBS uses many items.</td></tr>
+</table>
+
+</div>
+
+<!-- ================================================================ area 1: CRM -->
+<div class="page">
+
+<h2>3. 1.0 CRM &mdash; Quotation management</h2>
+
+<p>Goal: win the right jobs at the right price, and hand over a priced BOQ that becomes the project's
+contract value and starting budget without re-typing it.</p>
+
+<table class="flow"><tr>
+	<td class="box">Lead</td><td class="arr">&rarr;</td>
+	<td class="box">Opportunity</td><td class="arr">&rarr;</td>
+	<td class="box gold">Bid / no-bid</td><td class="arr">&rarr;</td>
+	<td class="box">Take-off &amp; estimate</td><td class="arr">&rarr;</td>
+	<td class="box">Quotation (rev 0, 1, 2&hellip;)</td><td class="arr">&rarr;</td>
+	<td class="box gold">Award</td><td class="arr">&rarr;</td>
+	<td class="box teal">Sales Order + Project + BOQ</td>
+</tr></table>
+
+<table class="data">
+	<thead><tr><th style="width:8%">WBS</th><th style="width:19%">Element</th><th style="width:30%">Deliverable / what happens</th><th style="width:22%">Key data</th><th style="width:21%">ERPNext / A3 mapping</th></tr></thead>
+	<tr class="pkg"><td>1.1</td><td colspan="4">Lead &amp; opportunity</td></tr>
+	<tr><td class="code">1.1.1</td><td class="term">Lead capture</td><td>Enquiries from tenders, portals, referrals and repeat clients recorded in one list.</td><td>Client, source, sector, location, estimated value</td><td>Lead <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">1.1.2</td><td class="term">Qualification</td><td>Converted to an opportunity with a pipeline stage and probability.</td><td>Stage, probability, expected award date</td><td>Opportunity <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">1.1.3</td><td class="term">Site visit</td><td>Visit report, photos, constraints noted before pricing.</td><td>Access, utilities, soil, logistics notes</td><td>Opportunity attachments / Event <span class="chip std">STANDARD</span></td></tr>
+	<tr class="pkg"><td>1.2</td><td colspan="4">Bid / no-bid decision</td></tr>
+	<tr><td class="code">1.2.1</td><td class="term">Go / no-go checklist</td><td>Scored against capacity, margin, risk, payment terms and client history.</td><td>Score, decision, approver</td><td>Custom fields + workflow on Opportunity <span class="chip part">CONFIG</span></td></tr>
+	<tr class="pkg"><td>1.3</td><td colspan="4">Tender documents &amp; clarifications</td></tr>
+	<tr><td class="code">1.3.1</td><td class="term">Tender register</td><td>Drawings, specs, BOQ form and addenda logged with revisions.</td><td>Document, revision, received date</td><td>Document Type / Mandatory Document Rule <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">1.3.2</td><td class="term">Pre-bid queries</td><td>Questions to the client and their answers, kept against the tender.</td><td>Query, reply, impact on price</td><td>Communication / Comment on Opportunity <span class="chip std">STANDARD</span></td></tr>
+	<tr class="pkg"><td>1.4</td><td colspan="4">Quantity take-off</td></tr>
+	<tr><td class="code">1.4.1</td><td class="term">Measure quantities</td><td>Quantities measured from drawings under a standard method (e.g. NRM2 / POMI / CESMM).</td><td>BOQ line, description, UOM, quantity</td><td>BOQ + BOQ Item <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">1.4.2</td><td class="term">Structure to cost heads</td><td>BOQ lines grouped under Earthworks, Structural, Architectural, MEP, Preliminaries.</td><td>Cost head, section, BOQ reference</td><td>Cost Head tree <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>1.5</td><td colspan="4">Estimating &amp; rate build-up</td></tr>
+	<tr><td class="code">1.5.1</td><td class="term">Rate analysis</td><td>Each unit rate built from material + labour + equipment + subcontract + wastage.</td><td>Resource, output per day, unit cost</td><td>Estimate sheet per BOQ line <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">1.5.2</td><td class="term">Supplier / subcontract prices</td><td>Budget quotes collected to support the rates.</td><td>Supplier, rate, validity</td><td>Request for Quotation / Supplier Quotation <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">1.5.3</td><td class="term">Preliminaries &amp; markups</td><td>Site set-up, supervision, insurance, overhead, profit, contingency.</td><td>%, lump sums, risk allowance</td><td>Allowance lines on BOQ (no item code) <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>1.6</td><td colspan="4">Quotation &amp; revisions</td></tr>
+	<tr><td class="code">1.6.1</td><td class="term">Client quotation</td><td>Priced BOQ issued as the offer, with terms, validity and exclusions.</td><td>Selling rate, amount, VAT, validity</td><td>Quotation + print format <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">1.6.2</td><td class="term">Revision control</td><td>Every re-price kept as a revision; the reason and the delta are recorded.</td><td>Revision no., reason, value change</td><td>Quotation amendments (-1, -2) + revision reason field <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">1.6.3</td><td class="term">Margin approval</td><td>Offers below a target margin need management approval before issue.</td><td>Cost, sell, margin %, approver</td><td>Workflow on Quotation + margin field <span class="chip part">CONFIG</span></td></tr>
+	<tr class="pkg"><td>1.7</td><td colspan="4">Negotiation &amp; award</td></tr>
+	<tr><td class="code">1.7.1</td><td class="term">Negotiation log</td><td>Discounts and scope changes agreed during negotiation.</td><td>Change, value, date</td><td>New quotation revision <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">1.7.2</td><td class="term">Won / lost</td><td>Result recorded; lost reasons and the competitor's price kept for analysis.</td><td>Status, lost reason, competitor</td><td>Quotation status / lost reasons <span class="chip std">STANDARD</span></td></tr>
+	<tr class="pkg"><td>1.8</td><td colspan="4">Handover to project</td></tr>
+	<tr><td class="code">1.8.1</td><td class="term">Contract order</td><td>The won quotation becomes the customer's order: the contract value.</td><td>Contract value, customer, terms</td><td>Sales Order from Quotation <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">1.8.2</td><td class="term">Project + budget BOQ</td><td>Project created; the priced BOQ copied as the cost budget (contract value and cost budget stay separate).</td><td>Project, BOQ revision 0, cost head</td><td>Quotation &rarr; Project + BOQ mapping <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">1.8.3</td><td class="term">Kick-off pack</td><td>Estimate assumptions, risks and exclusions handed to the project team.</td><td>Assumptions, risk register</td><td>Project attachments / notes <span class="chip std">STANDARD</span></td></tr>
+</table>
+
+<div class="practice">
+	<b class="h">Industry practice &mdash; estimating and CRM</b>
+	<ul>
+		<li><b>RIB CostX / iTWO, Candy, Sage Estimating:</b> take-off is linked to the drawing, and every BOQ
+		rate is a build-up of resources. A change to a resource price flows through every rate that uses it.</li>
+		<li><b>Procore, Buildertrend, CMiC:</b> the estimate becomes the original budget when the job is won, with
+		no re-keying. The bid pipeline (bid board) shows bids by stage, value and win rate.</li>
+		<li><b>Oracle Aconex / Procore Bid Management:</b> tender documents, addenda and bidder queries are
+		controlled and dated so every price can be tied to the document revision it was based on.</li>
+		<li><b>Adopt:</b> resource-based rate build-up (1.5.1), quotation revisions with reasons (1.6.2), and a
+		one-click handover from the won quote to Sales Order + Project + budget BOQ (1.8).</li>
+	</ul>
+</div>
+
+</div>
+
+<!-- ================================================================ area 2: Billing -->
+<div class="page">
+
+<h2>4. 2.0 Sales &mdash; Billing</h2>
+
+<p>Goal: bill the client for measured work against the contract BOQ, handle variations, advances and
+retention correctly, and always know what is certified, invoiced and collected per WBS.</p>
+
+<table class="flow"><tr>
+	<td class="box">Sales Order<br>(contract)</td><td class="arr">&rarr;</td>
+	<td class="box gold">Advance invoice</td><td class="arr">&rarr;</td>
+	<td class="box">Progress measurement</td><td class="arr">&rarr;</td>
+	<td class="box gold">IPC / payment application</td><td class="arr">&rarr;</td>
+	<td class="box">Sales Invoice<br>(less retention, advance)</td><td class="arr">&rarr;</td>
+	<td class="box">Payment Entry</td><td class="arr">&rarr;</td>
+	<td class="box teal">Final account</td>
+</tr></table>
+
+<table class="data">
+	<thead><tr><th style="width:8%">WBS</th><th style="width:19%">Element</th><th style="width:30%">Deliverable / what happens</th><th style="width:22%">Key data</th><th style="width:21%">ERPNext / A3 mapping</th></tr></thead>
+	<tr class="pkg"><td>2.1</td><td colspan="4">Contract setup</td></tr>
+	<tr><td class="code">2.1.1</td><td class="term">Contract register</td><td>Contract value, type (lump sum, re-measured, cost-plus), start and end dates.</td><td>Value, type, dates, currency</td><td>Sales Order + Project <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">2.1.2</td><td class="term">Commercial terms</td><td>Retention %, advance %, recovery method, payment days, VAT, withholding tax.</td><td>Retention %, advance %, taxes</td><td>Custom fields on Sales Order / Project <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">2.1.3</td><td class="term">Contract BOQ link</td><td>Each contract line points to its BOQ line and WBS so billing can be measured per WBS.</td><td>BOQ ref, WBS, selling rate</td><td>BOQ ref + WBS on Sales Order Item <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>2.2</td><td colspan="4">Billing schedule &amp; milestones</td></tr>
+	<tr><td class="code">2.2.1</td><td class="term">Milestone plan</td><td>For lump-sum jobs: agreed payment milestones tied to schedule events.</td><td>Milestone, %, planned date</td><td>Payment Schedule / Payment Terms <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">2.2.2</td><td class="term">Cash-in forecast</td><td>Expected billing per month from the schedule.</td><td>Month, planned billing</td><td>cash_flow_forecast report <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>2.3</td><td colspan="4">Advance payment</td></tr>
+	<tr><td class="code">2.3.1</td><td class="term">Advance invoice &amp; guarantee</td><td>Mobilisation advance billed against an advance-payment guarantee.</td><td>Amount, guarantee no., expiry</td><td>Sales Invoice (advance) / Payment Entry <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">2.3.2</td><td class="term">Advance recovery</td><td>A % deducted from each IPC until the advance is repaid.</td><td>Recovered to date, balance</td><td>IPC deduction line <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>2.4</td><td colspan="4">Progress measurement</td></tr>
+	<tr><td class="code">2.4.1</td><td class="term">Measurement sheet</td><td>Quantities done this period per BOQ line / WBS, agreed with the client's engineer.</td><td>Previous, this period, cumulative qty</td><td>Measurement lines on IPC <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">2.4.2</td><td class="term">Materials on site</td><td>Unfixed materials delivered to site, claimed where the contract allows.</td><td>Item, qty, % claimable</td><td>From Purchase Receipt / site stock <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>2.5</td><td colspan="4">Interim payment certificate (IPC)</td></tr>
+	<tr><td class="code">2.5.1</td><td class="term">Payment application</td><td>Gross value to date &minus; previous certified &minus; retention &minus; advance recovery = due this period.</td><td>Gross, retention, recovery, net</td><td>Client IPC doctype, mirroring Work Certificate <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">2.5.2</td><td class="term">Certification</td><td>Client's engineer certifies; the certified amount can differ from the claim.</td><td>Claimed vs certified, date</td><td>Workflow on IPC <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">2.5.3</td><td class="term">Tax invoice</td><td>Sales Invoice raised for the certified amount; lines keep Project + WBS.</td><td>Invoice no., VAT, WBS</td><td>Sales Invoice with WBS dimension <span class="chip part">CONFIG</span></td></tr>
+	<tr class="pkg"><td>2.6</td><td colspan="4">Variations / change orders</td></tr>
+	<tr><td class="code">2.6.1</td><td class="term">Change event</td><td>Anything that may change scope, cost or time is logged early, before it is priced.</td><td>Reason, source (client / design / site), ROM value</td><td>Change Event doctype <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">2.6.2</td><td class="term">Variation order</td><td>Priced, approved variation that adds to the contract value and to the budget of the WBS it touches.</td><td>VO no., value, time impact, WBS</td><td>Variation Order &rarr; Sales Order amendment + BOQ revision <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">2.6.3</td><td class="term">Claims</td><td>Disputed items tracked separately until settled.</td><td>Claim value, status</td><td>Status on Change Event <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>2.7</td><td colspan="4">Retention</td></tr>
+	<tr><td class="code">2.7.1</td><td class="term">Retention held</td><td>Held on every IPC up to a cap; posted to a retention receivable account.</td><td>Retention to date, cap</td><td>IPC + retention account <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">2.7.2</td><td class="term">Retention release</td><td>First half at practical completion, second at the end of the defects period.</td><td>Release date, amount</td><td>Sales Invoice against retention <span class="chip std">STANDARD</span></td></tr>
+	<tr class="pkg"><td>2.8</td><td colspan="4">Collections &amp; receivables</td></tr>
+	<tr><td class="code">2.8.1</td><td class="term">Receipts</td><td>Payments recorded against invoices; withholding tax deductions captured.</td><td>Amount, date, deductions</td><td>Payment Entry; customer_receipts report <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">2.8.2</td><td class="term">Ageing &amp; follow-up</td><td>Overdue certificates chased; dunning letters.</td><td>Days overdue, contact</td><td>Accounts Receivable, Dunning <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">2.8.3</td><td class="term">Credit notes</td><td>Corrections to issued invoices.</td><td>Reason, amount</td><td>credit_notes report <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>2.9</td><td colspan="4">Final account &amp; close-out</td></tr>
+	<tr><td class="code">2.9.1</td><td class="term">Final account</td><td>Re-measured contract + all variations &minus; all payments = final balance.</td><td>Final value, agreed date</td><td>Final account report on IPC data <span class="chip cus">CUSTOM</span></td></tr>
+</table>
+
+<div class="practice">
+	<b class="h">Industry practice &mdash; progress billing</b>
+	<ul>
+		<li><b>Procore (Prime Contract &amp; Owner Invoices), Viewpoint Vista, CMiC, Sage 300 CRE:</b> billing is
+		done on a schedule of values, the contract BOQ, line by line: work completed previously + this period +
+		stored materials, less retention (the AIA G702/G703 layout in the US; FIDIC IPCs elsewhere).</li>
+		<li><b>Procore Change Events &rarr; Change Orders:</b> potential changes are logged the day they arise,
+		then priced, approved and pushed to both the contract (revenue) and the budget (cost) at once.</li>
+		<li><b>SAP PS:</b> WBS elements are flagged as <i>billing elements</i>; billing plans are milestone-based
+		or resource-related (cost-plus). Revenue is posted to the WBS so margin is visible per WBS.</li>
+		<li><b>Adopt:</b> a client IPC doctype that works like our supplier-side Work Certificate, a Change Event
+		&rarr; Variation Order flow that updates contract and budget together, and WBS on every revenue line.</li>
+	</ul>
+</div>
+
+</div>
+
+<!-- ================================================================ area 3: Operations (1/3) -->
+<div>
+
+<h2>5. 3.0 Operations &mdash; Project execution</h2>
+
+<p>Goal: plan the work against the WBS, carry it out through tasks and sub-tasks, and record every hour
+of labour and equipment, and every material issued, against the WBS and cost code it belongs to. This
+area is the largest, so it runs over three pages.</p>
+
+<table class="flow"><tr>
+	<td class="box teal">WBS + budget</td><td class="arr">&rarr;</td>
+	<td class="box">Baseline schedule<br>(activities)</td><td class="arr">&rarr;</td>
+	<td class="box">Look-ahead<br>(3 weeks)</td><td class="arr">&rarr;</td>
+	<td class="box gold">Daily tasks<br>crew + equipment</td><td class="arr">&rarr;</td>
+	<td class="box">Daily site report<br>hours, qty done</td><td class="arr">&rarr;</td>
+	<td class="box teal">% complete &rarr; EV, billing</td>
+</tr></table>
+
+<table class="data">
+	<thead><tr><th style="width:8%">WBS</th><th style="width:19%">Element</th><th style="width:30%">Deliverable / what happens</th><th style="width:22%">Key data</th><th style="width:21%">ERPNext / A3 mapping</th></tr></thead>
+	<tr class="pkg"><td>3.1</td><td colspan="4">Planning &amp; baseline</td></tr>
+	<tr><td class="code">3.1.1</td><td class="term">Project set-up</td><td>Project, sites / stores, cost centre, project manager and team.</td><td>Project, site, warehouse, cost centre</td><td>Project + project_stores, site_stores <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.1.2</td><td class="term">WBS build</td><td>Cost Head &rarr; Work Package &rarr; WBS tree, grown as the design develops.</td><td>WBS code, level, node type, BOQ ref, location</td><td>WBS + Cost Head trees <span class="chip ok">EXISTS</span>; node type / location <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.1.3</td><td class="term">Budget allocation</td><td>Approved BOQ spread to WBS and resource lines; unallocated balance shown.</td><td>Item, qty, rate, cost code per WBS</td><td>WBS Allocation <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.1.4</td><td class="term">Master schedule</td><td>Activities under each WBS with durations and logic; baseline frozen when approved.</td><td>Activity, duration, predecessors, baseline dates</td><td>Task with WBS link, Gantt view <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.1.5</td><td class="term">Milestones</td><td>Contract and internal milestones (e.g. slab complete, handover).</td><td>Milestone, contract date</td><td>Task (is_milestone) <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">3.1.6</td><td class="term">Resource plan</td><td>Labour, equipment and material quantities loaded on each activity.</td><td>Resource, qty per day</td><td>Resource lines on Task <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>3.2</td><td colspan="4">Execution by trade &mdash; the project WBS (repeats per project)</td></tr>
+	<tr><td class="code">3.2.1</td><td class="term">Preliminaries &amp; site set-up</td><td>Site office, hoarding, temporary power and water, access roads.</td><td>Temporary works, rentals</td><td>WBS + temporary_works_items <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.2.2</td><td class="term">Earthworks / Structural</td><td>Excavation, foundations, frame, slabs, blockwork.</td><td>Concrete m&sup3;, rebar t, formwork m&sup2;</td><td>WBS nodes <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.2.3</td><td class="term">Architectural</td><td>3.2.3.1 Doors &amp; windows &middot; 3.2.3.2 Flooring &rarr; WBS A ground floor / WBS B first floor &middot; 3.2.3.3 Painting.</td><td>Scope, location, area / count</td><td>WBS nodes <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.2.4</td><td class="term">MEP / Others / Misc.</td><td>Electrical, plumbing, HVAC, fire, lifts, external works.</td><td>Systems, points, runs</td><td>WBS nodes <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.2.5</td><td class="term">Testing &amp; commissioning</td><td>System tests, commissioning, as-built drawings.</td><td>Test records, certificates</td><td>WBS node + Quality Inspection <span class="chip std">STANDARD</span></td></tr>
+	<tr class="pkg"><td>3.3</td><td colspan="4">Tasks &amp; sub-tasks</td></tr>
+	<tr><td class="code">3.3.1</td><td class="term">Activity</td><td>Schedule activity under a WBS, e.g. "Lay porcelain, ground floor, zone 1".</td><td>WBS, duration, planned qty, UOM</td><td>Task + WBS field <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.3.2</td><td class="term">Sub-tasks</td><td>Screed &rarr; set-out &rarr; lay tiles &rarr; grout &rarr; clean &amp; protect.</td><td>Parent task, sequence, weight %</td><td>Task (parent_task, is_group) <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">3.3.3</td><td class="term">Dependencies</td><td>Finish-to-start, start-to-start with lag; drives the critical path.</td><td>Predecessor, type, lag</td><td>Task Depends On (FS only) <span class="chip std">STANDARD</span>; SS/FF + lag <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.3.4</td><td class="term">Assignment</td><td>Each task given to a foreman / crew with a planned start and end.</td><td>Assignee, crew, dates</td><td>Task assignment <span class="chip std">STANDARD</span>; crew <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.3.5</td><td class="term">Progress update</td><td>Quantity done &rarr; % complete, weighted by sub-task.</td><td>Qty done, % complete, remaining duration</td><td>Task progress + qty fields <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>3.4</td><td colspan="4">Schedules &amp; progress</td></tr>
+	<tr><td class="code">3.4.1</td><td class="term">Baseline vs actual</td><td>Frozen baseline kept; actual and forecast dates compared to it.</td><td>Baseline start / finish, actual, float</td><td>Baseline fields on Task <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.4.2</td><td class="term">Look-ahead plan</td><td>Rolling 3-week plan: what must be ready (material, labour, equipment, permits).</td><td>Constraints, readiness</td><td>Look-ahead report from Task <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.4.3</td><td class="term">Schedule revisions</td><td>Re-baselines approved and kept as versions with a reason (e.g. variation).</td><td>Revision no., reason</td><td>Schedule revision log <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.4.4</td><td class="term">P6 / MS Project exchange</td><td>Import and export activities (XER / XML) where the client asks for a P6 programme.</td><td>Activity IDs mapped to WBS</td><td>Import tool <span class="chip cus">CUSTOM</span></td></tr>
+</table>
+
+</div>
+
+<!-- ================================================================ area 3: Operations (2/3) -->
+<div>
+
+<h3>3.0 Operations, continued &mdash; equipment, labour and workforce</h3>
+
+<table class="data">
+	<thead><tr><th style="width:8%">WBS</th><th style="width:19%">Element</th><th style="width:30%">Deliverable / what happens</th><th style="width:22%">Key data</th><th style="width:21%">ERPNext / A3 mapping</th></tr></thead>
+	<tr class="pkg"><td>3.5</td><td colspan="4">Equipment &amp; tools</td></tr>
+	<tr><td class="code">3.5.1</td><td class="term">Equipment register</td><td>Owned and hired plant: excavators, cranes, mixers, generators, vehicles.</td><td>Asset, category, owner / hirer, internal rate</td><td>Asset + custom fields <span class="chip ok">EXISTS</span>; rental_items <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.5.2</td><td class="term">Equipment plan</td><td>Which machine is needed on which WBS / task and when.</td><td>Equipment, WBS, planned days</td><td>Resource lines on Task <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.5.3</td><td class="term">Allocation &amp; movement</td><td>Machine moved to a site / project; custody recorded.</td><td>From / to site, date, operator</td><td>Asset Movement; assets_issued, assets_in_use <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.5.4</td><td class="term">Usage log</td><td>Daily hours worked, idle and breakdown per machine, charged to WBS + cost code.</td><td>Hours worked / idle / down, meter, WBS</td><td>Equipment Log doctype <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.5.5</td><td class="term">Fuel &amp; consumables</td><td>Fuel issued per machine, consumption per hour tracked.</td><td>Litres, meter reading</td><td>Stock Entry with asset link <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">3.5.6</td><td class="term">Maintenance &amp; spares</td><td>Planned service, breakdown repair, spares used.</td><td>Service due, cost, downtime</td><td>Asset Maintenance, Asset Spare Part; asset_maintenance_cost, spare_consumption_by_asset <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.5.7</td><td class="term">Equipment cost to WBS</td><td>Hours &times; internal or hire rate posted to the WBS (owned plant) or through the hire PO.</td><td>Rate, amount, WBS, cost code</td><td>Journal from Equipment Log <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.5.8</td><td class="term">Small tools</td><td>Hand tools issued to workers and returned; losses charged.</td><td>Tool, serial, custodian</td><td>Tool Issue; tools_outstanding, tool_loss_analysis <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>3.6</td><td colspan="4">Labour management</td></tr>
+	<tr><td class="code">3.6.1</td><td class="term">Crews / gangs</td><td>Standard crews by trade, e.g. tiling crew = 1 foreman + 2 tilers + 2 helpers.</td><td>Crew, members, trade, daily cost</td><td>Crew doctype <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.6.2</td><td class="term">Daily attendance</td><td>Site-wise attendance, in/out, overtime.</td><td>Employee, site, hours, OT</td><td>Attendance + custom fields; site_wise_attendance <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.6.3</td><td class="term">Labour allocation to WBS</td><td>Hours split across the tasks / WBS the crew worked on that day.</td><td>Hours, task, WBS, cost code</td><td>Timesheet + custom fields <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.6.4</td><td class="term">Productivity</td><td>Output per man-hour against the rate build-up (e.g. m&sup2; of tile per crew-day).</td><td>Planned vs actual output</td><td>Productivity report <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.6.5</td><td class="term">Labour cost</td><td>Payroll cost flowed to projects and WBS.</td><td>Cost per project / WBS</td><td>Salary Slip + project_wise_manpower_cost <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>3.7</td><td colspan="4">Workforce management</td></tr>
+	<tr><td class="code">3.7.1</td><td class="term">Manpower plan</td><td>Headcount by trade by week, from the resource-loaded schedule.</td><td>Trade, week, headcount</td><td>Manpower histogram <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.7.2</td><td class="term">Hiring &amp; onboarding</td><td>Direct hire and daily-rated workers: contract, ID, bank, site induction.</td><td>Employee, grade, rate, induction date</td><td>Employee, Job Opening, Employee Onboarding (HRMS) <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">3.7.3</td><td class="term">Skills &amp; certifications</td><td>Trade tests, operator licences, work-at-height, welding certificates with expiry.</td><td>Skill, certificate, expiry</td><td>Employee Skill Map / custom child table <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">3.7.4</td><td class="term">Subcontractor manpower</td><td>Subcontractor headcount on site per day, for safety and progress.</td><td>Supplier, trade, headcount</td><td>Daily site report line <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.7.5</td><td class="term">Accommodation, transport, PPE</td><td>Camp, buses and PPE issued per worker; charged as site overhead.</td><td>Worker, item, date</td><td>Stock Entry / Expense Claim with WBS <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">3.7.6</td><td class="term">Payroll &amp; reimbursements</td><td>Monthly and daily-wage payroll, site allowances, expense claims.</td><td>Salary, allowances, claims</td><td>Payroll (HRMS); employee_reimbursements <span class="chip ok">EXISTS</span></td></tr>
+</table>
+
+<div class="practice">
+	<b class="h">Industry practice &mdash; planning, labour and equipment</b>
+	<ul>
+		<li><b>Oracle Primavera P6:</b> EPS &rarr; project &rarr; WBS &rarr; activities. Activities are
+		resource-loaded (labour, equipment, material) with FS / SS / FF / SF logic and lags. Baselines are kept
+		as copies, and the critical path and float are calculated from the logic.</li>
+		<li><b>Procore / InEight / HCSS HeavyJob:</b> foremen record crew hours, equipment hours and quantities
+		per cost code each day on a phone (timecards + daily log). Productivity = installed quantity &divide;
+		man-hours, against the estimate.</li>
+		<li><b>Viewpoint Vista, CMiC, Sage 300 CRE:</b> equipment is a cost centre of its own. Usage hours
+		&times; internal rate are charged to the job cost code, and the equipment ledger recovers its owning
+		and operating cost.</li>
+		<li><b>Last Planner / lean:</b> master schedule &rarr; 3-week look-ahead with constraint removal &rarr;
+		weekly work plan, measured by percent plan complete.</li>
+		<li><b>Adopt:</b> WBS on Task with resource lines, a daily site report that captures labour, equipment and
+		quantity by WBS in one form, and an internal-rate equipment log.</li>
+	</ul>
+</div>
+
+</div>
+
+<!-- ================================================================ area 3: Operations (3/3) -->
+<div class="page">
+
+<h3>3.0 Operations, continued &mdash; site control, subcontractors, handover</h3>
+
+<table class="data">
+	<thead><tr><th style="width:8%">WBS</th><th style="width:19%">Element</th><th style="width:30%">Deliverable / what happens</th><th style="width:22%">Key data</th><th style="width:21%">ERPNext / A3 mapping</th></tr></thead>
+	<tr class="pkg"><td>3.8</td><td colspan="4">Site control: diary, QA/QC, HSE</td></tr>
+	<tr><td class="code">3.8.1</td><td class="term">Daily site report</td><td>One form per site per day: weather, manpower, equipment, work done by WBS, delays, photos.</td><td>Date, weather, crews, hours, qty, issues</td><td>Daily Site Report doctype <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.8.2</td><td class="term">Material consumption</td><td>Materials issued from site store to the WBS they are used on.</td><td>Item, qty, WBS, cost code</td><td>Stock Entry + custom fields; material_issue_notes <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.8.3</td><td class="term">Inspection &amp; test plan</td><td>Hold and witness points per activity; request for inspection signed off.</td><td>Checklist, result, inspector</td><td>Quality Inspection Template / Quality Procedure <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">3.8.4</td><td class="term">Non-conformance</td><td>Defective work logged, cause and corrective action tracked.</td><td>NCR no., WBS, action, status</td><td>Non Conformance (Quality module) <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">3.8.5</td><td class="term">HSE</td><td>Toolbox talks, permits to work, incidents, near misses.</td><td>Permit, incident, severity</td><td>HSE doctypes <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.8.6</td><td class="term">RFIs &amp; drawings</td><td>Technical queries to the designer and drawing revisions on site.</td><td>RFI no., drawing, revision, answer</td><td>Issue / Document Type <span class="chip part">CONFIG</span></td></tr>
+	<tr class="pkg"><td>3.9</td><td colspan="4">Subcontractor management</td></tr>
+	<tr><td class="code">3.9.1</td><td class="term">Subcontract award</td><td>Package let to a subcontractor against specific WBS lines.</td><td>Supplier, scope, WBS, value</td><td>Purchase Order (subcontract); subcontract_pos <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.9.2</td><td class="term">Subcontractor progress certificate</td><td>Measured work, retention and deductions for the subcontractor.</td><td>Period, qty, retention, net</td><td>Work Certificate <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">3.9.3</td><td class="term">Back-charges</td><td>Materials, equipment or rework charged back to a subcontractor.</td><td>Reason, amount</td><td>Deduction line on Work Certificate <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">3.9.4</td><td class="term">Compliance documents</td><td>Insurance, licences and guarantees valid before payment.</td><td>Document, expiry</td><td>Mandatory Document Rule <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>3.10</td><td colspan="4">Handover &amp; defects</td></tr>
+	<tr><td class="code">3.10.1</td><td class="term">Snag list</td><td>Punch items per room / WBS closed before handover.</td><td>Location, WBS, item, status</td><td>Snag doctype or Issue <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">3.10.2</td><td class="term">Practical completion</td><td>Handover certificate; triggers first retention release (2.7.2).</td><td>Date, certificate</td><td>Project status + milestone <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">3.10.3</td><td class="term">Defects liability period</td><td>Warranty call-outs tracked until final release.</td><td>Defect, date, cost</td><td>Warranty Claim / Issue <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">3.10.4</td><td class="term">Close-out</td><td>As-builts, O&amp;M manuals, surplus returned to store, project closed.</td><td>Documents, surplus stock</td><td>site_material_returns; Project close <span class="chip ok">EXISTS</span></td></tr>
+</table>
+
+<div class="note"><b>One form, many postings.</b> Most of 3.5, 3.6 and 3.8 can be captured once, in the
+daily site report: crew hours go to Timesheets, machine hours to the Equipment Log, quantities to Task
+progress, and materials to a Stock Entry. Every line carries Project + WBS + Cost Code. This is how
+Procore's Daily Log and HCSS HeavyJob work, and it is the single biggest win for site adoption.</div>
+
+</div>
+
+<!-- ================================================================ area 4: Procurement -->
+<div class="page">
+
+<h2>6. 4.0 Procurement</h2>
+
+<p>Goal: buy what the WBS needs, when the schedule needs it, within the WBS budget, and keep the
+WBS split on every line even when orders are consolidated (the client's 1,000 m&sup2; = 600 + 400 rule).</p>
+
+<table class="flow"><tr>
+	<td class="box">Procurement plan</td><td class="arr">&rarr;</td>
+	<td class="box">Material Request<br>(WBS + cost code)</td><td class="arr">&rarr;</td>
+	<td class="box gold">Approval + budget check</td><td class="arr">&rarr;</td>
+	<td class="box">RFQ &rarr; comparison</td><td class="arr">&rarr;</td>
+	<td class="box">PO<br>(WBS split kept)</td><td class="arr">&rarr;</td>
+	<td class="box">Receipt</td><td class="arr">&rarr;</td>
+	<td class="box">Transfer / issue</td><td class="arr">&rarr;</td>
+	<td class="box teal">Invoice &amp; pay</td>
+</tr></table>
+
+<table class="data">
+	<thead><tr><th style="width:8%">WBS</th><th style="width:19%">Element</th><th style="width:30%">Deliverable / what happens</th><th style="width:22%">Key data</th><th style="width:21%">ERPNext / A3 mapping</th></tr></thead>
+	<tr class="pkg"><td>4.1</td><td colspan="4">Procurement plan</td></tr>
+	<tr><td class="code">4.1.1</td><td class="term">Long-lead items</td><td>Items with long delivery (imported tiles, lifts, switchgear) scheduled back from the date they are needed on site.</td><td>Item, need-by date, lead time, order-by date</td><td>Procurement Plan <span class="chip ok">EXISTS</span>; link to Task dates <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">4.1.2</td><td class="term">Buy vs hire vs subcontract</td><td>Decision per package, recorded against the WBS.</td><td>Strategy, WBS</td><td>Procurement Plan Item <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>4.2</td><td colspan="4">Material request</td></tr>
+	<tr><td class="code">4.2.1</td><td class="term">Site request</td><td>Site raises a request; every line carries Project + WBS + Cost Code.</td><td>Item, qty, WBS, cost code, need-by</td><td>Material Request + custom fields; site_material_requests <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">4.2.2</td><td class="term">Request from plan</td><td>Requests generated from the WBS Allocation lines, not typed by hand.</td><td>Allocation ref, balance qty</td><td>"Get items from WBS Allocation" <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>4.3</td><td colspan="4">Approval &amp; budget check</td></tr>
+	<tr><td class="code">4.3.1</td><td class="term">Approval by value / role</td><td>Routed by amount, category and project.</td><td>Approver, limit</td><td>Approval Matrix <span class="chip ok">EXISTS</span>; Material Request workflow <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">4.3.2</td><td class="term">Budget check</td><td>Request + open commitments vs WBS budget: warn or stop when over.</td><td>Budget, committed, available</td><td>Budget on WBS dimension / validation <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>4.4</td><td colspan="4">Sourcing: RFQ &amp; comparison</td></tr>
+	<tr><td class="code">4.4.1</td><td class="term">Request for quotation</td><td>Sent to approved suppliers for the requested items.</td><td>Suppliers, due date</td><td>Request for Quotation <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">4.4.2</td><td class="term">Comparison &amp; recommendation</td><td>Technical and commercial comparison; recommended supplier approved.</td><td>Price, delivery, compliance</td><td>Supplier Quotation + custom fields; recommended_quotations <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">4.4.3</td><td class="term">Frame agreements</td><td>Rate contracts for repeat items and freight.</td><td>Rate, validity</td><td>Blanket Order; Freight Rate Contract <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>4.5</td><td colspan="4">Purchase &amp; subcontract orders</td></tr>
+	<tr><td class="code">4.5.1</td><td class="term">Consolidated PO</td><td>One PO for 1,000 m&sup2; tile; lines keep the 600 m&sup2; WBS A / 400 m&sup2; WBS B split.</td><td>Item, qty per WBS, rate</td><td>PO Item + WBS / cost code fields <span class="chip ok">EXISTS</span> (one WBS per line)</td></tr>
+	<tr><td class="code">4.5.2</td><td class="term">Delivery schedule</td><td>Staged deliveries matching the look-ahead.</td><td>Schedule date, qty</td><td>po_delivery_schedule <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">4.5.3</td><td class="term">Subcontract order</td><td>Scope, BOQ rates, retention and WBS for subcontracted packages.</td><td>Scope, rates, retention</td><td>Purchase Order (subcontract) <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">4.5.4</td><td class="term">Commitment</td><td>Open PO value counted against the WBS budget until invoiced.</td><td>Committed, WBS</td><td>budget_vs_commitment <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>4.6</td><td colspan="4">Logistics &amp; import</td></tr>
+	<tr><td class="code">4.6.1</td><td class="term">Shipment tracking</td><td>Imported goods from port to site: milestones, documents, customs.</td><td>Shipment, ETA, milestone</td><td>Shipment Tracking + milestones <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">4.6.2</td><td class="term">Landed cost</td><td>Freight, duty and clearing added to the item cost and the WBS.</td><td>Charges, allocation</td><td>Landed Cost Voucher; landed_cost_analysis <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>4.7</td><td colspan="4">Receipt &amp; inspection</td></tr>
+	<tr><td class="code">4.7.1</td><td class="term">Goods receipt</td><td>Full or partial receipt to site or central store, with WBS kept per line.</td><td>Received qty, store, WBS</td><td>Purchase Receipt + custom fields <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">4.7.2</td><td class="term">Incoming inspection</td><td>Quality check before acceptance; rejects returned.</td><td>Accepted / rejected qty</td><td>Quality Inspection <span class="chip std">STANDARD</span></td></tr>
+	<tr class="pkg"><td>4.8</td><td colspan="4">Stores: transfer, issue, return</td></tr>
+	<tr><td class="code">4.8.1</td><td class="term">Transfer to site</td><td>Central store &rarr; transit &rarr; site store.</td><td>From, to, qty</td><td>Stock Entry; transfer_despatch_notes, stock_sent_to_transit <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">4.8.2</td><td class="term">Issue to WBS</td><td>Consumption posted to the WBS where the material is used.</td><td>Qty, WBS, cost code</td><td>Stock Entry (Material Issue); material_issue_register <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">4.8.3</td><td class="term">Returns &amp; surplus</td><td>Unused material returned to store or moved to another project.</td><td>Qty, reason</td><td>site_material_returns <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>4.9</td><td colspan="4">Invoice &amp; payment</td></tr>
+	<tr><td class="code">4.9.1</td><td class="term">Three-way match</td><td>PO = receipt = invoice before payment.</td><td>Qty, rate variance</td><td>Purchase Invoice against PR <span class="chip std">STANDARD</span></td></tr>
+	<tr><td class="code">4.9.2</td><td class="term">Invoice to WBS</td><td>Invoiced cost reaches the WBS as actual cost (today it stops at the receipt).</td><td>Amount, WBS, cost code</td><td>WBS as Accounting Dimension <span class="chip part">CONFIG</span></td></tr>
+	<tr><td class="code">4.9.3</td><td class="term">Supplier payment</td><td>Payments scheduled by due date and cash position.</td><td>Due date, amount</td><td>Payment Entry; working_capital <span class="chip ok">EXISTS</span></td></tr>
+</table>
+
+<div class="practice">
+	<b class="h">Industry practice &mdash; procurement against the WBS</b>
+	<ul>
+		<li><b>SAP PS / S/4HANA:</b> every requisition and PO line is account-assigned to a WBS element.
+		Availability control checks budget &minus; commitments &minus; actuals when the document is saved, and warns
+		or blocks at set tolerances.</li>
+		<li><b>Procore Commitments, Oracle Unifier, CMiC:</b> POs and subcontracts are commitments on the budget
+		line. The cost report shows original budget, approved changes, revised budget, committed, invoiced and
+		to-complete in one row per cost code.</li>
+		<li><b>Distribution lines:</b> ERP systems (SAP, Oracle, D365) split one PO line across several account
+		assignments by quantity or %. The equivalent here is one PO line per WBS for the same item.</li>
+		<li><b>Adopt:</b> requests generated from WBS Allocation, a budget check on Material Request / PO, and WBS as
+		an accounting dimension so invoices post to it (closes gap-analysis items T1&ndash;T5).</li>
+	</ul>
+</div>
+
+</div>
+
+<!-- ================================================================ area 5: Reports -->
+<div class="page">
+
+<h2>7. 5.0 WBS analysis &mdash; Reports</h2>
+
+<p>Goal: one row per WBS showing where the money and quantities stand, rolled up WBS &rarr; Work
+Package &rarr; Cost Head &rarr; Project. Commitments, stock on hand and actual consumption are shown
+separately, never added together.</p>
+
+<table class="data">
+	<thead><tr><th style="width:8%">WBS</th><th style="width:19%">Report / analysis</th><th style="width:33%">What it shows</th><th style="width:40%">ERPNext / A3 mapping</th></tr></thead>
+	<tr class="pkg"><td>5.1</td><td colspan="3">Budget &amp; revisions</td></tr>
+	<tr><td class="code">5.1.1</td><td class="term">Budget register</td><td>Original budget, approved changes and revised budget per WBS, with revision history.</td><td>boq___approved, cost_head___* <span class="chip ok">EXISTS</span>; revision history <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">5.1.2</td><td class="term">Allocation status</td><td>Parent budget = child allocations + unallocated balance.</td><td>budget_vs_wbs <span class="chip ok">EXISTS</span>; unallocated column <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>5.2</td><td colspan="3">Commitments vs budget</td></tr>
+	<tr><td class="code">5.2.1</td><td class="term">Committed cost</td><td>Open MR, PO and subcontract value per WBS and cost code.</td><td>budget_vs_commitment, budget_vs_cost_code <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>5.3</td><td colspan="3">Actual cost &amp; roll-up</td></tr>
+	<tr><td class="code">5.3.1</td><td class="term">Cost by cost code</td><td>Material, labour, equipment, subcontract and overhead actuals.</td><td>cost_code_wise_costing <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">5.3.2</td><td class="term">Tree roll-up</td><td>WBS &rarr; Package &rarr; Head &rarr; Project with drill-down; no double counting.</td><td>Tree roll-up report <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">5.3.3</td><td class="term">Job cost report</td><td>Budget | revised | committed | actual | cost to complete | forecast | variance in one row.</td><td>Combined report <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>5.4</td><td colspan="3">Quantity analysis</td></tr>
+	<tr><td class="code">5.4.1</td><td class="term">BOQ vs consumption</td><td>Budget qty vs requested vs ordered vs received vs issued, per item and WBS, in the same UOM.</td><td>boq_vs_consumption, project_wise_material_consumption <span class="chip ok">EXISTS</span>; ordered / received columns <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">5.4.2</td><td class="term">Stock on hand by project</td><td>Received but not yet issued; wastage vs allowance.</td><td>Stock Balance by project warehouse <span class="chip std">STANDARD</span></td></tr>
+	<tr class="pkg"><td>5.5</td><td colspan="3">Forecast</td></tr>
+	<tr><td class="code">5.5.1</td><td class="term">Cost to complete / EAC</td><td>Estimate at completion = actual + committed + remaining estimate.</td><td>cost_to_complete <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">5.5.2</td><td class="term">Cash flow</td><td>Billing in vs payments out by month.</td><td>cash_flow_forecast, cash_and_bank_balance <span class="chip ok">EXISTS</span></td></tr>
+	<tr class="pkg"><td>5.6</td><td colspan="3">Earned value (EVM)</td></tr>
+	<tr><td class="code">5.6.1</td><td class="term">PV, EV, AC</td><td>Planned value (baseline), earned value (% complete &times; budget), actual cost, per WBS.</td><td>EVM report from Task progress + costs <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">5.6.2</td><td class="term">SPI, CPI, S-curve</td><td>Schedule and cost performance indices, cumulative S-curve.</td><td>EVM report + chart <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>5.7</td><td colspan="3">Labour &amp; equipment productivity</td></tr>
+	<tr><td class="code">5.7.1</td><td class="term">Manpower cost &amp; attendance</td><td>Labour cost and headcount per project / site.</td><td>project_wise_manpower_cost, site_wise_attendance <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">5.7.2</td><td class="term">Equipment utilisation</td><td>Worked vs available hours, idle and breakdown, cost per hour.</td><td>equipment_utilisation, asset_maintenance_cost <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">5.7.3</td><td class="term">Productivity factor</td><td>Actual output per man-hour vs estimate, by trade and WBS.</td><td>From daily site report <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>5.8</td><td colspan="3">Revenue, billing &amp; margin</td></tr>
+	<tr><td class="code">5.8.1</td><td class="term">Billed vs cost per WBS</td><td>Certified revenue vs cost to date; margin by WBS and project.</td><td>Needs WBS on revenue <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">5.8.2</td><td class="term">Over / under billing (WIP)</td><td>Earned revenue (% complete &times; contract) vs billed to date.</td><td>WIP schedule report <span class="chip cus">CUSTOM</span></td></tr>
+	<tr><td class="code">5.8.3</td><td class="term">Variation register</td><td>Pending, approved and rejected changes with values.</td><td>From Change Event / VO <span class="chip cus">CUSTOM</span></td></tr>
+	<tr class="pkg"><td>5.9</td><td colspan="3">Dashboards &amp; alerts</td></tr>
+	<tr><td class="code">5.9.1</td><td class="term">Project dashboard</td><td>Number cards and charts for budget, commitments, progress and cash.</td><td>A3 Constructa dashboard, number cards, charts <span class="chip ok">EXISTS</span></td></tr>
+	<tr><td class="code">5.9.2</td><td class="term">Exception alerts</td><td>WBS over budget, task late, certificate overdue, licence expiring.</td><td>Notification rules <span class="chip part">CONFIG</span></td></tr>
+</table>
+
+<div class="practice">
+	<b class="h">Industry practice &mdash; reporting</b>
+	<ul>
+		<li><b>Procore Budget view, Oracle Unifier cost sheet, CMiC job cost:</b> one row per cost code with fixed
+		columns: original budget, approved changes, revised budget, committed, pending changes, actual, cost to
+		complete, projected cost, over / under.</li>
+		<li><b>Primavera P6 / SAP PS / Oracle Primavera Cloud:</b> earned value per WBS (PV, EV, AC, SPI, CPI,
+		EAC) and S-curves against the baseline, following ANSI/EIA-748 and PMI practice.</li>
+		<li><b>Contractor accounting (Viewpoint, Sage 300 CRE, Foundation):</b> monthly WIP schedule of over /
+		under billing per job, which drives revenue recognition under IFRS 15 (percentage of completion).</li>
+		<li><b>Adopt:</b> a single job cost report with those columns, drill-down through the WBS tree, and EVM
+		once task progress is recorded (closes gap-analysis items R1&ndash;R5).</li>
+	</ul>
+</div>
+
+</div>
+
+<!-- ================================================================ worked example + comparison -->
+<div class="page">
+
+<h2>8. Worked example: porcelain tile, WBS A and WBS B</h2>
+
+<p>The client flow chart, followed through all five areas. One item code, two WBS, one consolidated PO.</p>
+
+<table class="data">
+	<thead><tr><th style="width:14%">Area</th><th style="width:43%">WBS A &mdash; ground-floor porcelain (600 m&sup2;)</th><th>WBS B &mdash; first-floor porcelain (400 m&sup2;)</th></tr></thead>
+	<tr><td class="term">1.0 CRM</td><td colspan="2">BOQ line "Porcelain floor tiling, 1,000 m&sup2;" priced from a rate build-up (tile + adhesive + grout + tiler hours). The quotation is won, and the BOQ becomes budget revision 0 under Architectural.</td></tr>
+	<tr><td class="term">3.1 Planning</td><td>Architectural &rarr; Flooring &rarr; WBS A. Allocation: tile 600 m&sup2;, adhesive, grout, installation labour.</td><td>Architectural &rarr; Flooring &rarr; WBS B. Allocation: tile 400 m&sup2;, adhesive, grout, installation labour.</td></tr>
+	<tr><td class="term">4.0 Procurement</td><td colspan="2">One Material Request, then one consolidated PO for 1,000 m&sup2; with two lines: 600 m&sup2; &rarr; WBS A, 400 m&sup2; &rarr; WBS B. Partial receipts keep the split. The budget check runs per WBS.</td></tr>
+	<tr><td class="term">3.3 Tasks</td><td>Task "Tile GF" with sub-tasks screed &rarr; lay &rarr; grout &rarr; clean. Tiling crew 1, 8 days.</td><td>Task "Tile FF", starts after "Tile GF" (FS). Tiling crew 1, 6 days.</td></tr>
+	<tr><td class="term">3.5&ndash;3.8 Site</td><td colspan="2">The daily site report records crew hours, mixer hours, m&sup2; laid and tiles issued. Each line is tagged to WBS A or WBS B and posts to Timesheet, Equipment Log, Task progress and Stock Entry.</td></tr>
+	<tr><td class="term">2.0 Billing</td><td>IPC 3: 350 m&sup2; measured &times; selling rate, less retention.</td><td>IPC 4: 400 m&sup2; measured.</td></tr>
+	<tr><td class="term">5.0 Reports</td><td colspan="2">WBS A and WBS B roll up to Flooring &rarr; Architectural &rarr; Project. Budget, committed, received, issued and invoiced are each shown in their own column, and EV = % complete &times; WBS budget.</td></tr>
+</table>
+
+<h2>9. How the standard packages compare</h2>
+
+<table class="data">
+	<thead><tr><th style="width:15%">Practice</th><th style="width:14%">Primavera P6</th><th style="width:14%">Procore</th><th style="width:15%">SAP PS</th><th style="width:14%">Unifier / CMiC / Vista</th><th>A3 Constructa approach</th></tr></thead>
+	<tr><td class="term">WBS vs cost codes</td><td>WBS + activity codes; cost accounts</td><td>Cost codes &times; cost types; WBS segments</td><td>WBS elements + cost elements</td><td>CBS / phase codes &times; cost types</td><td>WBS tree &times; Cost Code on every line</td></tr>
+	<tr><td class="term">Budget &amp; revisions</td><td>Budget log per WBS</td><td>Original + budget modifications + approved changes</td><td>Original, supplement, return, versions</td><td>Budget transfers with audit</td><td>BOQ revisions + submittable WBS Allocation</td></tr>
+	<tr><td class="term">Scheduling</td><td>CPM, all logic types, baselines, resource levelling</td><td>Imports P6 / MSP schedule</td><td>Networks &amp; activities</td><td>Links to P6</td><td>Task + WBS, FS logic, baseline fields; P6 import later</td></tr>
+	<tr><td class="term">Commitments</td><td>&mdash;</td><td>Subcontracts &amp; POs on budget</td><td>PR / PO on WBS, availability control</td><td>Commitments on cost sheet</td><td>MR / PO with WBS + budget check</td></tr>
+	<tr><td class="term">Change management</td><td>&mdash;</td><td>Change events &rarr; PCO &rarr; CO</td><td>Claims / change requests</td><td>Change orders to contract and budget</td><td>Change Event &rarr; Variation Order</td></tr>
+	<tr><td class="term">Progress billing</td><td>&mdash;</td><td>Owner invoices on SOV (G702/703)</td><td>Milestone / resource-related billing</td><td>AIA / IPC billing, retention</td><td>Client IPC mirroring Work Certificate</td></tr>
+	<tr><td class="term">Field data</td><td>Progress via P6 web / mobile</td><td>Daily log, timecards, equipment</td><td>Confirmations</td><td>Field time, equipment hours</td><td>Daily Site Report &rarr; Timesheet, Equipment Log, Stock Entry</td></tr>
+	<tr><td class="term">Equipment costing</td><td>Resource rates</td><td>Equipment log</td><td>Equipment as cost centre</td><td>Equipment ledger, internal rates</td><td>Equipment Log &times; internal rate to WBS</td></tr>
+	<tr><td class="term">Performance</td><td>EVM, S-curves</td><td>Budget view, forecasting</td><td>EVM, cost / revenue per WBS</td><td>Job cost, WIP schedule</td><td>Job cost report + EVM + WIP</td></tr>
+</table>
+
+</div>
+
+<!-- ================================================================ roadmap -->
+<div class="page last">
+
+<h2>10. Roadmap for merging into A3 Constructa</h2>
+
+<p>Ordered so each phase is usable on its own and the next one builds on its data. Standard and
+configuration items come first. Phase 1 overlaps with the fixes already recommended in the BOQ &rarr; WBS
+gap analysis.</p>
+
+<table class="data">
+	<thead><tr><th style="width:12%">Phase</th><th style="width:30%">Scope</th><th style="width:38%">Delivers</th><th style="width:20%">WBS elements</th></tr></thead>
+	<tr>
+		<td class="term">P1<br><span class="chip part">CONFIG</span></td>
+		<td>Close the budget gaps: WBS and Cost Code as accounting dimensions; submittable WBS Allocation that blocks over-allocation; allowance lines and node type on WBS; Material Request workflow and budget check.</td>
+		<td>Every cost document, including Purchase Invoice, carries WBS; budgets are enforced; the client's step 01&ndash;04 flow works end to end.</td>
+		<td>3.1.2&ndash;3.1.3, 4.2&ndash;4.3, 4.9.2</td>
+	</tr>
+	<tr>
+		<td class="term">P2<br><span class="chip cus">CUSTOM</span></td>
+		<td>Quotation &rarr; Sales Order &rarr; Project + BOQ handover; contract value on BOQ; client IPC with retention and advance recovery; Change Event &rarr; Variation Order.</td>
+		<td>Revenue side on the same WBS; contract vs budget kept separate; margin per WBS becomes possible.</td>
+		<td>1.5&ndash;1.8, 2.1&ndash;2.7</td>
+	</tr>
+	<tr>
+		<td class="term">P3<br><span class="chip cus">CUSTOM</span></td>
+		<td>WBS on Task with sub-tasks, resource lines and baseline dates; crews; Daily Site Report; Equipment Log with internal rates.</td>
+		<td>Labour, equipment and progress captured once per day per site and posted to WBS; % complete available.</td>
+		<td>3.1.4&ndash;3.1.6, 3.3&ndash;3.8</td>
+	</tr>
+	<tr>
+		<td class="term">P4<br><span class="chip cus">CUSTOM</span></td>
+		<td>Tree roll-up job cost report; quantity chain report; EVM with S-curve; WIP over / under billing; exception alerts.</td>
+		<td>One report per WBS with budget, committed, actual, forecast and earned value, rolled up the tree.</td>
+		<td>5.1&ndash;5.9</td>
+	</tr>
+	<tr>
+		<td class="term">Later</td>
+		<td>P6 / MS Project import; mobile daily report; HSE module; bid / no-bid scoring.</td>
+		<td>Parity with the specialist packages where the client needs it.</td>
+		<td>1.2, 3.4.4, 3.8.5</td>
+	</tr>
+</table>
+
+<h3>Decisions to confirm with the client in the demo</h3>
+<table class="data">
+	<thead><tr><th style="width:4%">#</th><th>Question</th></tr></thead>
+	<tr><td class="code">1</td><td>Is billing re-measured per BOQ line (IPC), by milestone, or both, and is the IPC format FIDIC-style or the client's own?</td></tr>
+	<tr><td class="code">2</td><td>Should the budget check <b>warn</b> or <b>block</b> when a Material Request or PO would exceed the WBS budget, and at what tolerance?</td></tr>
+	<tr><td class="code">3</td><td>Is the master programme kept in Primavera P6 (so we import it), or planned directly in the system?</td></tr>
+	<tr><td class="code">4</td><td>Is owned equipment charged to projects at an internal hourly rate, or only its running costs (fuel, repairs)?</td></tr>
+	<tr><td class="code">5</td><td>Are daily-rated site workers on payroll in the system, or supplied by labour subcontractors?</td></tr>
+	<tr><td class="code">6</td><td>How many WBS levels does a typical project need below the cost head: package + WBS only, or also zone / floor?</td></tr>
+</table>
+
+<div class="strip">
+	<b>One key on every line: Project + WBS + Cost Code + Item + Quantity</b>
+	<span>Quotes, bills, tasks, hours, machines, requests, orders, receipts, issues and invoices all carry it,
+	so every report can roll up the same tree without reconciling separate lists.</span>
+</div>
+
+</div>
+
+</body>
+</html>

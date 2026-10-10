@@ -12,4 +12,6 @@ node_modules
 #   bench --site <site> execute a3_constructa.demo.build_docs.build_pdf
 #   bench --site <site> execute a3_constructa.demo.build_docs.build_guide
 #   bench --site <site> execute a3_constructa.demo.build_docs.build_flow
+#   bench --site <site> execute a3_constructa.demo.build_docs.build_gap
+#   bench --site <site> execute a3_constructa.demo.build_docs.build_wbs
 docs/*.pdf

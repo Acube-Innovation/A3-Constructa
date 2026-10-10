@@ -1,0 +1,295 @@
+<!--
+  Source for docs/A3-Constructa-BOQ-WBS-Gap-Analysis.pdf
+
+  Gap analysis of the app against the client's "Design & Build | BOQ -> WBS ->
+  Item Mapping" requirement (Masiha Services SARL). Every "today" statement is
+  what the doctypes, controllers, hooks and reports actually do; keep it that
+  way if this is revised after changes land. Regenerate with:
+
+      bench --site <site> execute a3_constructa.demo.build_docs.build_gap
+
+  Same layout rules as the other guides: wkhtmltopdf runs an old WebKit that
+  drops inline SVG and mishandles flexbox, so everything is built from tables.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+	@page { size: A4; margin: 16mm 14mm 18mm 14mm; }
+
+	body {
+		font-family: Helvetica, Arial, sans-serif;
+		font-size: 10pt;
+		line-height: 1.45;
+		color: #1f2933;
+		margin: 0;
+	}
+
+	h1 { font-size: 22pt; margin: 0 0 2px 0; color: #14304f; letter-spacing: -0.4px; }
+	h2 {
+		font-size: 14pt; color: #14304f; margin: 0 0 8px 0;
+		border-bottom: 2px solid #14304f; padding-bottom: 4px;
+	}
+	h3 { font-size: 11pt; color: #14304f; margin: 12px 0 5px 0; }
+	p  { margin: 0 0 8px 0; }
+
+	.page { page-break-after: always; }
+	.page.last { page-break-after: auto; }
+
+	.lead { font-size: 11pt; color: #3e4c59; }
+	.muted { color: #6b7785; }
+	.small { font-size: 9pt; }
+
+	.titleblock { border-top: 7px solid #14304f; padding-top: 12px; margin-bottom: 10px; }
+	.titleblock .sub { font-size: 12pt; color: #3e4c59; }
+
+	table.data { width: 100%; border-collapse: collapse; margin: 6px 0 10px 0; }
+	table.data th {
+		background: #14304f; color: #fff; text-align: left;
+		padding: 5px 7px; font-size: 8.5pt; font-weight: bold;
+	}
+	table.data td {
+		padding: 5px 7px; border-bottom: 1px solid #dfe3e8;
+		vertical-align: top; font-size: 8.8pt;
+	}
+	table.data tr { page-break-inside: avoid; }
+	table.data tr:nth-child(even) td { background: #f6f8fa; }
+	td.term { font-weight: bold; color: #14304f; }
+	td.no { font-weight: bold; color: #9a5b00; white-space: nowrap; }
+	table.data td ul { margin: 0; padding-left: 14px; }
+
+	.note {
+		background: #fff8e6; border-left: 4px solid #d99100;
+		padding: 7px 11px; margin: 10px 0; font-size: 9pt;
+	}
+	.note b { color: #8a5a00; }
+
+	.chip {
+		font-size: 7pt; font-weight: bold; letter-spacing: 0.5px; padding: 1px 5px;
+		border-radius: 3px; white-space: nowrap;
+	}
+	.chip.ok   { background: #d9efe3; color: #1d6b43; }
+	.chip.part { background: #fdebc8; color: #8a5a00; }
+	.chip.miss { background: #f8d7d7; color: #9b1c1c; }
+	.chip.std  { background: #e4e7eb; color: #3e4c59; }
+	.chip.cus  { background: #14304f; color: #fff; }
+
+	/* summary tiles */
+	table.tiles { width: 100%; border-collapse: separate; border-spacing: 6px 0; margin: 8px -6px 12px -6px; }
+	table.tiles td {
+		width: 33%; vertical-align: top; border: 1px solid #dfe3e8; border-radius: 5px;
+		padding: 8px 10px; font-size: 9pt; background: #fff;
+	}
+	table.tiles td .n { display: block; font-size: 20pt; font-weight: bold; line-height: 1.1; }
+	table.tiles td.ok .n   { color: #1d6b43; }
+	table.tiles td.part .n { color: #8a5a00; }
+	table.tiles td.miss .n { color: #9b1c1c; }
+
+	.strip {
+		background: #14304f; color: #fff; border-radius: 5px;
+		padding: 8px 12px; margin-top: 10px;
+	}
+	.strip b { font-size: 10pt; }
+	.strip span { display: block; color: #c3d0dd; font-size: 9pt; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================ page 1 -->
+<div class="page">
+
+<div class="titleblock">
+	<h1>BOQ &rarr; WBS &rarr; Item Mapping</h1>
+	<div class="sub">Gap analysis: client requirement vs A3 Constructa as built</div>
+	<div class="muted small">Masiha Services SARL &nbsp;&bull;&nbsp; ERPNext v15 + A3 Constructa &nbsp;&bull;&nbsp; September 2026</div>
+</div>
+
+<p class="lead">The structure the requirement describes is already in the system: a Cost Head
+tree, a WBS tree, Cost Codes, a BOQ with an approval workflow, WBS Allocations, and WBS / Cost
+Code tags carried from Material Request through Purchase Order and Purchase Receipt to Stock Entry.
+The gaps are in the rules around that structure. Almost nothing is enforced, no report rolls up
+the WBS tree, and invoice costs never reach a WBS.</p>
+
+<table class="tiles"><tr>
+	<td class="ok"><span class="n">1</span><b>Covered</b><br>Works as the requirement describes.</td>
+	<td class="part"><span class="n">7</span><b>Partial</b><br>The data can be held, but a rule, link or view is missing.</td>
+	<td class="miss"><span class="n">3</span><b>Missing</b><br>No support in the system today.</td>
+</tr></table>
+
+<h2>The requirement, step by step</h2>
+
+<table class="data">
+	<tr><th style="width:24%">Requirement step</th><th style="width:9%">Status</th><th>What the system does today, and the gap</th></tr>
+	<tr>
+		<td class="term">Create project + load initial BOQ; keep contract value and cost budget separate</td>
+		<td><span class="chip part">PARTIAL</span></td>
+		<td>The BOQ holds a quantity &times; rate and an approved quantity &times; approved rate. Both are
+		cost figures. There is no contract (selling) value and no link to the customer order. The BOQ header
+		totals only the first amount, not the approved budget.</td>
+	</tr>
+	<tr>
+		<td class="term">01 &nbsp;Initial cost heads: broad allowances, no item codes needed</td>
+		<td><span class="chip miss">MISSING</span></td>
+		<td>Cost Heads exist as a tree, but every BOQ line and every WBS Allocation line requires an item
+		code. A lump-sum allowance for "Architectural" or "MEP" cannot be recorded before items are chosen.</td>
+	</tr>
+	<tr>
+		<td class="term">02 &nbsp;Develop work packages; keep the original BOQ reference</td>
+		<td><span class="chip part">PARTIAL</span></td>
+		<td>The WBS tree can model Architectural &rarr; Flooring &rarr; WBS A, but a node has no type (cost
+		head, work package or WBS) and its cost head is not checked against its parent. A WBS has no BOQ
+		reference. The BOQ-line link on a WBS Allocation is read-only with no way to pick it on the form.</td>
+	</tr>
+	<tr>
+		<td class="term">03 &nbsp;Define scope + location (e.g. ground floor, first floor)</td>
+		<td><span class="chip miss">MISSING</span></td>
+		<td>A WBS has no location or floor field and no scope description. Location exists only on the Project.</td>
+	</tr>
+	<tr>
+		<td class="term">04 &nbsp;Map approved items to budget lines: one item code &rarr; many WBS</td>
+		<td><span class="chip part">PARTIAL</span></td>
+		<td>The same item can be allocated to WBS A (600 m&sup2;) and WBS B (400 m&sup2;) in two WBS Allocations.
+		Over-allocation is not blocked, allocations are never approved or locked, and draft allocations
+		count as budget. Details on page 2.</td>
+	</tr>
+	<tr>
+		<td class="term">PR &rarr; Approval &rarr; PO &rarr; Receipt &rarr; Transfer / Consumption, each line keeping
+		Project + WBS + Cost Code + Item + Qty</td>
+		<td><span class="chip part">PARTIAL</span></td>
+		<td>The tags exist on Material Request, Purchase Order, Purchase Receipt and Stock Entry lines and
+		carry forward automatically. There is no Material Request approval, no check against the WBS
+		budget, and the tags stop at the Purchase Invoice.</td>
+	</tr>
+	<tr>
+		<td class="term">Report: WBS &rarr; Work Package &rarr; Cost Head &rarr; Project, with commitments, stock
+		and consumption shown separately</td>
+		<td><span class="chip part">PARTIAL</span></td>
+		<td>Budget vs WBS, Budget vs Commitment, Cost Code Wise Costing and Cost to Complete exist. None of
+		them rolls up the tree, stock on hand is not shown, and invoiced actuals read zero.</td>
+	</tr>
+</table>
+
+</div>
+
+<!-- ================================================================ page 2 -->
+<div class="page">
+
+<h2>Detailed findings</h2>
+
+<h3>Budget allocation (step 04)</h3>
+<table class="data">
+	<tr><th style="width:4%">#</th><th style="width:34%">Gap</th><th>Effect on the flooring example</th></tr>
+	<tr><td class="no">A1</td><td class="term">Over-allocation is not blocked</td>
+		<td>The system works out the remaining balance of a BOQ line but never stops a save. 600 + 400 + 300 m&sup2;
+		against a 1,000 m&sup2; line saves with a negative balance.</td></tr>
+	<tr><td class="no">A2</td><td class="term">Balance is measured against the BOQ quantity, not the approved quantity</td>
+		<td>Where the approved quantity is lower than the BOQ quantity, the balance overstates what is left to allocate.</td></tr>
+	<tr><td class="no">A3</td><td class="term">WBS Allocation cannot be submitted or approved</td>
+		<td>Every report counts draft allocations as budget. An unreviewed draft moves the budget immediately.</td></tr>
+	<tr><td class="no">A4</td><td class="term">A Cost Code is tied to a single WBS</td>
+		<td>Using one flooring cost code on both WBS A and WBS B, as the requirement shows, conflicts with the master.</td></tr>
+	<tr><td class="no">A5</td><td class="term">No split view or split action</td>
+		<td>There is no "get lines from BOQ" or "split across WBS" action, and no screen showing one item's allocations across all WBS.</td></tr>
+</table>
+
+<h3>Procurement and stock chain</h3>
+<table class="data">
+	<tr><th style="width:4%">#</th><th style="width:34%">Gap</th><th>Effect on the flooring example</th></tr>
+	<tr><td class="no">T1</td><td class="term">Purchase Invoice lines carry no WBS, Cost Head or Cost Code</td>
+		<td>The 1,000 m&sup2; tile invoice cannot be traced back to the 600 / 400 split. The chain breaks at billing.</td></tr>
+	<tr><td class="no">T2</td><td class="term">No Material Request approval</td>
+		<td>The only workflow is BOQ Approval. The Approval Matrix records rules but nothing enforces them.</td></tr>
+	<tr><td class="no">T3</td><td class="term">Requests are not checked against the WBS budget</td>
+		<td>A request for tiles on WBS A is not checked for whether the item is allocated there or whether the
+		quantity is within the 600 m&sup2;. WBS is not filtered by project, and Cost Code is not filtered by WBS.</td></tr>
+	<tr><td class="no">T4</td><td class="term">Consolidated PO only as separate lines</td>
+		<td>A PO line holds one WBS, so the order is two lines (600 + 400) rather than one 1,000 m&sup2; line with a
+		split. On a partial receipt the storekeeper has to choose which line to receive against.</td></tr>
+	<tr><td class="no">T5</td><td class="term">Procurement Plan is standalone</td>
+		<td>It does not read from WBS Allocations and cannot create a Material Request.</td></tr>
+</table>
+
+<h3>Reporting</h3>
+<table class="data">
+	<tr><th style="width:4%">#</th><th style="width:34%">Gap</th><th>Effect on the flooring example</th></tr>
+	<tr><td class="no">R1</td><td class="term">No roll-up through the tree</td>
+		<td>Reports group by the exact WBS or Cost Head on each record. "Flooring" does not show WBS A + WBS B
+		together, and "Architectural" does not show Flooring + Painting + Doors &amp; Windows.</td></tr>
+	<tr><td class="no">R2</td><td class="term">Invoiced actuals never reach a WBS</td>
+		<td>The general ledger has WBS and Cost Code fields, but nothing fills them. Invoice and journal costs read zero in Budget vs WBS and Budget vs Cost Code.</td></tr>
+	<tr><td class="no">R3</td><td class="term">Stock on hand is not shown separately</td>
+		<td>Material received but not yet issued is not reported per WBS. Transfers to site are ignored; only material issues count as consumption.</td></tr>
+	<tr><td class="no">R4</td><td class="term">No quantity view</td>
+		<td>Reports show amounts only. Nothing shows m&sup2; allocated, requested, ordered, received and consumed per WBS and item.</td></tr>
+	<tr><td class="no">R5</td><td class="term">BOQ vs Consumption adds up different items</td>
+		<td>It groups by cost code only, so tiles (m&sup2;), adhesive (kg) and grout (kg) under one cost code are summed into one meaningless quantity.</td></tr>
+</table>
+
+</div>
+
+<!-- ================================================================ page 3 -->
+<div class="page last">
+
+<h2>Implementation rules</h2>
+
+<table class="data">
+	<tr><th style="width:36%">Rule from the requirement</th><th style="width:9%">Status</th><th>Today</th></tr>
+	<tr><td class="term">Parent budget = child allocations + unallocated balance. Do not add levels together.</td>
+		<td><span class="chip miss">MISSING</span></td>
+		<td>Budget can be allocated to a parent node and to its children at the same time. There is no
+		unallocated-balance figure, so a cost-head allowance plus its child allocations would be double-counted.</td></tr>
+	<tr><td class="term">One WBS can use many items: tiles, adhesive, grout, installation.</td>
+		<td><span class="chip ok">COVERED</span></td>
+		<td>A WBS Allocation holds any number of item lines, each with its own cost code, rate and amount.</td></tr>
+	<tr><td class="term">Consolidated PO of 1,000 m&sup2; keeping the 600 / 400 split and partial-receipt links.</td>
+		<td><span class="chip part">PARTIAL</span></td>
+		<td>Works as two PO lines, and receipts carry the WBS from the PO line. A single line with a split is
+		not possible, and invoices lose the split (T1, T4).</td></tr>
+	<tr><td class="term">Preserve budget revisions.</td>
+		<td><span class="chip part">PARTIAL</span></td>
+		<td>The BOQ has a revision number typed by hand and can be amended. WBS Allocations are edited in
+		place, with only the change log as history. There is no original / revised / current budget comparison.
+		A revision entered as a new BOQ rather than an amendment is counted twice.</td></tr>
+</table>
+
+<h2 style="margin-top:14px">Recommended fixes, in order</h2>
+
+<table class="data">
+	<tr><th style="width:4%">#</th><th style="width:44%">Change</th><th style="width:13%">Type</th><th>Closes</th></tr>
+	<tr><td class="no">1</td>
+		<td class="term">Make WBS (and Cost Code) an ERPNext Accounting Dimension</td>
+		<td><span class="chip std">STANDARD</span></td>
+		<td>T1, R2, and budget control by WBS through the standard Budget doctype. The existing custom WBS
+		fields must be migrated to the dimension fields first.</td></tr>
+	<tr><td class="no">2</td>
+		<td class="term">Make WBS Allocation submittable and block over-allocation against the approved quantity</td>
+		<td><span class="chip cus">CUSTOM</span></td>
+		<td>A1, A2, A3, and the revision history for allocations.</td></tr>
+	<tr><td class="no">3</td>
+		<td class="term">Allow allowance lines without an item code; add node type, location and BOQ reference to WBS</td>
+		<td><span class="chip cus">CUSTOM</span></td>
+		<td>Steps 01, 02 and 03, and the parent = children + unallocated rule.</td></tr>
+	<tr><td class="no">4</td>
+		<td class="term">Material Request approval workflow and a WBS budget check on each line</td>
+		<td><span class="chip std">STANDARD</span> <span class="chip cus">CUSTOM</span></td>
+		<td>T2, T3. The workflow is configuration; the budget check is custom code.</td></tr>
+	<tr><td class="no">5</td>
+		<td class="term">Rewrite the budget reports to roll up the tree and show committed, in stock and consumed side by side, in quantity and amount</td>
+		<td><span class="chip cus">CUSTOM</span></td>
+		<td>R1, R3, R4, R5.</td></tr>
+	<tr><td class="no">6</td>
+		<td class="term">Contract value on the BOQ; link the Procurement Plan to allocations and Material Requests</td>
+		<td><span class="chip cus">CUSTOM</span></td>
+		<td>The contract-vs-budget split, A5, T5.</td></tr>
+</table>
+
+<div class="strip">
+	<b>Standard configuration vs customisation</b>
+	<span>Only the Accounting Dimension and the Material Request workflow are standard ERPNext configuration.
+	Everything else on this list needs custom work in A3 Constructa.</span>
+</div>
+
+</div>
+
+</body>
+</html>
