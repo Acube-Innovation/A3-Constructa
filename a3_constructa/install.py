@@ -40,9 +40,31 @@ def create_roles():
 		doc.insert(ignore_permissions=True)
 
 
+def ensure_item_group_root():
+	"""The tree root our Item Group fixtures hang off.
+
+	ERPNext creates "All Item Groups" in its setup wizard, but a new site - and
+	every new Frappe Cloud site - installs its apps before the wizard runs, so
+	the fixture sync would find no parent and fail the install. The wizard skips
+	records that already exist, so creating the root here is safe.
+	"""
+	if frappe.db.exists("Item Group", "All Item Groups"):
+		return
+	frappe.get_doc({"doctype": "Item Group", "item_group_name": "All Item Groups", "is_group": 1}).insert(
+		ignore_permissions=True
+	)
+
+
 def before_install():
 	create_roles()
+	ensure_item_group_root()
 	frappe.db.commit()
+
+
+def before_migrate():
+	"""A site migrated before its setup wizard has run hits the same missing root."""
+	if "erpnext" in frappe.get_installed_apps():
+		ensure_item_group_root()
 
 
 def after_install():

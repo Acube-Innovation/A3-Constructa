@@ -69,6 +69,7 @@ STAGES = [
 	("labour_productivity", "a3_constructa.demo.masiha.labour_productivity.run"),  # P-13E: the gangs' September timesheets and attendance behind their progress
 	("alerts", "a3_constructa.demo.masiha.alerts.run"),  # P-13F: an alert rule per condition, run once (nothing re-sent within 7 days)
 	("overview_refresh", "a3_constructa.demo.masiha.overview_refresh.run"),  # D-R: idle crane, draft log, undated plan line, unpriced crew member, alert nobody gets, unfinished estimate
+	("fill_gaps", "a3_constructa.demo.masiha.fill_gaps.run"),  # open leads, addresses, issues, spares, tools out, attic stock
 	("timeline", "a3_constructa.demo.masiha.timeline.run"),  # dates everything on the story calendar
 ]
 
@@ -87,3 +88,4 @@ def run(stage: str | None = None):
 			print(f"  !! {name} failed")
 			raise
 	print("\nMasiha demo ready.")
+

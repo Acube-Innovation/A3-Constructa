@@ -71,11 +71,14 @@ def attendance(p):
 	for crews, first, last in ATTENDANCE:
 		employees = {m.employee for c in crews for m in frappe.get_doc("Crew", c).members if m.is_active}
 		workers |= employees
+		# A worker added to a crew later in the story (D-R's new site helper) has no
+		# attendance before joining, and HRMS refuses it; a re-run would otherwise fail.
+		joined = {e: getdate(frappe.db.get_value("Employee", e, "date_of_joining")) for e in employees}
 		day = getdate(first)
 		while day <= getdate(last):
 			if day.weekday() < 6:  # Monday to Saturday
 				for emp in employees:
-					if frappe.db.exists("Attendance", {"employee": emp, "attendance_date": day, "docstatus": ["<", 2]}):
+					if day < joined[emp] or frappe.db.exists("Attendance", {"employee": emp, "attendance_date": day, "docstatus": ["<", 2]}):
 						continue
 					a = frappe.get_doc({"doctype": "Attendance", "employee": emp, "attendance_date": day, "status": "Present",
 					                    "company": COMPANY, "project": p, "site": site})

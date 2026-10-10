@@ -19,6 +19,7 @@ A3_CONSTRUCTA_MODULES = ["A3 Constructa"]
 
 # ---------------------------------------------------------------- install
 before_install = "a3_constructa.install.before_install"
+before_migrate = "a3_constructa.install.before_migrate"
 after_install = "a3_constructa.install.after_install"
 after_migrate = "a3_constructa.install.after_migrate"
 before_tests = "a3_constructa.install.before_tests"
